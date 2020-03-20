@@ -8,7 +8,7 @@ import pytz
 
 def scrape():
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
-    min_date = now - datetime.timedelta(days=7)
+    min_date = now - datetime.timedelta(days=14)
 
     scrape_feed(
         now,
