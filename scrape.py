@@ -51,7 +51,6 @@ def scrape_feed(now, min_date, url, publisher_name, publisher_icon_url):
         for entry in channel.entries:
 
             if ('published' not in entry or
-                'id' not in entry or
                 'title' not in entry or
                 'link' not in entry):
                 continue
@@ -60,10 +59,16 @@ def scrape_feed(now, min_date, url, publisher_name, publisher_icon_url):
             if published < min_date:
                 continue
 
-            item = NewsItem.query.filter_by(source_id = entry.id).first()
+            entry_id = None
+            if 'id' in entry:
+                entry_id = entry.id
+            else:
+                entry_id = entry.link
+
+            item = NewsItem.query.filter_by(source_id = entry_id).first()
             item_did_exist = False
             if item is None:
-                item = NewsItem(source_id = entry.id)
+                item = NewsItem(source_id = entry_id)
                 db.session.add(item)
             else:
                 item_did_exist = True
