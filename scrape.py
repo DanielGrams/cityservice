@@ -14,36 +14,31 @@ def scrape():
         now,
         min_date,
         'https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss',
-        'Stadt Goslar',
-        'https://www.goslar.de/templates/ndk_bs3_j3x/tpls/designs/ndk-goslar/ico/favicon-192x192.png')
+        'Stadt Goslar'
     scrape_feed(
         now,
         min_date,
         'https://www.landkreis-goslar.de/media/rss/Pressemitteilung.xml',
-        'Landkreis Goslar',
-        'https://www.landkreis-goslar.de/media/logo-start.gif')
+        'Landkreis Goslar')
     scrape_feed(
         now,
         min_date,
         'https://www.kwb-goslar.de/media/rss/Pressemitteilungen.xml',
-        'KWB Goslar',
-        'https://www.kwb-goslar.de/layout/kwb/media/logo_kwb-goslar.png')
+        'KWB Goslar')
     scrape_feed(
         now,
         min_date,
         'http://www.presseportal.de/rss/dienststelle_56518.rss2',
-        'Polizei Goslar',
-        'https://www.polizei-nds.de/favicon.ico')
+        'Polizei Goslar')
     scrape_feed(
         now,
         min_date,
         'https://stadtbibliothek.goslar.de/stadtbibliothek/aktuelles?format=feed&type=rss',
-        'Stadtbibliothek Goslar',
-        'https://www.goslar.de/templates/ndk_bs3_j3x/tpls/designs/ndk-goslar/ico/favicon-192x192.png')
+        'Stadtbibliothek Goslar')
 
     delete_old_items(min_date)
 
-def scrape_feed(now, min_date, url, publisher_name, publisher_icon_url):
+def scrape_feed(now, min_date, url, publisher_name):
     try:
         print(url)
         channel = feedparser.parse(url)
@@ -74,7 +69,6 @@ def scrape_feed(now, min_date, url, publisher_name, publisher_icon_url):
                 item_did_exist = True
 
             item.publisher_name = publisher_name
-            item.publisher_icon_url = publisher_icon_url
             item.content = entry.title
             item.link_url = entry.link
             item.published = published
