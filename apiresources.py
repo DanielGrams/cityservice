@@ -49,8 +49,9 @@ class NewsItemList(Resource):
 
 class RecyclingStreetList(Resource):
     def get(self):
-        items =  RecyclingStreet.query.order_by(RecyclingStreet.name).all()
-        return recycling_streets_schema.dump(items)
+        items =  RecyclingStreet.query.all()
+        sorted_items = sorted(items, key=lambda item: (not item.name.startswith('Ortsteil') and not item.name.startswith('Stadtteil'), item.name))
+        return recycling_streets_schema.dump(sorted_items)
 
 class RecyclingEventList(Resource):
     def get(self, street_id):

@@ -30,7 +30,7 @@ def scrape_streets():
     for option in select.find_all('option'):
         if 'value' in option.attrs and option.attrs['value'].strip():
             street_id = option.attrs['value'].strip()
-            street_name = option.text.replace("  ", " ")
+            street_name = option.text.strip()
 
             item = RecyclingStreet.query.filter_by(source_id = street_id).first()
             item_did_exist = False
