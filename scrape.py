@@ -14,7 +14,7 @@ def scrape():
         now,
         min_date,
         'https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss',
-        'Stadt Goslar'
+        'Stadt Goslar')
     scrape_feed(
         now,
         min_date,

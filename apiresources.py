@@ -4,6 +4,9 @@ import flask
 from flask_restful import Resource
 from flask_marshmallow import Marshmallow, fields
 import os
+import datetime
+import pytz
+from sqlalchemy import and_
 
 class NewsItemSchema(marshmallow.Schema):
     class Meta:
@@ -21,7 +24,7 @@ recycling_streets_schema = RecyclingStreetSchema(many=True)
 
 class RecyclingEventSchema(marshmallow.Schema):
     class Meta:
-        fields = ("date", "category")
+        fields = ("date", "category", "category_icon_url")
 
 recycling_event_schema = RecyclingEventSchema()
 recycling_events_schema = RecyclingEventSchema(many=True)
@@ -52,5 +55,25 @@ class RecyclingStreetList(Resource):
 class RecyclingEventList(Resource):
     def get(self, street_id):
         RecyclingStreet.query.filter_by(id = street_id).first_or_404(description='Die Straße ist nicht vorhanden.')
-        items =  RecyclingEvent.query.filter_by(street_id = street_id).order_by(RecyclingEvent.date).all()
+
+        now = datetime.datetime.now(tz=pytz.timezone('Europe/Berlin'))
+        today = datetime.datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
+        items =  RecyclingEvent.query.filter(and_(RecyclingEvent.street_id == street_id, RecyclingEvent.date >= today)).order_by(RecyclingEvent.date).all()
+
+        for item in items:
+            if item.category == "Baum- und Strauchschnitt":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.5.png", _external=True)
+            elif item.category == "Biotonne":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.4.png", _external=True)
+            elif item.category == "Blaue Tonne":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.3.png", _external=True)
+            elif item.category == "Gelber Sack":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.2.png", _external=True)
+            elif item.category == "Restmülltonne":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.1.png", _external=True)
+            elif item.category == "Weihnachtsbäume":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="1.6.png", _external=True)
+            elif item.category == "Wertstofftonne danach":
+                item.category_icon_url = flask.url_for("serve_file_in_dir", path="2523.1.png", _external=True)
+
         return recycling_events_schema.dump(items)
