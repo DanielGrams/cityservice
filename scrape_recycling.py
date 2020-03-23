@@ -15,8 +15,8 @@ def scrape():
     min_date = now - datetime.timedelta(days=14)
 
     scrape_streets()
-    #scrape_events(now)
-    #delete_old_events(min_date)
+    scrape_events(now)
+    delete_old_events(min_date)
 
 def scrape_streets():
     url = 'https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender/index.php?ort=62.1'
