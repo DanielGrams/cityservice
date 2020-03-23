@@ -12,7 +12,7 @@ api = Api(app)
 marshmallow = Marshmallow(app)
 
 from models import NewsItem
-from apiresources import NewsItemList
+from apiresources import NewsItemList, RecyclingStreetList, RecyclingEventList
 
 @app.route('/')
 def index():
@@ -25,6 +25,8 @@ def serve_file_in_dir(path):
     return send_from_directory(media_path, path)
 
 api.add_resource(NewsItemList, '/api/newsitems')
+api.add_resource(RecyclingStreetList, '/api/recycling/streets')
+api.add_resource(RecyclingEventList, '/api/recycling/street/<street_id>/events')
 
 if __name__ == '__main__':
     app.run()

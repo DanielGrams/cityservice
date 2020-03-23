@@ -64,7 +64,6 @@ def scrape_feed(now, min_date, url, publisher_name):
             item_did_exist = False
             if item is None:
                 item = NewsItem(source_id = entry_id)
-                db.session.add(item)
             else:
                 item_did_exist = True
 
