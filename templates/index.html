@@ -1,24 +1,18 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "layout.html" %}
+{% block title %}
+Goslar Service App
+{% endblock %}
+{% block content %}
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <div class="jumbotron p-4">
 
-    <title>Goslar Service App</title>
-  </head>
-  <body>
-    <div class="jumbotron">
-        <h1 class="display-4">Goslar Service App</h1>
+        <p class="h3">Goslar Service App</p>
         <p class="lead">Die inoffizielle App.</p>
         <hr class="my-4">
         <p>Was läge als App-Entwickler in Goslar näher als eine Goslar-App zu entwickeln? Eben.</p>
         <p>Features:</p>
         <ul>
-            <li><strong>News: </strong>Hier werden neue Meldungen aus offiziellen Kanälen wie <a href="https://www.landkreis-goslar.de/">Landkreis</a> und <a href="https://www.goslar.de">Stadt</a> angezeigt.</li>
+            <li><strong><a href="{{ url_for('news') }}">News:</a></strong> Hier werden neue Meldungen aus offiziellen Kanälen wie <a href="https://www.landkreis-goslar.de/">Landkreis</a> und <a href="https://www.goslar.de">Stadt</a> angezeigt.</li>
             <li><strong>Müllabfuhr: </strong>Nachdem du deine Straße ausgewählt hast, werden dir die Abfuhrtermine der <a href="https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender">Kreiswirtschaftsbetriebe</a> angezeigt.</li>
         </ul>
         <p>Mal schauen, welche Features noch folgen. Feedback und Verbesserungsvorschläge sind willkommen.</p>
@@ -26,20 +20,9 @@
         <p><a href='https://play.google.com/store/apps/details?id=de.danielgrams.goslar_service&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Jetzt bei Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/de_badge_web_generic.png' style="width: 200px; max-width: 100%;" /></a></p>
 
         <hr class="my-4">
-        <h6>Impressum &amp; Kontakt</h6>
-        <p>Daniel Grams, Schreiberstrasse 2, 38640 Goslar, <a href="mailto:goslar.service@gmail.com">goslar.service@gmail.com</a></p>
-        <p><a href="https://www.danielgrams.de">https://www.danielgrams.de</a></p>
-
-        <hr class="my-4">
         <p>Google Play und das Google Play-Logo sind Marken von Google LLC.</p>
         <p>Es werden Icons von <a href="https://fontawesome.com">https://fontawesome.com</a> verwendet.</p>
         <p>Es werden <a href="https://lottiefiles.com">Lottie Files</a> verwendet.</p>
       </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  </body>
-</html>
+{% endblock %}

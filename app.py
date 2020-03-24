@@ -18,6 +18,14 @@ from apiresources import NewsItemList, RecyclingStreetList, RecyclingEventList
 def index():
     return render_template('index.html')
 
+@app.route('/news')
+def news():
+    return render_template('news.html')
+
+@app.route('/impressum')
+def impressum():
+    return render_template('impressum.html')
+
 media_path = os.path.join(app.root_path, 'media')
 
 @app.route('/media/<path:path>', methods=['GET'])
