@@ -1,12 +1,20 @@
-from app import marshmallow, app
+from app import marshmallow, app, api
 from models import NewsItem, RecyclingStreet, RecyclingEvent
 import flask
-from flask_restful import Resource
+import flask_restful
 from flask_marshmallow import Marshmallow, fields
 import os
 import datetime
 import pytz
 from sqlalchemy import and_
+from functools import wraps
+import json
+from pprint import pprint
+from hashlib import md5
+
+#
+# Schemes
+#
 
 class NewsItemSchema(marshmallow.Schema):
     class Meta:
@@ -29,6 +37,24 @@ class RecyclingEventSchema(marshmallow.Schema):
 recycling_event_schema = RecyclingEventSchema()
 recycling_events_schema = RecyclingEventSchema(many=True)
 
+#
+# Resources
+#
+
+def etag_cache(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        data = func(*args, **kwargs)
+        dump = json.dumps(data, sort_keys=True)
+        response = flask.make_response(dump)
+        response.add_etag()
+        return response.make_conditional(flask.request)
+    return wrapper
+
+
+class Resource(flask_restful.Resource):
+    method_decorators = [etag_cache]   # applies to all inherited resources
+
 class NewsItemList(Resource):
     def get(self):
         items =  NewsItem.query.order_by(NewsItem.published.desc()).all()
@@ -45,7 +71,9 @@ class NewsItemList(Resource):
             elif item.publisher_name == "Stadtbibliothek Goslar":
                 item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="book-solid.png", _external=True)
 
-        return news_items_schema.dump(items)
+        data = news_items_schema.dump(items)
+        return data
+
 
 class RecyclingStreetList(Resource):
     def get(self):
