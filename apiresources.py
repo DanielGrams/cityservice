@@ -85,9 +85,12 @@ class RecyclingEventList(Resource):
     def get(self, street_id):
         RecyclingStreet.query.filter_by(id = street_id).first_or_404(description='Die Straße ist nicht vorhanden.')
 
-        now = datetime.datetime.now(tz=pytz.timezone('Europe/Berlin'))
-        today = datetime.datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
-        items =  RecyclingEvent.query.filter(and_(RecyclingEvent.street_id == street_id, RecyclingEvent.date >= today)).order_by(RecyclingEvent.date).all()
+        if 'all' in flask.request.args:
+            items =  RecyclingEvent.query.filter(RecyclingEvent.street_id == street_id).order_by(RecyclingEvent.date).all()
+        else:
+            now = datetime.datetime.now(tz=pytz.timezone('Europe/Berlin'))
+            today = datetime.datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
+            items =  RecyclingEvent.query.filter(and_(RecyclingEvent.street_id == street_id, RecyclingEvent.date >= today)).order_by(RecyclingEvent.date).all()
 
         for item in items:
             if item.category == "Baum- und Strauchschnitt":

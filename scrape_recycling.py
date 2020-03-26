@@ -12,7 +12,7 @@ import requests
 
 def scrape():
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
-    min_date = now - datetime.timedelta(days=14)
+    min_date = now - datetime.timedelta(weeks=60)
 
     scrape_streets()
     scrape_events(now)
