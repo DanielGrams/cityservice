@@ -15,7 +15,7 @@ function request_news() {
         dataType: "json",
         success: function (data) {
             $.each(data, function(index, item) {
-                var item_date = moment(item.date);
+                var item_date = moment(item.published);
                 var formatted_date = item_date.format("dd. DD.MM.YYYY");
 
                 var cell = `<a href="` + item.link_url + `" class="list-group-item list-group-item-action d-flex flex-row align-items-center p-2" target="_blank">
