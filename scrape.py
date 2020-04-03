@@ -35,6 +35,11 @@ def scrape():
         min_date,
         'https://stadtbibliothek.goslar.de/stadtbibliothek/aktuelles?format=feed&type=rss',
         'Stadtbibliothek Goslar')
+    scrape_feed(
+        now,
+        min_date,
+        'https://machmit.goslar.de/category/machmit-prozess/feed',
+        'Mach mit!')
 
     delete_old_items(min_date)
 

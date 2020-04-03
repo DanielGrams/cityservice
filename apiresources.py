@@ -70,6 +70,8 @@ class NewsItemList(Resource):
                 item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="taxi-solid.png", _external=True)
             elif item.publisher_name == "Stadtbibliothek Goslar":
                 item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="book-solid.png", _external=True)
+            elif item.publisher_name == "Mach mit!":
+                item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="users-solid.png", _external=True)
 
         data = news_items_schema.dump(items)
         return data
