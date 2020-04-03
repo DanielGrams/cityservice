@@ -27,6 +27,10 @@ def news():
 def impressum():
     return render_template('impressum.html')
 
+@app.route('/datenschutz')
+def datenschutz():
+    return render_template('datenschutz.html')
+
 media_path = os.path.join(app.root_path, 'media')
 
 @app.route('/media/<path:path>', methods=['GET'])
