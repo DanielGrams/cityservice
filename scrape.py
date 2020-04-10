@@ -55,6 +55,13 @@ def scrape_feed(now, min_date, url, publisher_name):
                 'link' not in entry):
                 continue
 
+            title = entry.title
+            if publisher_name == 'Polizei Goslar':
+                if title.startswith('POL-GS: '):
+                    title = title[len('POL-GS: '):]
+                if 'Goslar' not in title and 'Vienenburg' not in title:
+                    continue
+
             published = parser.parse(entry.published)
             if published < min_date:
                 continue
@@ -73,7 +80,7 @@ def scrape_feed(now, min_date, url, publisher_name):
                 item_did_exist = True
 
             item.publisher_name = publisher_name
-            item.content = entry.title
+            item.content = title
             item.link_url = entry.link
             item.published = published
             item.fetched = now
