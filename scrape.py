@@ -40,6 +40,11 @@ def scrape():
         min_date,
         'https://machmit.goslar.de/category/machmit-prozess/feed',
         'Mach mit!')
+    scrape_feed(
+        now,
+        min_date,
+        'https://feuerwehr-goslar.de/feed/',
+        'Feuerwehr Goslar')
 
     delete_old_items(min_date)
 
