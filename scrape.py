@@ -45,6 +45,11 @@ def scrape():
         min_date,
         'https://feuerwehr-goslar.de/feed/',
         'Feuerwehr Goslar')
+    scrape_feed(
+        now,
+        min_date,
+        'https://feuerwehr-vienenburg.de/feed/',
+        'Feuerwehr Vienenburg')
 
     delete_old_items(min_date)
 
