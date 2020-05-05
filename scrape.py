@@ -50,6 +50,11 @@ def scrape():
         min_date,
         'https://feuerwehr-vienenburg.de/feed/',
         'Feuerwehr Vienenburg')
+    scrape_feed(
+        now,
+        min_date,
+        'https://warnung.bund.de/bbk.mowas/rss/031530000000.xml',
+        'Bevölkerungsschutz')
 
     delete_old_items(min_date)
 
