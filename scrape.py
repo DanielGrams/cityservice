@@ -55,6 +55,11 @@ def scrape():
         min_date,
         'https://warnung.bund.de/bbk.mowas/rss/031530000000.xml',
         'Bevölkerungsschutz')
+    scrape_feed(
+        now,
+        min_date,
+        'https://wettwarn.de/rss/gsx.rss',
+        'Deutscher Wetterdienst')
 
     delete_old_items(min_date)
 

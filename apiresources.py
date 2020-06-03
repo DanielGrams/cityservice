@@ -78,6 +78,8 @@ class NewsItemList(Resource):
                 item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="taxi-solid-red.png", _external=True)
             elif item.publisher_name == "Bevölkerungsschutz":
                 item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="warning-solid.png", _external=True)
+            elif item.publisher_name == "Deutscher Wetterdienst":
+                item.publisher_icon_url = flask.url_for("serve_file_in_dir", path="warning-solid.png", _external=True)
 
         data = news_items_schema.dump(items)
         return data
