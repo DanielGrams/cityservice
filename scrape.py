@@ -5,6 +5,7 @@ from pprint import pprint
 import datetime
 from dateutil import parser, tz
 import pytz
+from sqlalchemy.sql import not_, and_
 
 def scrape():
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
@@ -62,6 +63,7 @@ def scrape_feed(now, min_date, url, publisher_name):
     try:
         print(url)
         channel = feedparser.parse(url)
+        entry_ids = list()
 
         for entry in channel.entries:
 
@@ -102,6 +104,11 @@ def scrape_feed(now, min_date, url, publisher_name):
 
             if not item_did_exist:
                 db.session.add(item)
+
+            entry_ids.append(entry_id)
+
+        # Delete entries that are not part of the feed anymore
+        NewsItem.query.filter(and_(NewsItem.publisher_name == publisher_name, not_(NewsItem.source_id.in_(entry_ids)))).delete(synchronize_session=False)
 
     except Exception as e:
         pprint(e)
