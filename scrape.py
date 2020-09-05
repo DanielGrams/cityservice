@@ -54,6 +54,26 @@ def scrape():
     scrape_feed(
         now,
         min_date,
+        'https://feuerwehr-hahndorf.de/feed/',
+        'Feuerwehr Hahndorf')
+    scrape_feed(
+        now,
+        min_date,
+        'https://www.feuerwehr-wiedelah.de/rss/blog',
+        'Feuerwehr Wiedelah')
+    scrape_feed(
+        now,
+        min_date,
+        'http://www.ffw-jerstedt.de/index.php/einsaetze?format=feed&type=rss',
+        'Feuerwehr Jerstedt')
+    scrape_feed(
+        now,
+        min_date,
+        'https://www.feuerwehr-oker.de/index.php/aktuelles/einsaetze/einsatzberichte?format=feed&type=rss',
+        'Feuerwehr Oker')
+    scrape_feed(
+        now,
+        min_date,
         'https://warnung.bund.de/bbk.mowas/rss/031530000000.xml',
         'Bevölkerungsschutz')
     scrape_feed(
@@ -83,6 +103,9 @@ def scrape_feed(now, min_date, url, publisher_name):
                     title = title[len('POL-GS: '):]
                 if 'Goslar' not in title and 'Vienenburg' not in title:
                     continue
+
+            if publisher_name == 'Deutscher Wetterdienst' and title == 'Keine Warnungen':
+                continue
 
             published = parser.parse(entry.published)
             if published < min_date:
