@@ -20,6 +20,7 @@ class RecyclingStreet(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     source_id = db.Column(db.String())
+    town_id = db.Column(db.String())
     name = db.Column(db.String())
     events = db.relationship('RecyclingEvent', backref='street', lazy=True)
 

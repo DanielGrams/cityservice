@@ -10,16 +10,28 @@ from sqlalchemy.sql import not_
 from ics import Calendar
 import requests
 
+class ScrapeTown:
+    def __init__(self, identifier, name):
+        self.identifier = identifier
+        self.name = name
+
 def scrape():
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
     min_date = now - datetime.timedelta(weeks=60)
 
-    scrape_streets()
+    towns = list()
+    towns.append(ScrapeTown('62.1', 'Goslar'))
+    towns.append(ScrapeTown('62.4', 'Oker'))
+    towns.append(ScrapeTown('62.5', 'Vienenburg'))
+
+    for town in towns:
+        scrape_streets(town)
+
     scrape_events(now)
     delete_old_events(min_date)
 
-def scrape_streets():
-    url = 'https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender/index.php?ort=62.1'
+def scrape_streets(town):
+    url = 'https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender/index.php?ort=%s' % town.identifier
     print(url)
 
     response = urlopen(url)
@@ -39,7 +51,8 @@ def scrape_streets():
             else:
                 item_did_exist = True
 
-            item.name = street_name
+            item.name = "%s, %s" % (street_name, town.name)
+            item.town_id = town.identifier
 
             if not item_did_exist:
                 db.session.add(item)
@@ -62,9 +75,8 @@ def scrape_events(now):
 
 def scrape_events_for_street(street, year):
     try:
-        town_id = '62.1'
         street_id = street.source_id
-        url = "https://www.kwb-goslar.de/output/abfall_export.php?csv_export=1&mode=vcal&ort=%s&strasse=%s&vtyp=4&vMo=1&vJ=%s&bMo=12" % (town_id, street_id, year)
+        url = "https://www.kwb-goslar.de/output/abfall_export.php?csv_export=1&mode=vcal&ort=%s&strasse=%s&vtyp=4&vMo=1&vJ=%s&bMo=12" % (street.town_id, street_id, year)
         print(url)
 
         calendar = Calendar(requests.get(url).text)
