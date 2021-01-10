@@ -6,7 +6,7 @@ from dateutil import parser, tz
 import pytz
 from urllib.request import urlopen, URLError
 from bs4 import BeautifulSoup
-from sqlalchemy.sql import not_
+from sqlalchemy.sql import not_, and_
 from ics import Calendar
 import requests
 
@@ -70,10 +70,14 @@ def scrape_events(now):
         years.append(year_in_six_month)
 
     for street in streets:
-        for year in years:
-            scrape_events_for_street(street, year)
+        event_ids = list()
 
-def scrape_events_for_street(street, year):
+        for year in years:
+            scrape_events_for_street(street, year, event_ids)
+
+        delete_events_not_in_calendars(street.id, event_ids)
+
+def scrape_events_for_street(street, year, event_ids):
     try:
         street_id = street.source_id
         url = "https://www.kwb-goslar.de/output/abfall_export.php?csv_export=1&mode=vcal&ort=%s&strasse=%s&vtyp=4&vMo=1&vJ=%s&bMo=12" % (street.town_id, street_id, year)
@@ -100,6 +104,8 @@ def scrape_events_for_street(street, year):
             if not item_did_exist:
                 db.session.add(item)
 
+            event_ids.append(event_id)
+
     except Exception as e:
         pprint(url)
         pprint(e)
@@ -111,5 +117,11 @@ def delete_old_events(min_date):
     RecyclingStreet.query.filter(not_(RecyclingStreet.events.any())).delete(synchronize_session=False)
     db.session.commit()
 
+def delete_events_not_in_calendars(street_id, event_ids):
+    # Delete events that are not part of the streets calendars anymore
+    RecyclingEvent.query.filter(and_(RecyclingEvent.street_id == street_id, not_(RecyclingEvent.source_id.in_(event_ids)))).delete(synchronize_session=False)
+    db.session.commit()
+
 if __name__ == '__main__':
     scrape()
+    print("Done")
