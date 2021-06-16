@@ -1,3 +1,4 @@
+from urllib.request import urlopen
 from app import app, db
 from models import NewsItem
 import feedparser
@@ -6,10 +7,13 @@ import datetime
 from dateutil import parser, tz
 import pytz
 from sqlalchemy.sql import not_, and_
+from bs4 import BeautifulSoup
 
 def scrape():
     now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
     min_date = now - datetime.timedelta(days=14)
+
+    scrape_dwd(now)
 
     scrape_feed(
         now,
@@ -76,13 +80,45 @@ def scrape():
         min_date,
         'https://warnung.bund.de/bbk.mowas/rss/031530000000.xml',
         'Bevölkerungsschutz')
-    scrape_feed(
-        now,
-        min_date,
-        'https://wettwarn.de/rss/gsx.rss',
-        'Deutscher Wetterdienst')
 
     delete_old_items(min_date)
+
+def upsert_news_item(entry_id, publisher_name, title, link, published, fetched):
+    item = NewsItem.query.filter_by(source_id = entry_id).first()
+    item_did_exist = False
+    if item is None:
+        item = NewsItem(source_id = entry_id)
+    else:
+        item_did_exist = True
+
+    item.publisher_name = publisher_name
+    item.content = title
+    item.link_url = link
+    item.published = published
+    item.fetched = fetched
+
+    if not item_did_exist:
+        db.session.add(item)
+
+def scrape_dwd(now):
+    try:
+        url = 'https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnings_gemeinde_nib.html'
+        publisher_name = 'Deutscher Wetterdienst'
+        print(url)
+
+        response = urlopen(url)
+        doc = BeautifulSoup(response, 'lxml')
+        anchor = doc.find(id='Stadt Goslar')
+
+        if anchor:
+            upsert_news_item('https://www.dwd.de', publisher_name, 'Es liegen Wetterwarnungen vor', 'https://www.dwd.de/DE/wetter/warnungen_gemeinden/warnWetter_node.html?ort=Goslar', now, now)
+        else:
+            NewsItem.query.filter(NewsItem.publisher_name == publisher_name).delete(synchronize_session=False)
+
+    except Exception as e:
+        pprint(e)
+    finally:
+        db.session.commit()
 
 def scrape_feed(now, min_date, url, publisher_name):
     try:
@@ -104,9 +140,6 @@ def scrape_feed(now, min_date, url, publisher_name):
                 if 'Goslar' not in title and 'Vienenburg' not in title:
                     continue
 
-            if publisher_name == 'Deutscher Wetterdienst' and title == 'Keine Warnungen':
-                continue
-
             published = parser.parse(entry.published)
             if published < min_date:
                 continue
@@ -117,22 +150,7 @@ def scrape_feed(now, min_date, url, publisher_name):
             else:
                 entry_id = entry.link
 
-            item = NewsItem.query.filter_by(source_id = entry_id).first()
-            item_did_exist = False
-            if item is None:
-                item = NewsItem(source_id = entry_id)
-            else:
-                item_did_exist = True
-
-            item.publisher_name = publisher_name
-            item.content = title
-            item.link_url = entry.link
-            item.published = published
-            item.fetched = now
-
-            if not item_did_exist:
-                db.session.add(item)
-
+            upsert_news_item(entry_id, publisher_name, title, entry.link, published, now)
             entry_ids.append(entry_id)
 
         # Delete entries that are not part of the feed anymore
