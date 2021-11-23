@@ -141,7 +141,7 @@ def scrape_feed(now, min_date, url, publisher_name):
                     continue
 
             published = parser.parse(entry.published)
-            if published < min_date:
+            if published < min_date or published > now:
                 continue
 
             entry_id = None
