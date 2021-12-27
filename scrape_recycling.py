@@ -30,8 +30,8 @@ def scrape():
     towns.append(ScrapeTown('2523.8', 'Oker'))
     towns.append(ScrapeTown('2523.10', 'Vienenburg'))
 
-    # for town in towns:
-    #     scrape_streets(town)
+    for town in towns:
+        scrape_streets(town)
 
     scrape_events()
     delete_old_events(min_date)
