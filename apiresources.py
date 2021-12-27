@@ -11,6 +11,7 @@ from functools import wraps
 import json
 from pprint import pprint
 from hashlib import md5
+from sqlalchemy.sql.expression import func
 
 #
 # Schemes
@@ -85,20 +86,34 @@ class NewsItemList(Resource):
 
 class RecyclingStreetList(Resource):
     def get(self):
-        items =  RecyclingStreet.query.all()
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+
+        if now.year > 2021:
+            items =  RecyclingStreet.query.filter(func.length(RecyclingStreet.town_id) > 4).all() # > 4 bedeutet TownId ab 2022
+        else:
+            items =  RecyclingStreet.query.filter(func.length(RecyclingStreet.town_id) < 5).all() # < 5 bedeutet TownId bis 2021
+
         sorted_items = sorted(items, key=lambda item: (not item.name.startswith('Ortsteil') and not item.name.startswith('Stadtteil'), item.name))
         return recycling_streets_schema.dump(sorted_items)
 
 class RecyclingEventList(Resource):
     def get(self, street_id):
-        RecyclingStreet.query.filter_by(id = street_id).first_or_404(description='Die Straße ist nicht vorhanden.')
+        street = RecyclingStreet.query.filter_by(id = street_id).first_or_404(description='Die Straße ist nicht vorhanden.')
+
+        street_ids = list()
+        if len(street.town_id) > 4: # > 4 bedeutet TownId ab 2022
+            street_ids.append(street.id)
+        else: # wenn street mit alter town_id, dann alle streets laden, die denselben namen haben
+            similar_streets = RecyclingStreet.query.filter(RecyclingStreet.name == street.name).all()
+            for similar_street in similar_streets:
+                street_ids.append(similar_street.id)
 
         if 'all' in flask.request.args:
-            items =  RecyclingEvent.query.filter(RecyclingEvent.street_id == street_id).order_by(RecyclingEvent.date).all()
+            items =  RecyclingEvent.query.filter(RecyclingEvent.street_id.in_(street_ids)).order_by(RecyclingEvent.date).all()
         else:
             now = datetime.datetime.now(tz=pytz.timezone('Europe/Berlin'))
             today = datetime.datetime(now.year, now.month, now.day, tzinfo=now.tzinfo)
-            items =  RecyclingEvent.query.filter(and_(RecyclingEvent.street_id == street_id, RecyclingEvent.date >= today)).order_by(RecyclingEvent.date).all()
+            items =  RecyclingEvent.query.filter(and_(RecyclingEvent.street_id.in_(street_ids), RecyclingEvent.date >= today)).order_by(RecyclingEvent.date).all()
 
         for item in items:
             if item.category == "Baum- und Strauchschnitt":

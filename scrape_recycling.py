@@ -7,8 +7,14 @@ import pytz
 from urllib.request import urlopen, URLError
 from bs4 import BeautifulSoup
 from sqlalchemy.sql import not_, and_
+from sqlalchemy.sql.expression import func
 from ics import Calendar
 import requests
+
+# Town IDs vor 2022
+# towns.append(ScrapeTown('62.1', 'Goslar'))
+# towns.append(ScrapeTown('62.4', 'Oker'))
+# towns.append(ScrapeTown('62.5', 'Vienenburg'))
 
 class ScrapeTown:
     def __init__(self, identifier, name):
@@ -20,75 +26,66 @@ def scrape():
     min_date = now - datetime.timedelta(weeks=60)
 
     towns = list()
-    towns.append(ScrapeTown('62.1', 'Goslar'))
-    towns.append(ScrapeTown('62.4', 'Oker'))
-    towns.append(ScrapeTown('62.5', 'Vienenburg'))
+    towns.append(ScrapeTown('2523.1', 'Goslar'))
+    towns.append(ScrapeTown('2523.8', 'Oker'))
+    towns.append(ScrapeTown('2523.10', 'Vienenburg'))
 
-    for town in towns:
-        scrape_streets(town)
+    # for town in towns:
+    #     scrape_streets(town)
 
-    scrape_events(now)
+    scrape_events()
     delete_old_events(min_date)
 
 def scrape_streets(town):
-    url = 'https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender/index.php?ort=%s' % town.identifier
+    url = 'https://www.kwb-goslar.de/output/autocomplete.php?out=json&type=abto&mode=&select=2&refid=%s&term=' % town.identifier
     print(url)
 
-    response = urlopen(url)
-    doc = BeautifulSoup(response, 'lxml')
+    response = requests.get(url, headers={'referer': 'https://www.kwb-goslar.de'})
+    json = response.json()
+    replace_from = " (%s)" % town.name
+    replace_to = ", %s" % town.name
 
-    select = doc.find('select', {"name":"strasse"})
+    for line in json:
+        street_id = line[0].strip()
+        street_name = line[1].strip()
 
-    for option in select.find_all('option'):
-        if 'value' in option.attrs and option.attrs['value'].strip():
-            street_id = option.attrs['value'].strip()
-            street_name = option.text.strip()
+        item = RecyclingStreet.query.filter(and_(RecyclingStreet.source_id == street_id, RecyclingStreet.town_id == town.identifier)).first()
+        item_did_exist = False
+        if item is None:
+            item = RecyclingStreet(source_id = street_id)
+        else:
+            item_did_exist = True
 
-            item = RecyclingStreet.query.filter_by(source_id = street_id).first()
-            item_did_exist = False
-            if item is None:
-                item = RecyclingStreet(source_id = street_id)
-            else:
-                item_did_exist = True
+        item.name = street_name.replace(replace_from, replace_to)
+        item.town_id = town.identifier
 
-            item.name = "%s, %s" % (street_name, town.name)
-            item.town_id = town.identifier
-
-            if not item_did_exist:
-                db.session.add(item)
+        if not item_did_exist:
+            db.session.add(item)
 
     db.session.commit()
 
-def scrape_events(now):
-    streets =  RecyclingStreet.query.all()
-    years = [ now.strftime("%Y") ]
-
-    in_six_month = now + datetime.timedelta(6*365/12)
-    year_in_six_month = in_six_month.strftime("%Y")
-
-    if year_in_six_month not in years:
-        years.append(year_in_six_month)
+def scrape_events():
+    streets =  RecyclingStreet.query.filter(func.length(RecyclingStreet.town_id) > 4).all() # > 4 bedeutet TownId ab 2022
 
     for street in streets:
         event_ids = list()
-
-        for year in years:
-            scrape_events_for_street(street, year, event_ids)
-
+        scrape_events_for_street(street, event_ids)
         delete_events_not_in_calendars(street.id, event_ids)
 
-def scrape_events_for_street(street, year, event_ids):
+def scrape_events_for_street(street, event_ids):
     try:
         street_id = street.source_id
-        url = "https://www.kwb-goslar.de/output/abfall_export.php?csv_export=1&mode=vcal&ort=%s&strasse=%s&vtyp=4&vMo=1&vJ=%s&bMo=12" % (street.town_id, street_id, year)
+        url = "https://www.kwb-goslar.de/output/options.php?ModID=48&call=ical&pois=%s&alarm=0" % street_id
         print(url)
 
-        calendar = Calendar(requests.get(url).text)
+        calendar = Calendar(requests.get(url, headers={'referer': 'https://www.kwb-goslar.de'}).text)
 
         for event in calendar.events:
             event_id = event.uid
             category = event.name.split(':')[0]
-            date = event.begin.datetime
+
+            # Legacy
+            date = event.begin.datetime.replace(hour = 0) + event.begin.datetime.tzinfo.utcoffset(event.begin.datetime)
 
             item = RecyclingEvent.query.filter_by(street_id = street.id, source_id = event_id).first()
             item_did_exist = False
