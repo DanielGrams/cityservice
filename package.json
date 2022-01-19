@@ -1,10 +1,10 @@
 {
   "scripts": {
-    "postinstall": "(cd frontend && npm install)",
-    "build": "(cd frontend && npm run build)"
+    "postinstall": "(cd frontend && npm install --loglevel verbose)",
+    "heroku-postbuild": "(cd frontend && npm run build --loglevel verbose)",
   },
   "engines": {
-    "node": "12.x",
-    "npm": "7.x"
+    "node": "12.22.6",
+    "npm": "7.24.1"
   }
 }
