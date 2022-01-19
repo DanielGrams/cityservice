@@ -1,14 +1,17 @@
 <template>
-    <NewsList />
+  <NewsList />
 </template>
 
 <script>
-import NewsList from '@/components/NewsList.vue'
+import NewsList from "@/components/NewsList.vue";
 
 export default {
-  name: 'News',
+  name: "News",
+  metaInfo: {
+    title: "News",
+  },
   components: {
-    NewsList
-  }
-}
+    NewsList,
+  },
+};
 </script>

@@ -4,6 +4,7 @@ import router from './router'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import moment from 'moment'
 import VueMoment from 'vue-moment';
+import VueMeta from 'vue-meta'
 
 import './custom.scss'
 
@@ -15,6 +16,10 @@ Vue.use(IconsPlugin)
 require('moment/locale/de');
 moment.locale('de');
 Vue.use(VueMoment, { moment });
+
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true
+})
 
 new Vue({
   router,
