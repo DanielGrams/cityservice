@@ -50,23 +50,6 @@ media_path = os.path.join(app.root_path, 'media')
 def serve_file_in_dir(path):
     return send_from_directory(media_path, path)
 
-@app.route('/hello')
-def etag_post():
-    some_response = render_template('impressum.html')
-    some_response = make_response(some_response)
-    some_response.add_etag()
-    return some_response.make_conditional(request)
-
-def etag_pre():
-    some_response = make_response()
-    some_response.set_etag('the-etag')
-    some_response.make_conditional(request)
-    if some_response.status_code == 304:
-        return some_response
-    some_response =  do_expensive_stuff()
-    some_response.set_etag('the-etag')
-    return some_response
-
 api.add_resource(NewsItemList, '/api/newsitems')
 api.add_resource(RecyclingStreetList, '/api/recycling/streets')
 api.add_resource(RecyclingEventList, '/api/recycling/street/<street_id>/events')
