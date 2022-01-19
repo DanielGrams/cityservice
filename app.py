@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, send_from_directory, make_response, request
+from flask import Flask, Blueprint, render_template, jsonify, send_from_directory, make_response, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from flask_marshmallow import Marshmallow
@@ -18,16 +18,23 @@ cors = CORS(
     resources={r"/api/*"},
 )
 
+frontend = Blueprint("frontend", __name__,
+    static_folder='frontend/dist',
+    static_url_path='/'
+)
+
+@frontend.route("/news")
+def news():
+    return frontend.send_static_file("index.html")
+
+app.register_blueprint(frontend)
+
 from models import NewsItem
 from apiresources import NewsItemList, RecyclingStreetList, RecyclingEventList
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/news')
-def news():
-    return render_template('news.html')
 
 @app.route('/impressum')
 def impressum():
