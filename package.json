@@ -2,5 +2,9 @@
   "scripts": {
     "postinstall": "npm install --prefix ./frontend",
     "build": "npm run build --prefix ./frontend"
+  },
+  "engines": {
+    "node": "12.x",
+    "npm": "7.x"
   }
 }
