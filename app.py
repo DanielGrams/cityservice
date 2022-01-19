@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, send_from_directory, make_res
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from flask_marshmallow import Marshmallow
+from flask_cors import CORS
 import os
 import json
 
@@ -11,6 +12,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 api = Api(app)
 marshmallow = Marshmallow(app)
+
+cors = CORS(
+    app,
+    resources={r"/api/*"},
+)
 
 from models import NewsItem
 from apiresources import NewsItemList, RecyclingStreetList, RecyclingEventList
