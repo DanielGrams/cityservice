@@ -23,7 +23,7 @@
       <router-view />
       <footer>
         <p class="text-center">
-          Mit <i class="fa fa-heart" style="color: red"></i> in
+          Mit <b-icon icon="heart-fill" style="color: red"></b-icon> in
           <strong>Goslar</strong> entwickelt.
         </p>
         <p class="text-center small">
@@ -37,10 +37,6 @@
 </template>
 
 <style>
-a, a:hover {
-    color: #009688;
-}
-
 .navbar {
     background-color: lightslategray;
     font-size: 1em;
@@ -62,20 +58,5 @@ a, a:hover {
 .navbar-item {
     font-variant: small-caps;
     margin-left: 30px;
-}
-
-.body-content {
-    padding: 10px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-footer {
-    padding: 10px;
-}
-
-.social-btn {
-    /* background-color: #009688;
-    color: white; */
-    font-size: 1.5rem;
 }
 </style>
