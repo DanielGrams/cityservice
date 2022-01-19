@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "postinstall": "(cd frontend && cwd && ls -la && npm install --loglevel verbose) && cwd && ls -la ",
-    "heroku-postbuild": "(cd frontend && cwd && ls -la && npm run build --loglevel verbose)"
+    "postinstall": "(cd frontend && pwd && ls -la && npm install --loglevel verbose) && pwd && ls -la ",
+    "heroku-postbuild": "(cd frontend && pwd && ls -la && npm run build --loglevel verbose)"
   },
   "engines": {
     "node": "12.22.6",
