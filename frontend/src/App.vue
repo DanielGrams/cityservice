@@ -3,7 +3,7 @@
     <b-navbar toggleable="lg" type="light" variant="light">
       <b-navbar-brand href="/">
         <img
-          src="http://127.0.0.1:5000/static/apple-touch-icon.png"
+          src="@/assets/apple-touch-icon.png"
           width="30"
           height="30"
           class="d-inline-block align-top rounded"

@@ -29,7 +29,7 @@
 <script>
 import axios from "axios";
 export default {
-  name: "HelloWorld",
+  name: "NewsList",
   props: {
     msg: String,
   },
@@ -39,7 +39,7 @@ export default {
     };
   },
   created() {
-    axios.get(`http://localhost:5000/api/newsitems`).then((response) => {
+    axios.get('/api/newsitems').then((response) => {
       this.items = response.data;
     });
   },
