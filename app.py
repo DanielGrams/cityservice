@@ -19,7 +19,7 @@ cors = CORS(
 )
 
 frontend = Blueprint("frontend", __name__,
-    static_folder='frontend/dist',
+    static_folder='static/frontend',
     static_url_path='/'
 )
 
