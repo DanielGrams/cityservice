@@ -1,10 +1,16 @@
 {
   "name": "City service",
-  "description": "Service for cities",
-  "image": "heroku/python",
   "keywords": ["python"],
   "repository": "https://github.com/DanielGrams/cityservice",
   "addons": ["heroku-postgresql"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ],
   "env": {
     "SECRET_TOKEN": {
       "description": "A secret key for verifying the integrity of signed cookies.",
@@ -13,6 +19,14 @@
     "SECURITY_PASSWORD_SALT": {
       "description": "Bcrypt salt for encrypting passwords.",
       "generator": "secret"
+    },
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "Vue frontend related.",
+      "value": "false"
+    },
+    "USE_NPM_INSTALL": {
+      "description": "Vue frontend related.",
+      "value": "true"
     }
   }
 }

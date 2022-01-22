@@ -1,5 +1,5 @@
 module.exports = {
-    outputDir: '../static/frontend',
+    outputDir: '../project/static/frontend',
     devServer: {
       proxy: {
         '/api*': {
