@@ -3,7 +3,7 @@ name: Vue
 on: [pull_request, workflow_dispatch]
 
 jobs:
-  lint:
+  vue:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
