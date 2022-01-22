@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        group: [1, 2, 3, 4]
+        group: [1, 2]
 
     # Service containers to run with `container-job`
     services:
@@ -50,7 +50,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
-        run: pytest --cov=project --splits 4 --group ${{ matrix.group }}
+        run: pytest --cov=project --splits 2 --group ${{ matrix.group }}
         env:
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost/cityservice_tests
 
