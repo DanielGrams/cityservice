@@ -6,6 +6,13 @@ __pycache__/
 .env
 static/frontend
 package-lock.json
+runcypress.sh
+runpytest.sh
+app.yaml
+deployment.yaml
+node_modules
+cypress/videos
+cypress/screenshots
 
 # C extensions
 *.so

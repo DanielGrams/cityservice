@@ -1,0 +1,18 @@
+{
+  "name": "City service",
+  "description": "Service for cities",
+  "image": "heroku/python",
+  "keywords": ["python"],
+  "repository": "https://github.com/DanielGrams/city-service",
+  "addons": ["heroku-postgresql"],
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "SECURITY_PASSWORD_SALT": {
+      "description": "Bcrypt salt for encrypting passwords.",
+      "generator": "secret"
+    }
+  }
+}

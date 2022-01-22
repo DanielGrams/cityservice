@@ -10,5 +10,4 @@ heroku/python
 NPM_CONFIG_PRODUCTION=false
 USE_NPM_INSTALL=true
 
-heroku run python manage.py db upgrade --app goslar-service
-
+heroku run flask db upgrade --app goslar-service
