@@ -24,6 +24,9 @@ cors = CORS(
 # API Resources
 import project.api
 
+# Command line
+import project.cli.scrape
+
 frontend = Blueprint(
     "frontend", __name__, static_folder="static/frontend", static_url_path="/"
 )

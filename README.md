@@ -1,13 +1,11 @@
-python manage.py db init
-python manage.py db migrate
-python manage.py db upgrade
+# Cityservice
 
-= Heroku Buildpacks =
-heroku/nodejs
-heroku/python
+City website using Python, Flask and Postgres.
 
-= Heroku settings =
-NPM_CONFIG_PRODUCTION=false
-USE_NPM_INSTALL=true
+## Deployment
 
-heroku run flask db upgrade --app goslar-service
+[Deployment](doc/deployment.md)
+
+## Development
+
+[Development](doc/development.md)

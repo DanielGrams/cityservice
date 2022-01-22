@@ -1,0 +1,4 @@
+[run]
+omit =
+    project/cli/test.py
+    project/templates/email/*

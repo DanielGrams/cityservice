@@ -3,7 +3,7 @@
   "description": "Service for cities",
   "image": "heroku/python",
   "keywords": ["python"],
-  "repository": "https://github.com/DanielGrams/city-service",
+  "repository": "https://github.com/DanielGrams/cityservice",
   "addons": ["heroku-postgresql"],
   "env": {
     "SECRET_TOKEN": {

@@ -4,11 +4,11 @@ from pprint import pprint
 import pytz
 import requests
 from ics import Calendar
-from models import RecyclingEvent, RecyclingStreet
 from sqlalchemy.sql import and_, not_
 from sqlalchemy.sql.expression import func
 
 from project import db
+from project.models import RecyclingEvent, RecyclingStreet
 
 # Town IDs vor 2022
 # towns.append(ScrapeTown('62.1', 'Goslar'))
