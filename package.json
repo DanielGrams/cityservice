@@ -5,7 +5,10 @@
     "heroku-postbuild": "(cd frontend && npm run build)"
   },
   "engines": {
-    "node": "12.22.6",
-    "npm": "7.24.1"
+    "node": "16.x",
+    "npm": "8.x"
+  },
+  "dependencies": {
+    "npm": "^8.3.2"
   }
 }
