@@ -33,11 +33,6 @@ import project.cli.scrape
 # API
 from project.api import RestApi
 
-# JSON
-from project.date_time_encoder import DateTimeEncoder
-
-app.json_encoder = DateTimeEncoder
-
 frontend = Blueprint(
     "frontend", __name__, static_folder="static/frontend", static_url_path="/"
 )

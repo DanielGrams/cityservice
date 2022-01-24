@@ -1,3 +1,4 @@
+from project.api import marshmallow
 from project.api.schemas import SQLAlchemyBaseSchema
 from project.models import RecyclingStreet
 
@@ -5,8 +6,7 @@ from project.models import RecyclingStreet
 class RecyclingStreetSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = RecyclingStreet
-        fields = ("id", "name")
+        load_instance = True
 
-
-recycling_street_schema = RecyclingStreetSchema()
-recycling_streets_schema = RecyclingStreetSchema(many=True)
+    id = marshmallow.auto_field()
+    name = marshmallow.auto_field()

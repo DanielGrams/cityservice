@@ -3,10 +3,7 @@ from flask_apispec import doc, marshal_with
 from sqlalchemy import and_
 
 from project.api import add_api_resource
-from project.api.recycling_event.schemas import (
-    RecyclingEventSchema,
-    recycling_events_schema,
-)
+from project.api.recycling_event.schemas import RecyclingEventSchema
 from project.api.resources import BaseResource
 from project.dateutils import get_today
 from project.models import RecyclingEvent, RecyclingStreet
@@ -49,37 +46,7 @@ class RecyclingEventList(BaseResource):
                 .all()
             )
 
-        for item in items:  # pragma: no cover
-            if item.category == "Baum- und Strauchschnitt":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.5.png", _external=True
-                )
-            elif item.category == "Biotonne":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.4.png", _external=True
-                )
-            elif item.category == "Blaue Tonne":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.3.png", _external=True
-                )
-            elif item.category == "Gelber Sack":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.2.png", _external=True
-                )
-            elif item.category == "Restmülltonne":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.1.png", _external=True
-                )
-            elif item.category == "Weihnachtsbäume":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="1.6.png", _external=True
-                )
-            elif item.category == "Wertstofftonne danach":
-                item.category_icon_url = flask.url_for(
-                    "serve_file_in_dir", path="2523.1.png", _external=True
-                )
-
-        return recycling_events_schema.dump(items)
+        return items
 
 
 add_api_resource(
