@@ -1,13 +1,13 @@
 import datetime
 from pprint import pprint
 
-import pytz
 import requests
 from ics import Calendar
 from sqlalchemy.sql import and_, not_
 from sqlalchemy.sql.expression import func
 
 from project import db
+from project.dateutils import get_now
 from project.models import RecyclingEvent, RecyclingStreet
 
 # Town IDs vor 2022
@@ -23,7 +23,7 @@ class ScrapeTown:
 
 
 def scrape():
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+    now = get_now()
     min_date = now - datetime.timedelta(weeks=60)
 
     towns = list()
@@ -39,40 +39,45 @@ def scrape():
 
 
 def scrape_streets(town):
-    url = (
-        "https://www.kwb-goslar.de/output/autocomplete.php?out=json&type=abto&mode=&select=2&refid=%s&term="
-        % town.identifier
-    )
-    print(url)
+    try:
+        url = (
+            "https://www.kwb-goslar.de/output/autocomplete.php?out=json&type=abto&mode=&select=2&refid=%s&term="
+            % town.identifier
+        )
+        print(url)
 
-    response = requests.get(url, headers={"referer": "https://www.kwb-goslar.de"})
-    json = response.json()
-    replace_from = " (%s)" % town.name
-    replace_to = ", %s" % town.name
+        response = requests.get(url, headers={"referer": "https://www.kwb-goslar.de"})
+        json = response.json()
+        replace_from = " (%s)" % town.name
+        replace_to = ", %s" % town.name
 
-    for line in json:
-        street_id = line[0].strip()
-        street_name = line[1].strip()
+        for line in json:
+            street_id = line[0].strip()
+            street_name = line[1].strip()
 
-        item = RecyclingStreet.query.filter(
-            and_(
-                RecyclingStreet.source_id == street_id,
-                RecyclingStreet.town_id == town.identifier,
-            )
-        ).first()
-        item_did_exist = False
-        if item is None:
-            item = RecyclingStreet(source_id=street_id)
-        else:
-            item_did_exist = True
+            item = RecyclingStreet.query.filter(
+                and_(
+                    RecyclingStreet.source_id == street_id,
+                    RecyclingStreet.town_id == town.identifier,
+                )
+            ).first()
+            item_did_exist = False
+            if item is None:
+                item = RecyclingStreet(source_id=street_id)
+            else:
+                item_did_exist = True
 
-        item.name = street_name.replace(replace_from, replace_to)
-        item.town_id = town.identifier
+            item.name = street_name.replace(replace_from, replace_to)
+            item.town_id = town.identifier
 
-        if not item_did_exist:
-            db.session.add(item)
+            if not item_did_exist:
+                db.session.add(item)
 
-    db.session.commit()
+    except Exception as e:
+        pprint(url)
+        pprint(e)
+    finally:
+        db.session.commit()
 
 
 def scrape_events():
@@ -150,8 +155,3 @@ def delete_events_not_in_calendars(street_id, event_ids):
         )
     ).delete(synchronize_session=False)
     db.session.commit()
-
-
-if __name__ == "__main__":
-    scrape()
-    print("Done")

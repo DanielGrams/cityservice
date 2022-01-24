@@ -2,30 +2,36 @@ import os
 
 from flask import Blueprint, Flask, render_template, send_from_directory
 from flask_cors import CORS
+from flask_gzip import Gzip
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 
-# Create db
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# Gzip
+gzip = Gzip(app)
 
-# API
-from project.api import RestApi
-
+# cors
 cors = CORS(
     app,
     resources={r"/api/*"},
 )
+
+# Create db
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # API Resources
 import project.api
 
 # Command line
 import project.cli.scrape
+
+# API
+from project.api import RestApi
 
 frontend = Blueprint(
     "frontend", __name__, static_folder="static/frontend", static_url_path="/"

@@ -1,19 +1,19 @@
 import datetime
 from pprint import pprint
-from urllib.request import urlopen
 
 import feedparser
-import pytz
+import requests
 from bs4 import BeautifulSoup
 from dateutil import parser
 from sqlalchemy.sql import and_, not_
 
 from project import db
+from project.dateutils import get_now
 from project.models import NewsItem
 
 
 def scrape():
-    now = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+    now = get_now()
     min_date = now - datetime.timedelta(days=14)
 
     scrape_dwd(now)
@@ -113,8 +113,8 @@ def scrape_dwd(now):
         publisher_name = "Deutscher Wetterdienst"
         print(url)
 
-        response = urlopen(url)
-        doc = BeautifulSoup(response, "lxml")
+        response = requests.get(url)
+        doc = BeautifulSoup(response.text, "lxml")
         anchor = doc.find(id="Stadt Goslar")
 
         if anchor:
@@ -131,7 +131,7 @@ def scrape_dwd(now):
                 synchronize_session=False
             )
 
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         pprint(e)
     finally:
         db.session.commit()
@@ -145,7 +145,9 @@ def scrape_feed(now, min_date, url, publisher_name):
 
         for entry in channel.entries:
 
-            if "published" not in entry or "title" not in entry or "link" not in entry:
+            if (
+                "published" not in entry or "title" not in entry or "link" not in entry
+            ):  # pragma: no cover
                 continue
 
             title = entry.title
@@ -156,7 +158,7 @@ def scrape_feed(now, min_date, url, publisher_name):
                     continue
 
             published = parser.parse(entry.published)
-            if published < min_date or published > now:
+            if published < min_date or published > now:  # pragma: no cover
                 continue
 
             entry_id = None

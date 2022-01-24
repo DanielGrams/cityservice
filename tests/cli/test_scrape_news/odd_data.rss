@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generator="Joomla! - Open Source Content Management" -->
+<?xml-stylesheet href="/plugins/system/jce/css/content.css?b7d91c6595be68e3c4ca5d8eee1d4b68" type="text/css"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Pressemitteilungen - GOSLAR am Harz, UNESCO-Weltkulturerbe</title>
+		<description>
+			<![CDATA[]]>
+		</description>
+		<link>https://www.goslar.de/presse/pressemitteilungen</link>
+		<lastBuildDate>Mon, 24 Jan 2022 06:57:38 +0000</lastBuildDate>
+		<generator>Joomla! - Open Source Content Management</generator>
+		<atom:link rel="self" type="application/rss+xml" href="https://www.goslar.de/presse/pressemitteilungen?format=feed&amp;type=rss" />
+		<language>de-de</language>
+		<managingEditor>webmaster@goslar.de (GOSLAR am Harz, UNESCO-Weltkulturerbe)</managingEditor>
+		<item>
+			<title>Ohne pubDate und ohne Link</title>
+			<guid isPermaLink="true">https://www.goslar.de/presse/pressemitteilungen/verkehr-strassen/289724-verkehrsbehinderungen-durch-kundgebung-am-montagabend</guid>
+			<description>
+				<![CDATA[<p>Versammlung bewegt sich zwischen 18 und 19:30 durch die Innenstadt</p>
+]]>
+			</description>
+			<author>nina.sturde@goslar.de (Nina Sturde)</author>
+			<category>Verkehr &amp; Straßen</category>
+		</item>
+		<item>
+			<title>Zu alt</title>
+			<link>https://www.goslar.de/presse/pressemitteilungen/stadtverwaltung-buergerservice/281245-stadtteilbuero-breite-strasse-vorerst-nur-telefonisch-erreichbar</link>
+			<guid isPermaLink="true">https://www.goslar.de/presse/pressemitteilungen/stadtverwaltung-buergerservice/281245-stadtteilbuero-breite-strasse-vorerst-nur-telefonisch-erreichbar</guid>
+			<description>
+				<![CDATA[<p>Aufgrund der Corona-Lage derzeit keine persönlichen Beratungsgespräche</p>
+]]>
+			</description>
+			<author>tino.schmoz@goslar.de (Tino Schmoz)</author>
+			<category>Stadtverwaltung &amp; Bürgerservice</category>
+			<pubDate>Mon, 17 Jan 2021 11:21:22 +0000</pubDate>
+		</item>
+		<item>
+			<title>Ohne ID</title>
+			<link>https://www.goslar.de/presse/pressemitteilungen/goslar-specials/272856-goslar-starkes-tourismusjahr-2021-trotz-laengerem-lockdown</link>
+			<description>
+				<![CDATA[<p>Die vergangenen zwei Jahre haben gezeigt, dass Urlaub in Deutschland immer beliebter wird und sich der Trend auch in Goslar weiter fortsetzt – und das trotz Corona-bedingtem Lockdown, der im Jahr 2021 ein Beherbergungsverbot von über 130 Tagen (vom 1. Januar bis 11. Mai) mit sich brachte!</p>
+]]>
+			</description>
+			<author>nina.sturde@goslar.de (Nina Sturde)</author>
+			<category>Goslar Specials</category>
+			<pubDate>Thu, 13 Jan 2022 09:08:30 +0000</pubDate>
+		</item>
+		<item>
+			<title>Neuer Termin für die Paul-Lincke-Ring-Verleihung an Max Mutzke</title>
+			<link>https://www.goslar.de/presse/pressemitteilungen/kultur-veranstaltungen/270779-neuer-termin-fuer-die-paul-lincke-ring-verleihung-an-max-mutzke</link>
+			<guid isPermaLink="true">https://www.goslar.de/presse/pressemitteilungen/kultur-veranstaltungen/270779-neuer-termin-fuer-die-paul-lincke-ring-verleihung-an-max-mutzke</guid>
+			<description>
+				<![CDATA[<p>Der Künstler erhält den Musikpreis der Stadt Goslar am 8. April</p>
+]]>
+			</description>
+			<author>tino.schmoz@goslar.de (Tino Schmoz)</author>
+			<category>Kultur &amp; Veranstaltungen</category>
+			<pubDate>Wed, 12 Jan 2022 06:29:26 +0000</pubDate>
+		</item>
+	</channel>
+</rss>
