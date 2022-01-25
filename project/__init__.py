@@ -1,28 +1,94 @@
+import logging
 import os
 
-from flask import Blueprint, Flask, render_template, send_from_directory
+from flask import Flask
+from flask_babelex import Babel
 from flask_cors import CORS
 from flask_gzip import Gzip
 from flask_migrate import Migrate
+from flask_security import Security, SQLAlchemySessionUserDatastore
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
+from project.custom_session_interface import CustomSessionInterface
+
+# Create app
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECURITY_TRACKABLE"] = True
+app.config["SECURITY_REGISTERABLE"] = True
+app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
+
+# Proxy handling
+if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover
+    app.config["PREFERRED_URL_SCHEME"] = os.getenv("PREFERRED_URL_SCHEME")
+
+from project.reverse_proxied import ReverseProxied
+
+app.wsgi_app = ReverseProxied(app.wsgi_app)
+
+# Generate a nice key using secrets.token_urlsafe()
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY", "JL6BFcPC7N23fbKjbSkCM1hTCSn8GsTSb7xT-LF7Z8A"
+)
+# Bcrypt is set as default SECURITY_PASSWORD_HASH, which requires a salt
+# Generate a good salt using: secrets.SystemRandom().getrandbits(128)
+app.config["SECURITY_PASSWORD_SALT"] = os.environ.get(
+    "SECURITY_PASSWORD_SALT", "11853555980110007309421904519904894213"
+)
+
+app.config["JWT_PUBLIC_JWKS"] = os.environ.get("JWT_PUBLIC_JWKS", "")
+app.config["JWT_PRIVATE_KEY"] = os.environ.get("JWT_PRIVATE_KEY", "").replace(
+    r"\n", "\n"
+)
+
+# Gunicorn logging
+if __name__ != "__main__":
+    gunicorn_logger = logging.getLogger("gunicorn.error")
+    if gunicorn_logger.hasHandlers():
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
 
 # Gzip
 gzip = Gzip(app)
 
+# i18n
+app.config["BABEL_DEFAULT_LOCALE"] = "de"
+app.config["BABEL_DEFAULT_TIMEZONE"] = "Europe/Berlin"
+babel = Babel(app)
+
 # cors
 cors = CORS(
     app,
-    resources={r"/api/*"},
+    resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"},
 )
+
+# CRSF protection
+csrf = CSRFProtect(app)
+app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
 # Create db
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# API
+from project.api import RestApi
+from project.forms.security import ExtendedConfirmRegisterForm
+
+# Setup Flask-Security
+from project.models import Role, User
+
+user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
+security = Security(app, user_datastore, register_form=ExtendedConfirmRegisterForm)
+app.session_interface = CustomSessionInterface()
+
+# OAuth2
+from project.oauth2 import config_oauth
+
+config_oauth(app)
 
 # API Resources
 import project.api
@@ -33,44 +99,10 @@ import project.cli.scrape
 if os.getenv("TESTING", False):  # pragma: no cover
     import project.cli.test
 
-# API
-from project.api import RestApi
+from project import i18n, init_data
 
-frontend = Blueprint(
-    "frontend", __name__, static_folder="static/frontend", static_url_path="/"
-)
-
-
-@frontend.route("/news")
-def news():  # pragma: no cover
-    return frontend.send_static_file("index.html")
-
-
-app.register_blueprint(frontend)
-
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
-@app.route("/impressum")
-def impressum():
-    return render_template("impressum.html")
-
-
-@app.route("/datenschutz")
-def datenschutz():
-    return render_template("datenschutz.html")
-
-
-media_path = os.path.join(app.root_path, "media")
-
-
-@app.route("/media/<path:path>", methods=["GET"])
-def serve_file_in_dir(path):
-    return send_from_directory(media_path, path)
-
+# Routes
+from project.views import frontend, oauth, root
 
 if __name__ == "__main__":  # pragma: no cover
     app.run()
