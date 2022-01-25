@@ -2,7 +2,9 @@
   "scripts": {
     "postinstall": "(cd frontend && npm install)",
     "build": "(cd frontend && npm run build)",
-    "heroku-postbuild": "(cd frontend && npm run build)"
+    "heroku-postbuild": "(cd frontend && npm run build)",
+    "cypress:open": "cypress open --config-file cypress/config/desktop.json",
+    "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.json"
   },
   "engines": {
     "node": "16.x",
@@ -10,5 +12,9 @@
   },
   "dependencies": {
     "npm": "^8.3.2"
+  },
+  "devDependencies": {
+    "cypress": "^9.3.1",
+    "cypress-fail-on-console-error": "^2.1.3"
   }
 }

@@ -30,6 +30,9 @@ import project.api
 # Command line
 import project.cli.scrape
 
+if os.getenv("TESTING", False):  # pragma: no cover
+    import project.cli.test
+
 # API
 from project.api import RestApi
 
