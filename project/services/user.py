@@ -1,3 +1,4 @@
+from flask_principal import Permission, RoleNeed
 from flask_security import hash_password
 
 from project import user_datastore
@@ -31,3 +32,8 @@ def upsert_user_role(role_name, role_title, permissions):
     role.remove_permissions(role.get_permissions())
     role.add_permissions(permissions)
     return role
+
+
+def has_current_user_role(role):
+    user_perm = Permission(RoleNeed(role))
+    return user_perm.can()

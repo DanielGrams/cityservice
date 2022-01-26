@@ -14,3 +14,5 @@ def print_dynamic_texts():
     gettext("Scope_profile")
     gettext("Scope_user:read")
     gettext("Scope_user:write")
+    gettext("Scope_newsfeed:read")
+    gettext("Scope_newsfeed:write")
