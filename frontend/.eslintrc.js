@@ -5,13 +5,27 @@ module.exports = {
   },
   'extends': [
     'plugin:vue/essential',
-    'eslint:recommended'
+    'eslint:recommended',
+    'plugin:@intlify/vue-i18n/recommended'
   ],
   parserOptions: {
     parser: 'babel-eslint'
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    "@intlify/vue-i18n/no-raw-text": [
+      "error",
+      {
+        "ignorePattern": "^[-#:()&]+$",
+        "ignoreText": ["Goslar", "|"]
+      }
+    ]
+  },
+  settings: {
+    'vue-i18n': {
+      localeDir: './src/locales/**/*.json',
+      messageSyntaxVersion: '^8.26.3'
+    }
   }
 }

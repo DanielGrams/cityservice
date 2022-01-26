@@ -1,0 +1,12 @@
+{
+  "app": {
+    "contact": "Kontakt",
+    "imprint": "Impressum",
+    "menu": {
+      "news": "News"
+    },
+    "privacy": "Datenschutz",
+    "title": "Goslar Service App",
+    "withLove": "Mit {love} in {place} entwickelt."
+  }
+}

@@ -2,6 +2,7 @@
   "scripts": {
     "postinstall": "(cd frontend && npm install)",
     "build": "(cd frontend && npm run build)",
+    "lint": "(cd frontend && npm run lint)",
     "heroku-postbuild": "(cd frontend && npm run build)",
     "cypress:open": "cypress open --config-file cypress/config/desktop.json",
     "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.json"
