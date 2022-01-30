@@ -16,7 +16,7 @@ from project.utils import get_localized_scope
 
 
 class RestApi(Api):
-    def handle_error(self, err):
+    def handle_error(self, err):  # pragma: no cover
         from project.api.schemas import (
             ErrorResponseSchema,
             UnprocessableEntityResponseSchema,
@@ -86,7 +86,9 @@ class RestApi(Api):
 
         return schema.dump(data), code
 
-    def fill_validation_data(self, err: ValidationError, data: dict):
+    def fill_validation_data(
+        self, err: ValidationError, data: dict
+    ):  # pragma: no cover
         if (
             getattr(err, "args", None)
             and isinstance(err.args, tuple)

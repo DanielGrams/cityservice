@@ -25,7 +25,7 @@ from project import db
 
 
 def _current_user_id_or_none():
-    if current_user and current_user.is_authenticated:
+    if current_user and current_user.is_authenticated:  # pragma: no cover
         return current_user.id
 
     return None

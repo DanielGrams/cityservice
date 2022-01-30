@@ -8,7 +8,7 @@ class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def make_post_schema(self):
+    def make_post_schema(self):  # pragma: no cover
         for name, field in self.fields.items():
             if not field.required:
                 if field.missing is missing:
@@ -18,7 +18,7 @@ class SQLAlchemyBaseSchema(marshmallow.SQLAlchemySchema):
                         field.missing = None
                 field.allow_none = True
 
-    def make_patch_schema(self):
+    def make_patch_schema(self):  # pragma: no cover
         for name, field in self.fields.items():
             field.required = False
             field.allow_none = True
@@ -32,7 +32,7 @@ class WriteIdSchemaMixin(object):
     id = marshmallow.auto_field(required=True)
 
     @pre_load()
-    def validate_exists(self, data, **kwargs):
+    def validate_exists(self, data, **kwargs):  # pragma: no cover
         if not self.get_instance(data):
             raise ValidationError("Referenced object does not exist")
         return data

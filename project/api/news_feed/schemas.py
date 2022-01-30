@@ -54,12 +54,12 @@ class NewsFeedListResponseSchema(PaginationResponseSchema):
 
 
 class NewsFeedPostRequestSchema(NewsFeedModelSchema, NewsFeedBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.make_post_schema()
 
 
 class NewsFeedPatchRequestSchema(NewsFeedModelSchema, NewsFeedBaseSchemaMixin):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
