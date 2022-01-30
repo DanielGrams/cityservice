@@ -1,12 +1,38 @@
 {
+  "admin": {
+    "title": "Admin"
+  },
   "app": {
     "contact": "Kontakt",
     "imprint": "Impressum",
     "menu": {
-      "news": "News"
+      "admin": "Admin",
+      "login": "Login",
+      "logout": "Ausloggen",
+      "news": "News",
+      "profile": "Profil"
     },
     "privacy": "Datenschutz",
     "title": "Goslar Service App",
     "withLove": "Mit {love} in {place} entwickelt."
+  },
+  "login": {
+    "email": "Email",
+    "errorMessage": "Die Anmeldung ist fehlgeschlagen.",
+    "password": "Passwort"
+  },
+  "profile": {
+    "title": "Profil"
+  },
+  "shared": {
+    "errors": {
+      "uniqueViolation": "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt.",
+      "unprocessableEntity": "Die Anfrage konnte aufgrund von semantischen Fehlern nicht beantwortet werden."
+    },
+    "submit": "Senden",
+    "toast": {
+      "errorTitle": "Fehler",
+      "successTitle": "Erfolg"
+    }
   }
 }

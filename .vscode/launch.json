@@ -33,6 +33,17 @@
             "type": "python",
             "request": "test",
             "justMyCode": false,
-        }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Vue: Chrome",
+            "url": "http://localhost:8081",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "breakOnLoad": true,
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            }
+        },
     ]
 }

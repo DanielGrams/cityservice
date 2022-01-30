@@ -62,7 +62,7 @@ def login_api_user_or_401(role: str = None) -> bool:
     if role:
         from project.services.user import has_current_user_role
 
-        if has_current_user_role(role):
+        if not has_current_user_role(role):
             abort(401)
 
 

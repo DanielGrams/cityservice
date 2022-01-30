@@ -22,10 +22,6 @@ class NewsFeedIdSchema(NewsFeedModelSchema, IdSchemaMixin):
     pass
 
 
-class NewsFeedDumpIdSchema(NewsFeedModelSchema, IdSchemaMixin):
-    pass
-
-
 class NewsFeedWriteIdSchema(NewsFeedModelSchema, WriteIdSchemaMixin):
     pass
 

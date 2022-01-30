@@ -129,6 +129,9 @@ class User(db.Model, UserMixin):
     def get_user_id(self):
         return self.id
 
+    def get_security_payload(self):
+        return {"email": self.email, "roles": [r.name for r in self.roles]}
+
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 

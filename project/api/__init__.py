@@ -190,3 +190,4 @@ import project.api.news_feed.resources
 import project.api.news_item.resources
 import project.api.recycling_event.resources
 import project.api.recycling_street.resources
+import project.api.user.resources

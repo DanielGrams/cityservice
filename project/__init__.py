@@ -16,8 +16,11 @@ from project.custom_session_interface import CustomSessionInterface
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECURITY_CSRF_COOKIE_NAME"] = "XSRF-TOKEN"
+app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
+app.config["WTF_CSRF_TIME_LIMIT"] = None
 app.config["SECURITY_TRACKABLE"] = True
-app.config["SECURITY_REGISTERABLE"] = True
+app.config["SECURITY_REGISTERABLE"] = False
 app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
