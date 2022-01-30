@@ -24,14 +24,14 @@ from sqlalchemy.orm import backref, deferred, object_session, relationship
 from project import db
 
 
-def _current_user_id_or_none():  # pragma: no cover
-    if current_user and current_user.is_authenticated:
+def _current_user_id_or_none():
+    if current_user and current_user.is_authenticated:  # pragma: no cover
         return current_user.id
 
     return None
 
 
-class TrackableMixin(object):  # pragma: no cover
+class TrackableMixin(object):
     @declared_attr
     def created_at(cls):
         return deferred(
@@ -129,6 +129,9 @@ class User(db.Model, UserMixin):
     def get_user_id(self):
         return self.id
 
+    def get_security_payload(self):
+        return {"email": self.email, "roles": [r.name for r in self.roles]}
+
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
 
@@ -193,6 +196,16 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
         return expires_at >= time.time()
 
 
+# News
+
+
+class NewsFeed(db.Model, TrackableMixin):
+    __tablename__ = "newsfeed"
+    id = Column(Integer(), primary_key=True)
+    publisher = Column(Unicode(255))
+    url = Column(String(255))
+
+
 class NewsItem(db.Model):
     __tablename__ = "newsitems"
 
@@ -204,6 +217,9 @@ class NewsItem(db.Model):
     link_url = db.Column(db.String())
     published = db.Column(db.DateTime(timezone=True))
     fetched = db.Column(db.DateTime(timezone=True))
+
+
+# Recycling
 
 
 class RecyclingStreet(db.Model):

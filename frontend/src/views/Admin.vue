@@ -1,0 +1,29 @@
+<template>
+  <div class="container" v-if="currentUser">
+    <h3>{{ $t("admin.title") }}</h3>
+    <p>
+      {{ currentUser.email }}
+    </p>
+    <ul>
+      <li v-for="(role, index) in currentUser.roles" :key="index">
+        {{ role }}
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Admin",
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+  },
+  mounted() {
+    if (!this.$store.getters["auth/isAdmin"]) {
+      this.$router.push({ name: "Profile" });
+    }
+  },
+};
+</script>

@@ -116,6 +116,26 @@ class Seeder(object):
 
         return news_item_id
 
+    def create_news_feed(self, **kwargs) -> int:
+        from project.models import NewsFeed
+
+        with self._app.app_context():
+            news_feed = NewsFeed()
+            news_feed.publisher = (
+                kwargs["publisher"] if "publisher" in kwargs else "Feuerwehr"
+            )
+            news_feed.url = (
+                kwargs["url"]
+                if "url" in kwargs
+                else "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss"
+            )
+
+            self._db.session.add(news_feed)
+            self._db.session.commit()
+            news_feed_id = news_feed.id
+
+        return news_feed_id
+
     def create_recycling_street(self, **kwargs) -> int:
         from project.models import RecyclingStreet
 

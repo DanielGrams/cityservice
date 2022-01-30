@@ -16,6 +16,25 @@
         <b-navbar-nav>
           <b-nav-item to="/news">{{ $t("app.menu.news") }}</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item v-if="!currentUser" to="/login">{{
+            $t("app.menu.login")
+          }}</b-nav-item>
+          <b-nav-item-dropdown v-if="currentUser" right>
+            <template #button-content>
+              {{ currentUser.email }}
+            </template>
+            <b-dropdown-item to="/profile">{{
+              $t("app.menu.profile")
+            }}</b-dropdown-item>
+            <b-dropdown-item v-if="isAdmin" to="/admin">{{
+              $t("app.menu.admin")
+            }}</b-dropdown-item>
+            <b-dropdown-item href @click.prevent="logOut">{{
+              $t("app.menu.logout")
+            }}</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </b-navbar-nav>
       </b-collapse>
     </b-navbar>
 
@@ -41,6 +60,25 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    isAdmin() {
+      return this.$store.getters["auth/isAdmin"];
+    },
+  },
+  methods: {
+    logOut() {
+      this.$store.dispatch("auth/logout");
+      this.$router.push("/");
+    },
+  },
+};
+</script>
 
 <style>
 .navbar {
