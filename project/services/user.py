@@ -1,4 +1,3 @@
-from flask_principal import Permission, RoleNeed
 from flask_security import hash_password
 
 from project import user_datastore
