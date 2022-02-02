@@ -13,6 +13,8 @@ deployment.yaml
 node_modules
 cypress/videos
 cypress/screenshots
+.nyc_output/
+coverage/
 
 # C extensions
 *.so
