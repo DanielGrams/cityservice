@@ -17,6 +17,7 @@
         />
         <b-button
           variant="primary"
+          id="submit"
           type="submit"
           v-bind:disabled="isSubmitting"
         >
@@ -39,16 +40,6 @@ export default {
       password: "",
       isSubmitting: false,
     };
-  },
-  computed: {
-    loggedIn() {
-      return this.$store.state.auth.status.loggedIn;
-    },
-  },
-  created() {
-    if (this.loggedIn) {
-      this.$router.replace({ name: "Profile" });
-    }
   },
   methods: {
     submitForm() {

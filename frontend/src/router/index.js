@@ -8,6 +8,11 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/",
+    name: "Home",
+    component: News,
+  },
+  {
     path: "/news",
     name: "News",
     component: News,
@@ -16,6 +21,9 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+    meta: {
+      requiresAnonymous: true,
+    },
   },
   {
     path: "/profile",
@@ -60,17 +68,24 @@ router.beforeEach((to, from, next) => {
   if (
     to.matched.some(
       (record) => record.meta.requiresAuth || record.meta.requiresAdmin
-    )
+    ) &&
+    !store.state.auth.status.loggedIn
   ) {
-    if (!store.state.auth.status.loggedIn) {
-      return next({ name: "Login", query: { redirectTo: to.fullPath } });
-    }
+    return next({ name: "Login", query: { redirectTo: to.fullPath } });
   }
 
-  if (to.matched.some((record) => record.meta.requiresAdmin)) {
-    if (!store.getters["auth/isAdmin"]) {
-      return next({ name: "Profile" });
-    }
+  if (
+    to.matched.some((record) => record.meta.requiresAdmin) &&
+    !store.getters["auth/isAdmin"]
+  ) {
+    return next({ name: "Profile" });
+  }
+
+  if (
+    to.matched.some((record) => record.meta.requiresAnonymous) &&
+    store.state.auth.status.loggedIn
+  ) {
+    return next({ name: "Profile" });
   }
 
   next();

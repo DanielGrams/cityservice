@@ -20,7 +20,7 @@
           <b-nav-item v-if="!currentUser" to="/login">{{
             $t("app.menu.login")
           }}</b-nav-item>
-          <b-nav-item-dropdown v-if="currentUser" right>
+          <b-nav-item-dropdown v-if="currentUser" right class="user-dropdown">
             <template #button-content>
               {{ currentUser.email }}
             </template>
@@ -30,7 +30,7 @@
             <b-dropdown-item v-if="isAdmin" to="/admin">{{
               $t("app.menu.admin")
             }}</b-dropdown-item>
-            <b-dropdown-item href @click.prevent="logOut">{{
+            <b-dropdown-item class="logout" href @click.prevent="logOut">{{
               $t("app.menu.logout")
             }}</b-dropdown-item>
           </b-nav-item-dropdown>
@@ -73,8 +73,9 @@ export default {
   },
   methods: {
     logOut() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push("/");
+      this.$store.dispatch("auth/logout").then(() => {
+        this.$router.replace({ name: "Home" });
+      });
     },
   },
 };

@@ -20,10 +20,5 @@ export default {
       return this.$store.state.auth.user;
     },
   },
-  mounted() {
-    if (!this.currentUser) {
-      this.$router.push({ name: "Login" });
-    }
-  },
 };
 </script>

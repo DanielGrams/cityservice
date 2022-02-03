@@ -6,7 +6,9 @@
     "heroku-postbuild": "(cd frontend && npm run build)",
     "cypress:open": "cypress open --config-file cypress/config/desktop.json",
     "cypress:open:mobile": "cypress open --config-file cypress/config/mobile.json",
-    "cypress:open:vue": "cypress open --config-file cypress/config/desktop.json --config baseUrl=http://localhost:8081"
+    "cypress:open:vue": "cypress open --config-file cypress/config/desktop.json --config baseUrl=http://localhost:8081",
+    "cypress:open:vue:mobile": "cypress open --config-file cypress/config/mobile.json --config baseUrl=http://localhost:8081",
+    "cypress:open:vue:nocov": "cypress open --config-file cypress/config/desktop.json --config baseUrl=http://localhost:8081 --env coverage=false"
   },
   "engines": {
     "node": "16.x",

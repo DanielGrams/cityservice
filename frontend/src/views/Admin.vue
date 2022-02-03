@@ -20,10 +20,5 @@ export default {
       return this.$store.state.auth.user;
     },
   },
-  mounted() {
-    if (!this.$store.getters["auth/isAdmin"]) {
-      this.$router.push({ name: "Profile" });
-    }
-  },
 };
 </script>

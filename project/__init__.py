@@ -16,6 +16,7 @@ from project.custom_session_interface import CustomSessionInterface
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECURITY_URL_PREFIX"] = "/auth"
 app.config["SECURITY_CSRF_COOKIE_NAME"] = "XSRF-TOKEN"
 app.config["WTF_CSRF_TIME_LIMIT"] = None
 app.config["SECURITY_TRACKABLE"] = True
