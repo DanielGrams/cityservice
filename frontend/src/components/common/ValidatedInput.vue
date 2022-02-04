@@ -58,6 +58,7 @@ export default {
     }
   },
   methods: {
+    /* istanbul ignore next */
     getValidationState({ dirty, validated, valid = null }) {
       return dirty || validated ? valid : null;
     },
