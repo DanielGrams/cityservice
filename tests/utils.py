@@ -27,12 +27,12 @@ class UtilActions(object):
         return self._refresh_token
 
     def register(self, email="test@test.de", password="MeinPasswortIstDasBeste"):
-        response = self._client.get("/register")
+        response = self._client.get("/auth/register")
         assert response.status_code == 200
 
         with self._client:
             response = self._client.post(
-                "/register",
+                "/auth/register",
                 data={
                     "email": email,
                     "password": password,
@@ -53,12 +53,12 @@ class UtilActions(object):
     ):
         from project.services.user import find_user_by_email
 
-        response = self._client.get("/login")
+        response = self._client.get("/auth/login")
         assert response.status_code == 200
 
         with self._client:
             response = self._client.post(
-                "/login",
+                "/auth/login",
                 data={
                     "email": email,
                     "password": password,

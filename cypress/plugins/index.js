@@ -11,20 +11,24 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const { renameSync } = require("fs");
+const fs = require("fs");
 /**
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
-  require("@cypress/code-coverage/task")(on, config)
-  on("after:screenshot", ({ path }) => {
-    renameSync(
-      path,
-      path
-        .replace(/ \(\d*\)/i, "")
-        .replace(".png", "-" + config.viewportWidth + ".png")
-    );
+  require("@cypress/code-coverage/task")(on, config);
+  on("after:screenshot", (details) => {
+    const newPath = details.path
+      .replace(/ \(\d*\)/i, "")
+      .replace(".png", "-" + config.viewportWidth + ".png");
+
+    return new Promise((resolve, reject) => {
+      fs.rename(details.path, newPath, (err) => {
+        if (err) return reject(err);
+        resolve({ path: newPath });
+      });
+    });
   });
 
   return config;
