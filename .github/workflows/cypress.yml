@@ -90,6 +90,13 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          verbose: true
+          fail_ci_if_error: true
+          flags: uitests
+
   # TODO: Optimize because this is just a copy of the first job
   cypress-desktop:
     strategy:
@@ -172,3 +179,11 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          verbose: true
+          fail_ci_if_error: true
+          flags: uitests
+          files: coverage/lcov.info

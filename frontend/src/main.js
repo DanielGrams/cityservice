@@ -8,9 +8,9 @@ import VueMeta from "vue-meta";
 import * as VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
 import axios from "axios";
-import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
-import * as rules from 'vee-validate/dist/rules';
-import { messages } from 'vee-validate/dist/locale/de.json';
+import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
+import * as rules from "vee-validate/dist/rules";
+import { messages } from "vee-validate/dist/locale/de.json";
 
 import "./custom.scss";
 import i18n from "./i18n";
@@ -33,13 +33,13 @@ Vue.use(VueMeta, {
   refreshOnceOnNavigation: true,
 });
 
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
+Vue.component("ValidationProvider", ValidationProvider);
+Vue.component("ValidationObserver", ValidationObserver);
 
-Object.keys(rules).forEach(rule => {
+Object.keys(rules).forEach((rule) => {
   extend(rule, {
     ...rules[rule],
-    message: messages[rule]
+    message: messages[rule],
   });
 });
 
@@ -50,6 +50,7 @@ var vue = new Vue({
   render: (h) => h(App),
   methods: {
     handleAxiosStart(config) {
+      /* istanbul ignore next */
       if (
         config &&
         Object.prototype.hasOwnProperty.call(config, "handleRequestStart")
@@ -57,6 +58,7 @@ var vue = new Vue({
         config.handleRequestStart();
       }
 
+      /* istanbul ignore next */
       if (
         config &&
         Object.prototype.hasOwnProperty.call(config, "handleLoading")
@@ -65,6 +67,7 @@ var vue = new Vue({
       }
     },
     handleAxiosFinish(config) {
+      /* istanbul ignore next */
       if (
         config &&
         Object.prototype.hasOwnProperty.call(config, "handleRequestFinish")
@@ -72,6 +75,7 @@ var vue = new Vue({
         config.handleRequestFinish();
       }
 
+      /* istanbul ignore next */
       if (
         config &&
         Object.prototype.hasOwnProperty.call(config, "handleLoading")
@@ -100,12 +104,13 @@ var vue = new Vue({
         return;
       }
 
+      /* istanbul ignore next */
       const status = error && error.response && error.response.status;
+      /* istanbul ignore next */
       let message = error.message || error;
 
-      if (status === 401) {
-        store.dispatch("auth/logout");
-      } else if (status == 400 || status == 422) {
+      /* istanbul ignore next */
+      if (status == 400 || status == 422) {
         message =
           (error &&
             error.response &&
@@ -125,15 +130,17 @@ var vue = new Vue({
         }
       }
 
+      /* istanbul ignore next */
       if (hasHandler) {
         error.config.handleRequestError(error, message);
-      } else {
+      } /* istanbul ignore next */ else {
         this.makeErrorToast(message);
       }
     },
     makeErrorToast(message) {
       this.makeToast(message, "danger", this.$t("shared.toast.errorTitle"));
     },
+    /* istanbul ignore next */
     makeSuccessToast(message) {
       this.makeToast(message, "success", this.$t("shared.toast.successTitle"));
     },
@@ -146,6 +153,7 @@ var vue = new Vue({
         solid: true,
       });
     },
+    /* istanbul ignore next */
     goBack(fallbackPath) {
       window.history.length > 1
         ? this.$router.go(-1)
@@ -161,6 +169,7 @@ axios.interceptors.request.use(
     }
     return config;
   },
+  /* istanbul ignore next */
   function (error) {
     vue.handleAxiosError(error);
     return Promise.reject(error);

@@ -10,9 +10,13 @@
         <b-form-input
           v-model="innerValue"
           v-bind="$attrs"
+          :id="$attrs.name"
           :state="getValidationState(validationContext)"
         ></b-form-input>
-        <b-form-invalid-feedback :state="getValidationState(validationContext)">
+        <b-form-invalid-feedback
+          :state="getValidationState(validationContext)"
+          :id="$attrs.name + '-error'"
+        >
           {{ validationContext.errors[0] }}
         </b-form-invalid-feedback>
       </b-form-group>
@@ -48,11 +52,13 @@ export default {
     },
   },
   created() {
+    /* istanbul ignore next */
     if (this.value) {
       this.innerValue = this.value;
     }
   },
   methods: {
+    /* istanbul ignore next */
     getValidationState({ dirty, validated, valid = null }) {
       return dirty || validated ? valid : null;
     },

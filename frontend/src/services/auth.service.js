@@ -3,7 +3,7 @@ import axios from "axios";
 class AuthService {
   init() {
     return axios
-      .get("/login", {
+      .get("/auth/login", {
         data: null,
         headers: { "Content-Type": "application/json" },
       })
@@ -23,7 +23,7 @@ class AuthService {
 
   login(email, password) {
     return axios
-      .get("/login", {
+      .get("/auth/login", {
         data: null,
         headers: { "Content-Type": "application/json" },
       })
@@ -32,7 +32,7 @@ class AuthService {
 
         return axios
           .post(
-            "/login",
+            "/auth/login",
             {
               email: email,
               password: password,
@@ -49,7 +49,7 @@ class AuthService {
   }
 
   logout() {
-    return axios.post("/logout", null);
+    return axios.post("/auth/logout", null);
   }
 }
 

@@ -59,6 +59,7 @@ export const auth = {
           commit("logoutSuccess");
           return Promise.resolve();
         },
+        /* istanbul ignore next */
         (error) => {
           commit("logoutFailure");
           return Promise.reject(error);
@@ -103,6 +104,7 @@ export const auth = {
       state.status.loggedIn = false;
       state.user = null;
     },
+    /* istanbul ignore next */
     logoutFailure(state) {
       state.status.loggingOut = false;
     },
