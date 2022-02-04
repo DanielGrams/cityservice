@@ -1,3 +1,5 @@
+import json
+
 import click
 from flask.cli import AppGroup
 from flask_migrate import stamp
@@ -5,8 +7,10 @@ from sqlalchemy import MetaData
 
 from project import app, db
 from project.init_data import create_initial_data
+from tests.model_seeder import ModelSeeder
 
 test_cli = AppGroup("test")
+seeder = ModelSeeder(db)
 
 
 @test_cli.command("reset")
@@ -47,6 +51,18 @@ def create_all():
 def seed():
     create_initial_data()
     click.echo("Seed done.")
+
+
+app.cli.add_command(test_cli)
+
+
+@test_cli.command("news-item-create")
+def create_news_item():
+    news_item_id = seeder.create_news_item()
+    result = {
+        "news_item_id": news_item_id,
+    }
+    click.echo(json.dumps(result))
 
 
 app.cli.add_command(test_cli)

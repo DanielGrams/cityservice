@@ -15,6 +15,10 @@ Cypress.Commands.add("setup", () => {
   cy.logexec("flask test reset --seed && flask users create test@test.de --password password --active && flask users create admin@test.de --password password --active && flask roles add admin@test.de admin");
 });
 
+Cypress.Commands.add("createNewsItem", () => {
+  cy.logexec("flask test news-item-create");
+});
+
 Cypress.Commands.add("assertValid", (fieldId) => {
   cy.get("#" + fieldId).should("have.class", "is-valid");
   cy.get("#" + fieldId + "-error").should("have.value", "");

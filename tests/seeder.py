@@ -1,3 +1,4 @@
+from tests.model_seeder import ModelSeeder
 from tests.utils import UtilActions
 
 
@@ -6,6 +7,7 @@ class Seeder(object):
         self._app = app
         self._db = db
         self._utils = utils
+        self._model_seeder = ModelSeeder(db)
 
     def setup_base(
         self,
@@ -90,29 +92,8 @@ class Seeder(object):
         return user_id
 
     def create_news_item(self, **kwargs) -> int:
-        from project.dateutils import create_berlin_date
-        from project.models import NewsItem
-
         with self._app.app_context():
-            news_item = NewsItem()
-            news_item.publisher_name = (
-                kwargs["publisher_name"] if "publisher_name" in kwargs else "Feuerwehr"
-            )
-            news_item.content = (
-                kwargs["content"] if "content" in kwargs else "Ein Einsatz war"
-            )
-            news_item.link_url = (
-                kwargs["link_url"] if "link_url" in kwargs else "https://example.com"
-            )
-            news_item.published = (
-                kwargs["published"]
-                if "published" in kwargs
-                else create_berlin_date(2050, 1, 1, 12)
-            )
-
-            self._db.session.add(news_item)
-            self._db.session.commit()
-            news_item_id = news_item.id
+            news_item_id = self._model_seeder.create_news_item(**kwargs)
 
         return news_item_id
 
