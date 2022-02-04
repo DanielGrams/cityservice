@@ -95,6 +95,7 @@ jobs:
         with:
           verbose: true
           fail_ci_if_error: true
+          flags: uitests
 
   # TODO: Optimize because this is just a copy of the first job
   cypress-desktop:
@@ -184,3 +185,5 @@ jobs:
         with:
           verbose: true
           fail_ci_if_error: true
+          flags: uitests
+          files: coverage/lcov.info
