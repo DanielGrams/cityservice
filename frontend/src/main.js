@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import router from "./router";
+import router from "./app/router";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 import moment from "moment";
 import VueMoment from "vue-moment";

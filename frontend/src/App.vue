@@ -24,7 +24,7 @@
             <template #button-content>
               {{ currentUser.email }}
             </template>
-            <b-dropdown-item to="/profile">{{
+            <b-dropdown-item to="/user/profile">{{
               $t("app.menu.profile")
             }}</b-dropdown-item>
             <b-dropdown-item v-if="isAdmin" to="/admin">{{
@@ -74,7 +74,7 @@ export default {
   methods: {
     logOut() {
       this.$store.dispatch("auth/logout").then(() => {
-        this.$router.replace({ name: "Home" });
+        this.$router.replace("/");
       });
     },
   },

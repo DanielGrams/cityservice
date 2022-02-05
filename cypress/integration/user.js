@@ -1,7 +1,7 @@
 describe("User", () => {
   it("login", () => {
     // /profile without Login should redirect to Login
-    cy.visit("/profile");
+    cy.visit("/user/profile");
     cy.url().should("include", "/login");
 
     // Login
@@ -34,12 +34,12 @@ describe("User", () => {
     cy.get("#submit").click();
 
     // Profile
-    cy.url().should("include", "/profile");
+    cy.url().should("include", "/user/profile");
     cy.screenshot("profile");
 
     // Redirect to profile if logged in
     cy.visit("/login");
-    cy.url().should("include", "/profile");
+    cy.url().should("include", "/user/profile");
   });
 
   it("loginWithRedirect", () => {

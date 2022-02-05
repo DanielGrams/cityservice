@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import NewsList from "@/components/NewsList.vue";
+import NewsList from "../components/NewsList.vue";
 
 export default {
   name: "News",

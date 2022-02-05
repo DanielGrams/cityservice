@@ -1,46 +1,21 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import News from "../views/News.vue";
-import Login from "../views/Login.vue";
 import store from "../store";
+import newsRoutes from "./news/router";
+import adminRoutes from "./admin/router";
+import userRoutes from "./user/router";
+import authRoutes from "./auth/router";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: News,
   },
-  {
-    path: "/news",
-    name: "News",
-    component: News,
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: Login,
-    meta: {
-      requiresAnonymous: true,
-    },
-  },
-  {
-    path: "/profile",
-    name: "Profile",
-    component: () => import("../views/Profile.vue"),
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: "/admin",
-    name: "Admin",
-    component: () => import("../views/Admin.vue"),
-    meta: {
-      requiresAdmin: true,
-    },
-  },
+  ...authRoutes,
+  ...newsRoutes,
+  ...userRoutes,
+  ...adminRoutes,
 ];
 
 const router = new VueRouter({
@@ -71,21 +46,21 @@ router.beforeEach((to, from, next) => {
     ) &&
     !store.state.auth.status.loggedIn
   ) {
-    return next({ name: "Login", query: { redirectTo: to.fullPath } });
+    return next({ path: "/login", query: { redirectTo: to.fullPath } });
   }
 
   if (
     to.matched.some((record) => record.meta.requiresAdmin) &&
     !store.getters["auth/isAdmin"]
   ) {
-    return next({ name: "Profile" });
+    return next("/user/profile");
   }
 
   if (
     to.matched.some((record) => record.meta.requiresAnonymous) &&
     store.state.auth.status.loggedIn
   ) {
-    return next({ name: "Profile" });
+    return next("/user/profile");
   }
 
   next();
