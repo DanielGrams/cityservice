@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import ValidatedInput from "@/components/common/ValidatedInput.vue";
+import ValidatedInput from "@/components/ValidatedInput.vue";
 export default {
   name: "Login",
   components: { ValidatedInput },
@@ -52,7 +52,7 @@ export default {
             if (this.$route.query.redirectTo) {
               this.$router.replace(this.$route.query.redirectTo);
             } else {
-              this.$router.replace({ name: "Profile" });
+              this.$router.replace("/user/profile");
             }
           },
           () => {

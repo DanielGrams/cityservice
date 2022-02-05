@@ -12,7 +12,7 @@ def news():  # pragma: no cover
     return frontend.send_static_file("index.html")
 
 
-@frontend.route("/profile")
+@frontend.route("/user/profile")
 def profile():  # pragma: no cover
     return frontend.send_static_file("index.html")
 

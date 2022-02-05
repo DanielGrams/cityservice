@@ -39,10 +39,10 @@ Cypress.Commands.add("assertErrorToast", (msg) => {
 
 Cypress.Commands.add(
   "login",
-  (email = "test@test.de", password = "password", redirectTo = "/profile") => {
+  (email = "test@test.de", password = "password", redirectTo = "/user/profile") => {
     let loginUrl = "/login";
 
-    if (redirectTo != "/profile") {
+    if (redirectTo != "/user/profile") {
       loginUrl += "?redirectTo=" + redirectTo
     }
 
