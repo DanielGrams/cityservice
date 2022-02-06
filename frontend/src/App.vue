@@ -52,9 +52,9 @@
           </i18n>
         </p>
         <p class="text-center small">
-          <a href="/impressum">{{ $t("app.imprint") }}</a> &vert;
-          <a href="/impressum">{{ $t("app.contact") }}</a> &vert;
-          <a href="/datenschutz">{{ $t("app.privacy") }}</a>
+          <a href="/impressum">{{ $t("app.footer.imprint") }}</a> &vert;
+          <a href="/impressum">{{ $t("app.footer.contact") }}</a> &vert;
+          <a href="/datenschutz">{{ $t("app.footer.privacy") }}</a>
         </p>
       </footer>
     </div>

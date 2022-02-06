@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-if="currentUser">
-    <h3>{{ $t("profile.title") }}</h3>
+    <h3>{{ $t("app.user.profile.title") }}</h3>
     <p>
       {{ currentUser.email }}
     </p>
@@ -14,7 +14,6 @@
 
 <script>
 export default {
-  name: "Profile",
   computed: {
     currentUser() {
       return this.$store.state.auth.user;

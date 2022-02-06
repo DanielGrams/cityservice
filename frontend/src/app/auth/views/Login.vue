@@ -3,13 +3,13 @@
     <ValidationObserver v-slot="{ handleSubmit }">
       <b-form @submit.stop.prevent="handleSubmit(submitForm)">
         <ValidatedInput
-          :label="$t('login.email')"
+          :label="$t('app.auth.login.email')"
           name="email"
           v-model="email"
           rules="required|email"
         />
         <ValidatedInput
-          :label="$t('login.password')"
+          :label="$t('app.auth.login.password')"
           name="password"
           type="password"
           v-model="password"
@@ -32,7 +32,6 @@
 <script>
 import ValidatedInput from "@/components/ValidatedInput.vue";
 export default {
-  name: "Login",
   components: { ValidatedInput },
   data() {
     return {
@@ -57,7 +56,7 @@ export default {
           },
           () => {
             this.isSubmitting = false;
-            this.$root.makeErrorToast(this.$t("login.errorMessage"));
+            this.$root.makeErrorToast(this.$t("app.auth.login.errorMessage"));
           }
         );
     },
