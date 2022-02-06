@@ -9,7 +9,7 @@
           class="d-inline-block align-top rounded"
           alt="Logo"
         />
-        {{ $t("app.title") }}
+        {{ $t("app.menu.title") }}
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
@@ -42,7 +42,7 @@
       <router-view />
       <footer>
         <p class="text-center">
-          <i18n path="app.withLove" tag="span">
+          <i18n path="app.footer.withLove" tag="span">
             <template v-slot:love>
               <b-icon icon="heart-fill" style="color: red"></b-icon>
             </template>
