@@ -1,28 +1,36 @@
 {
-  "admin": {
-    "title": "Admin"
-  },
   "app": {
-    "contact": "Kontakt",
-    "imprint": "Impressum",
+    "admin": {
+      "home": {
+        "title": "Admin"
+      }
+    },
+    "auth": {
+      "login": {
+        "email": "Email",
+        "errorMessage": "Die Anmeldung ist fehlgeschlagen.",
+        "password": "Passwort"
+      }
+    },
+    "footer": {
+      "contact": "Kontakt",
+      "imprint": "Impressum",
+      "privacy": "Datenschutz",
+      "withLove": "Mit {love} in {place} entwickelt."
+    },
     "menu": {
       "admin": "Admin",
       "login": "Login",
       "logout": "Ausloggen",
       "news": "News",
-      "profile": "Profil"
+      "profile": "Profil",
+      "title": "Goslar Service App"
     },
-    "privacy": "Datenschutz",
-    "title": "Goslar Service App",
-    "withLove": "Mit {love} in {place} entwickelt."
-  },
-  "login": {
-    "email": "Email",
-    "errorMessage": "Die Anmeldung ist fehlgeschlagen.",
-    "password": "Passwort"
-  },
-  "profile": {
-    "title": "Profil"
+    "user": {
+      "profile": {
+        "title": "Profil"
+      }
+    }
   },
   "shared": {
     "errors": {
