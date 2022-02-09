@@ -7,7 +7,7 @@ from project.api.resources import BaseResource
 from project.models import RecyclingStreet
 
 
-class RecyclingStreetList(BaseResource):
+class RecyclingStreetListResource(BaseResource):
     @doc(summary="List recycling street", tags=["Recycling"])
     @marshal_with(RecyclingStreetSchema(many=True))
     def get(self):
@@ -26,4 +26,6 @@ class RecyclingStreetList(BaseResource):
         return sorted_items
 
 
-add_api_resource(RecyclingStreetList, "/recycling/streets", "api_recycling_street_list")
+add_api_resource(
+    RecyclingStreetListResource, "/recycling/streets", "api_recycling_street_list"
+)

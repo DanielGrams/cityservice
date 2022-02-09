@@ -65,4 +65,13 @@ def create_news_item():
     click.echo(json.dumps(result))
 
 
+@test_cli.command("news-feed-create")
+def create_news_feed():
+    news_feed_id = seeder.create_news_feed()
+    result = {
+        "news_feed_id": news_feed_id,
+    }
+    click.echo(json.dumps(result))
+
+
 app.cli.add_command(test_cli)

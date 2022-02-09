@@ -25,3 +25,20 @@ class ModelSeeder(object):
         self._db.session.add(news_item)
         self._db.session.commit()
         return news_item.id
+
+    def create_news_feed(self, **kwargs) -> int:
+        from project.models import NewsFeed
+
+        news_feed = NewsFeed()
+        news_feed.publisher = (
+            kwargs["publisher"] if "publisher" in kwargs else "Feuerwehr"
+        )
+        news_feed.url = (
+            kwargs["url"]
+            if "url" in kwargs
+            else "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss"
+        )
+
+        self._db.session.add(news_feed)
+        self._db.session.commit()
+        return news_feed.id

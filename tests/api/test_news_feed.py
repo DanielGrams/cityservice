@@ -25,3 +25,95 @@ def test_list(client, seeder: Seeder, utils: UtilActions, auth):
 
     news_feed = items[0]
     assert news_feed["publisher"] == "Feuerwehr"
+
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
+    news_feed_id = seeder.create_news_feed()
+    seeder.setup_base(admin=True)
+
+    url = utils.get_url("api_news_feed", id=news_feed_id)
+    response = utils.get_json(url)
+    news_feed = response.json
+    assert news_feed["id"] == news_feed_id
+    assert news_feed["publisher"] == "Feuerwehr"
+    assert (
+        news_feed["url"]
+        == "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss"
+    )
+
+
+def test_post(client, app, seeder: Seeder, utils: UtilActions):
+    seeder.setup_base(admin=True)
+
+    url = utils.get_url("api_news_feed_list")
+    response = utils.post_json(
+        url,
+        {
+            "publisher": "Feuerwehr",
+            "url": "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss",
+        },
+    )
+    utils.assert_response_created(response)
+    assert "id" in response.json
+
+    with app.app_context():
+        from project.models import NewsFeed
+
+        news_feed = NewsFeed.query.get(int(response.json["id"]))
+        assert news_feed.publisher == "Feuerwehr"
+        assert (
+            news_feed.url
+            == "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss"
+        )
+
+
+def test_put(client, seeder, utils, app):
+    news_feed_id = seeder.create_news_feed()
+    seeder.setup_base(admin=True)
+
+    url = utils.get_url("api_news_feed", id=news_feed_id)
+    response = utils.put_json(
+        url, {"publisher": "Polizei", "url": "http://www.polizei.de"}
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import NewsFeed
+
+        news_feed = NewsFeed.query.get(news_feed_id)
+        assert news_feed.publisher == "Polizei"
+        assert news_feed.url == "http://www.polizei.de"
+
+
+def test_patch(client, seeder, utils, app):
+    news_feed_id = seeder.create_news_feed()
+    seeder.setup_base(admin=True)
+
+    url = utils.get_url("api_news_feed", id=news_feed_id)
+    response = utils.patch_json(url, {"publisher": "Polizei"})
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import NewsFeed
+
+        news_feed = NewsFeed.query.get(news_feed_id)
+        assert news_feed.publisher == "Polizei"
+        assert (
+            news_feed.url
+            == "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss"
+        )
+
+
+def test_delete(client, seeder, utils, app):
+    news_feed_id = seeder.create_news_feed()
+    seeder.setup_base(admin=True)
+
+    url = utils.get_url("api_news_feed", id=news_feed_id)
+    response = utils.delete(url)
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import NewsFeed
+
+        news_feed = NewsFeed.query.get(news_feed_id)
+        assert news_feed is None

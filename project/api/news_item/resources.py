@@ -6,7 +6,7 @@ from project.api.resources import BaseResource
 from project.models import NewsItem
 
 
-class NewsItemList(BaseResource):
+class NewsItemListResource(BaseResource):
     @doc(summary="List news items", tags=["News"])
     @marshal_with(NewsItemSchema(many=True))
     def get(self):
@@ -14,4 +14,4 @@ class NewsItemList(BaseResource):
         return items
 
 
-add_api_resource(NewsItemList, "/newsitems", "api_news_item_list")
+add_api_resource(NewsItemListResource, "/newsitems", "api_news_item_list")

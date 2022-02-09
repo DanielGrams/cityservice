@@ -2,7 +2,25 @@
   "app": {
     "admin": {
       "home": {
+        "newsFeeds": "News Feeds",
         "title": "Admin"
+      },
+      "newsFeeds": {
+        "create": {
+          "successMessage": "Newsfeed erfolgreich angelegt",
+          "title": "News Feed anlegen"
+        },
+        "deleteConfirmation": "Möchten Sie den Newsfeed wirklich löschen?",
+        "deletedMessage": "Newsfeed erfolgreich gelöscht",
+        "list": {
+          "title": "News Feeds"
+        },
+        "publisher": "Herausgeber",
+        "update": {
+          "successMessage": "Newsfeed erfolgreich aktualisiert",
+          "title": "Newsfeed bearbeiten"
+        },
+        "url": "URL"
       }
     },
     "auth": {
@@ -33,6 +51,8 @@
     }
   },
   "shared": {
+    "cancel": "Abbrechen",
+    "emptyData": "Keine Daten vorhanden",
     "errors": {
       "uniqueViolation": "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt.",
       "unprocessableEntity": "Die Anfrage konnte aufgrund von semantischen Fehlern nicht beantwortet werden."
