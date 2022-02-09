@@ -9,7 +9,7 @@ from project.dateutils import get_today
 from project.models import RecyclingEvent, RecyclingStreet
 
 
-class RecyclingEventList(BaseResource):
+class RecyclingEventListResource(BaseResource):
     @doc(summary="List recycling events for street", tags=["Recycling"])
     @marshal_with(RecyclingEventSchema(many=True))
     def get(self, street_id):
@@ -50,7 +50,7 @@ class RecyclingEventList(BaseResource):
 
 
 add_api_resource(
-    RecyclingEventList,
+    RecyclingEventListResource,
     "/recycling/street/<street_id>/events",
     "api_recycling_street_event_list",
 )

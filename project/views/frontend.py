@@ -18,7 +18,8 @@ def profile():  # pragma: no cover
 
 
 @frontend.route("/admin")
-def admin():  # pragma: no cover
+@frontend.route("/admin/<path:path>")
+def admin(path=None):  # pragma: no cover
     return frontend.send_static_file("index.html")
 
 
