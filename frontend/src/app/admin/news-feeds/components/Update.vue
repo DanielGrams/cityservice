@@ -10,16 +10,20 @@
       url="/api/news-feeds"
       #default="{ formData }"
     >
-      <Form :model="formData"></Form>
+      <CreateFormPart :model="formData"></CreateFormPart>
+      <UpdateFormPart :model="formData"></UpdateFormPart>
     </UpdateModalForm>
   </div>
 </template>
 
 <script>
+import ModalFormMixin from "@/mixins/ModalFormMixin.js";
 import UpdateModalForm from "@/components/UpdateModalForm.vue";
-import Form from "./Form.vue";
+import CreateFormPart from "./CreateFormPart.vue";
+import UpdateFormPart from "./UpdateFormPart.vue";
 export default {
-  components: { Form, UpdateModalForm },
+  mixins: [ModalFormMixin],
+  components: { CreateFormPart, UpdateFormPart, UpdateModalForm },
   props: {
     id: {
       type: String,
@@ -30,13 +34,11 @@ export default {
       form: {
         publisher: null,
         url: null,
+        title_filter: null,
+        title_sub_pattern: null,
+        title_sub_repl: null,
       },
     };
-  },
-  methods: {
-    showModal() {
-      this.$refs["form"].showModal();
-    },
   },
 };
 </script>

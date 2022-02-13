@@ -9,16 +9,18 @@
       url="/api/news-feeds"
       #default="{ formData }"
     >
-      <Form :model="formData"></Form>
+      <CreateFormPart :model="formData"></CreateFormPart>
     </CreateModalForm>
   </div>
 </template>
 
 <script>
+import ModalFormMixin from "@/mixins/ModalFormMixin.js";
 import CreateModalForm from "@/components/CreateModalForm.vue";
-import Form from "./Form.vue";
+import CreateFormPart from "./CreateFormPart.vue";
 export default {
-  components: { Form, CreateModalForm },
+  mixins: [ModalFormMixin],
+  components: { CreateFormPart, CreateModalForm },
   data() {
     return {
       form: {
@@ -26,11 +28,6 @@ export default {
         url: null,
       },
     };
-  },
-  methods: {
-    showModal() {
-      this.$refs["form"].showModal();
-    },
   },
 };
 </script>

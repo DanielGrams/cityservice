@@ -204,6 +204,9 @@ class NewsFeed(db.Model, TrackableMixin):
     id = Column(Integer(), primary_key=True)
     publisher = Column(Unicode(255))
     url = Column(String(255))
+    title_filter = Column(Unicode(255))
+    title_sub_pattern = Column(Unicode(255))
+    title_sub_repl = Column(Unicode(255))
 
 
 class NewsItem(db.Model):

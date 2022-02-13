@@ -18,7 +18,8 @@
         <Update ref="update" :id="$route.params.id" @updated="loadData" />
 
         <h3>{{ newsFeed.publisher }}</h3>
-        <p>{{ newsFeed.url }}</p>
+        <b-table stacked :fields="propertyFields" :items="properties">
+        </b-table>
       </div>
     </b-overlay>
   </div>
@@ -30,15 +31,33 @@ import Update from "../components/Update.vue";
 
 export default {
   components: { Update },
+  computed: {
+    properties() {
+      return [this.newsFeed];
+    },
+  },
   data() {
     return {
       isLoading: false,
-      isSubmitting: false,
       newsFeed: null,
-      form: {
-        publisher: null,
-        url: null,
-      },
+      propertyFields: [
+        {
+          key: "url",
+          label: this.$t("app.admin.newsFeeds.url"),
+        },
+        {
+          key: "title_filter",
+          label: this.$t("app.admin.newsFeeds.titleFilter"),
+        },
+        {
+          key: "title_sub_pattern",
+          label: this.$t("app.admin.newsFeeds.titleSubPattern"),
+        },
+        {
+          key: "title_sub_repl",
+          label: this.$t("app.admin.newsFeeds.titleSubRepl"),
+        },
+      ],
     };
   },
   mounted() {
@@ -54,7 +73,6 @@ export default {
         })
         .then((response) => {
           this.newsFeed = response.data;
-          this.form = this.newsFeed;
         });
     },
     deleteItem() {

@@ -3,6 +3,7 @@
     <ValidationObserver v-slot="{ handleSubmit }">
       <b-modal
         ref="modal"
+        scrollable
         :title="title"
         @ok.prevent="handleSubmit(submitForm)"
       >

@@ -1,4 +1,5 @@
 import datetime
+import re
 from pprint import pprint
 
 import feedparser
@@ -9,7 +10,7 @@ from sqlalchemy.sql import and_, not_
 
 from project import db
 from project.dateutils import get_now
-from project.models import NewsItem
+from project.models import NewsFeed, NewsItem
 
 
 def scrape():
@@ -18,73 +19,91 @@ def scrape():
 
     scrape_dwd(now)
 
-    scrape_feed(
-        now,
-        min_date,
-        "https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss",
-        "Stadt Goslar",
+    news_feeds = list()
+    news_feeds.append(
+        NewsFeed(
+            publisher="Stadt Goslar",
+            url="https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://www.landkreis-goslar.de/media/rss/Pressemitteilung.xml",
-        "Landkreis Goslar",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Landkreis Goslar",
+            url="https://www.landkreis-goslar.de/media/rss/Pressemitteilung.xml",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://www.kwb-goslar.de/media/rss/Pressemitteilungen.xml",
-        "KWB Goslar",
+    news_feeds.append(
+        NewsFeed(
+            publisher="KWB Goslar",
+            url="https://www.kwb-goslar.de/media/rss/Pressemitteilungen.xml",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "http://www.presseportal.de/rss/dienststelle_56518.rss2",
-        "Polizei Goslar",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Polizei Goslar",
+            url="http://www.presseportal.de/rss/dienststelle_56518.rss2",
+            title_filter=".*Goslar|Vienenburg.*",
+            title_sub_pattern="POL-GS: ",
+            title_sub_repl="",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://stadtbibliothek.goslar.de/stadtbibliothek/aktuelles?format=feed&type=rss",
-        "Stadtbibliothek Goslar",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Stadtbibliothek Goslar",
+            url="https://stadtbibliothek.goslar.de/stadtbibliothek/aktuelles?format=feed&type=rss",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://machmit.goslar.de/category/machmit-prozess/feed",
-        "Mach mit!",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Mach mit!",
+            url="https://machmit.goslar.de/category/machmit-prozess/feed",
+        )
     )
-    scrape_feed(now, min_date, "https://feuerwehr-goslar.de/feed/", "Feuerwehr Goslar")
-    scrape_feed(
-        now, min_date, "https://feuerwehr-vienenburg.de/feed/", "Feuerwehr Vienenburg"
+    news_feeds.append(
+        NewsFeed(publisher="Feuerwehr Goslar", url="https://feuerwehr-goslar.de/feed/")
     )
-    scrape_feed(
-        now, min_date, "https://feuerwehr-hahndorf.de/feed/", "Feuerwehr Hahndorf"
+    news_feeds.append(
+        NewsFeed(
+            publisher="Feuerwehr Vienenburg",
+            url="https://feuerwehr-vienenburg.de/feed/",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://www.feuerwehr-wiedelah.de/rss/blog",
-        "Feuerwehr Wiedelah",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Feuerwehr Hahndorf", url="https://feuerwehr-hahndorf.de/feed/"
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "http://www.ffw-jerstedt.de/index.php/einsaetze?format=feed&type=rss",
-        "Feuerwehr Jerstedt",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Feuerwehr Wiedelah",
+            url="https://www.feuerwehr-wiedelah.de/rss/blog",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://www.feuerwehr-oker.de/index.php/aktuelles/einsaetze/einsatzberichte?format=feed&type=rss",
-        "Feuerwehr Oker",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Feuerwehr Jerstedt",
+            url="http://www.ffw-jerstedt.de/index.php/einsaetze?format=feed&type=rss",
+        )
     )
-    scrape_feed(
-        now,
-        min_date,
-        "https://warnung.bund.de/bbk.mowas/rss/031530000000.xml",
-        "Bevölkerungsschutz",
+    news_feeds.append(
+        NewsFeed(
+            publisher="Feuerwehr Oker",
+            url="https://www.feuerwehr-oker.de/index.php/aktuelles/einsaetze/einsatzberichte?format=feed&type=rss",
+        )
     )
+    news_feeds.append(
+        NewsFeed(
+            publisher="Bevölkerungsschutz",
+            url="https://warnung.bund.de/bbk.mowas/rss/031530000000.xml",
+        )
+    )
+
+    for news_feed in news_feeds:
+        scrape_feed(
+            now,
+            min_date,
+            news_feed,
+        )
 
     delete_old_items(min_date)
 
@@ -137,11 +156,22 @@ def scrape_dwd(now):
         db.session.commit()
 
 
-def scrape_feed(now, min_date, url, publisher_name):
+def scrape_feed(now, min_date, news_feed: NewsFeed):
     try:
+        url = news_feed.url
+        publisher_name = news_feed.publisher
+        title_filter = news_feed.title_filter
+        title_sub_pattern = news_feed.title_sub_pattern
+        title_sub_repl = news_feed.title_sub_repl
+
         print(url)
         channel = feedparser.parse(url)
         entry_ids = list()
+
+        title_filter_regex = re.compile(title_filter) if title_filter else None
+        title_sub_pattern_regex = (
+            re.compile(title_sub_pattern) if title_sub_pattern else None
+        )
 
         for entry in channel.entries:
 
@@ -151,11 +181,12 @@ def scrape_feed(now, min_date, url, publisher_name):
                 continue
 
             title = entry.title
-            if publisher_name == "Polizei Goslar":
-                if title.startswith("POL-GS: "):
-                    title = title[len("POL-GS: ") :]
-                if "Goslar" not in title and "Vienenburg" not in title:
-                    continue
+
+            if title_filter_regex and not title_filter_regex.match(title):
+                continue
+
+            if title_sub_pattern_regex:
+                title = title_sub_pattern_regex.sub(title_sub_repl, title)
 
             published = parser.parse(entry.published)
             if published < min_date or published > now:  # pragma: no cover
