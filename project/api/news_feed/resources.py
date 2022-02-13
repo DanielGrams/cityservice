@@ -1,5 +1,6 @@
 from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy import func
 
 from project import db
 from project.api import add_api_resource
@@ -31,7 +32,7 @@ class NewsFeedListResource(BaseResource):
     def get(self, **kwargs):
         login_api_user_or_401("admin")
 
-        pagination = NewsFeed.query.paginate()
+        pagination = NewsFeed.query.order_by(func.lower(NewsFeed.publisher)).paginate()
         return pagination
 
     @doc(
