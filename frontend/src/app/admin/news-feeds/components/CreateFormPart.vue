@@ -4,7 +4,7 @@
       :label="$t('app.admin.newsFeeds.publisher')"
       name="publisher"
       v-model="innerModel.publisher"
-      rules="required"
+      rules="required|max:255"
     />
     <ValidatedInput
       :label="$t('app.admin.newsFeeds.url')"
@@ -16,22 +16,10 @@
 </template>
 
 <script>
+import FormPartMixin from "@/mixins/FormPartMixin.js";
 import ValidatedInput from "@/components/ValidatedInput.vue";
 export default {
+  mixins: [FormPartMixin],
   components: { ValidatedInput },
-  props: {
-    model: {
-      type: Object,
-      default: null,
-    },
-  },
-  data() {
-    return {
-      innerModel: {},
-    };
-  },
-  created() {
-    this.innerModel = this.model;
-  },
 };
 </script>

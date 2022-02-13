@@ -33,6 +33,10 @@ class NewsFeedBaseSchemaMixin(TrackableSchemaMixin):
     url = marshmallow.auto_field(
         required=True, validate=[validate.URL(), validate.Length(max=255)]
     )
+    url = marshmallow.auto_field(required=True, validate=[validate.Length(max=255)])
+    title_filter = marshmallow.auto_field(validate=[validate.Length(max=255)])
+    title_sub_pattern = marshmallow.auto_field(validate=[validate.Length(max=255)])
+    title_sub_repl = marshmallow.auto_field(validate=[validate.Length(max=255)])
 
 
 class NewsFeedSchema(NewsFeedIdSchema, NewsFeedBaseSchemaMixin):

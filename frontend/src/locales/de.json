@@ -16,6 +16,12 @@
           "title": "News Feeds"
         },
         "publisher": "Herausgeber",
+        "titleFilter": "Titel Filter",
+        "titleFilterDescription": "Regulärer Ausdruck im Python-Format. Wenn der Titel nicht auf den regulären Ausdruck passt, wird er ignoriert.",
+        "titleSubPattern": "Titelersetzung Finden",
+        "titleSubPatternDescription": "Regulärer Ausdruck im Python-Format. Wenn der Titel auf den regulären Ausdruck passt, wird er ersetzt.",
+        "titleSubRepl": "Titelersetzung Ersetzen",
+        "titleSubReplDescription": "Durch diesen Wert wird der Teil des Titels ersetzt.",
         "update": {
           "successMessage": "Newsfeed erfolgreich aktualisiert",
           "title": "Newsfeed bearbeiten"

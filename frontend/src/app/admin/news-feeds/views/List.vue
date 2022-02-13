@@ -25,7 +25,6 @@
       :current-page="currentPage"
       :per-page="perPage"
       primary-key="id"
-      thead-class="d-none"
       outlined
       hover
       responsive
@@ -57,7 +56,7 @@ export default {
       fields: [
         {
           key: "publisher",
-          label: "",
+          label: this.$t("app.admin.newsFeeds.publisher"),
         },
       ],
       totalRows: 0,
