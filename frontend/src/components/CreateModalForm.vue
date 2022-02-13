@@ -5,9 +5,10 @@
         ref="modal"
         scrollable
         :title="title"
+        @shown="modalShown"
         @ok.prevent="handleSubmit(submitForm)"
       >
-        <b-form>
+        <b-form ref="formform">
           <slot v-bind:formData="formData"></slot>
         </b-form>
         <template #modal-footer="{ ok, cancel }">
@@ -56,6 +57,9 @@ export default {
     };
   },
   methods: {
+    modalShown() {
+      this.$refs["formform"].reset();
+    },
     submitForm() {
       axios
         .post(this.url, this.formData, {

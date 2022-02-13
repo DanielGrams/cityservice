@@ -4,11 +4,11 @@
       <b-modal
         ref="modal"
         scrollable
-        @show="loadData"
         :title="title"
+        @show="modalShow"
         @ok.prevent="handleSubmit(submitForm)"
       >
-        <b-form>
+        <b-form ref="formform">
           <b-overlay :show="isLoading">
             <slot v-bind:formData="formData"></slot>
           </b-overlay>
@@ -64,6 +64,9 @@ export default {
     };
   },
   methods: {
+    modalShow() {
+      this.loadData();
+    },
     loadData() {
       /* istanbul ignore next */
       if (this.id == null) {

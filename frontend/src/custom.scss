@@ -1,17 +1,19 @@
-$link-color: #009688;
+$theme-colors: (
+  primary: #009688,
+);
 
-@import '~bootstrap/scss/bootstrap.scss';
-@import '~bootstrap-vue/src/index.scss';
+@import "~bootstrap/scss/bootstrap.scss";
+@import "~bootstrap-vue/src/index.scss";
 
 .body-content {
-    padding: 10px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 footer {
-    padding: 10px;
+  padding: 10px;
 }
 
 .social-btn {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }

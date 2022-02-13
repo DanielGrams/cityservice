@@ -5,6 +5,8 @@ describe("NewsFeeds", () => {
     cy.screenshot("list-empty");
 
     cy.get(".add-btn").click();
+    cy.get("#publisher");
+    cy.wait(1000); // Form gets cleared
     cy.get("#publisher").type("Polizei");
     cy.get("#url").type("http://www.polizei.de");
     cy.get(".submit-create-modal-btn").click();
