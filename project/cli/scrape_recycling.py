@@ -1,12 +1,11 @@
 import datetime
-from pprint import pprint
 
 import requests
 from ics import Calendar
 from sqlalchemy.sql import and_, not_
 from sqlalchemy.sql.expression import func
 
-from project import db
+from project import app, db
 from project.dateutils import get_now
 from project.models import RecyclingEvent, RecyclingStreet
 
@@ -73,9 +72,8 @@ def scrape_streets(town):
             if not item_did_exist:
                 db.session.add(item)
 
-    except Exception as e:
-        pprint(url)
-        pprint(e)
+    except Exception:
+        app.logger.exception(url)
     finally:
         db.session.commit()
 
@@ -131,9 +129,8 @@ def scrape_events_for_street(street, event_ids):
 
             event_ids.append(event_id)
 
-    except Exception as e:
-        pprint(url)
-        pprint(e)
+    except Exception:
+        app.logger.exception(url)
     finally:
         db.session.commit()
 

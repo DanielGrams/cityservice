@@ -1,12 +1,11 @@
 import re
 from datetime import datetime
-from pprint import pprint
 
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.sql import not_
 
-from project import db
+from project import app, db
 from project.dateutils import create_berlin_date, get_now
 from project.models import WeatherWarning
 
@@ -63,16 +62,16 @@ def scrape():
 
                     warning.published = published
                     warning_ids.append(warning.id)
-                except Exception as e:  # pragma: no cover
-                    pprint(e)
+                except Exception:  # pragma: no cover
+                    app.logger.exception(url)
 
         # Delete entries that are not part of the feed anymore
         WeatherWarning.query.filter(not_(WeatherWarning.id.in_(warning_ids))).delete(
             synchronize_session=False
         )
 
-    except Exception as e:  # pragma: no cover
-        pprint(e)
+    except Exception:  # pragma: no cover
+        app.logger.exception(url)
     finally:
         db.session.commit()
 
