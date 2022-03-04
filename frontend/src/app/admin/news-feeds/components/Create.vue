@@ -26,6 +26,7 @@ export default {
       form: {
         publisher: null,
         url: null,
+        feed_type: "unknown",
       },
     };
   },

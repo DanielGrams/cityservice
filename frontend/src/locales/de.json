@@ -12,6 +12,17 @@
         },
         "deleteConfirmation": "Möchten Sie den Newsfeed wirklich löschen?",
         "deletedMessage": "Newsfeed erfolgreich gelöscht",
+        "feedType": "Typ",
+        "feedTypes": {
+          "unknown": "Unbekannt",
+          "city": "Stadt/Gemeinde",
+          "district": "Landkreis",
+          "police": "Polizei",
+          "fire_department": "Feuerwehr",
+          "culture": "Kultur",
+          "citizen_participation": "Bürgerbeteiligung",
+          "civil_protection": "Bevölkerungsschutz"
+        },
         "list": {
           "title": "News Feeds"
         },

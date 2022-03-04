@@ -5,6 +5,9 @@ name: Tests
 # Controls when the action will run.
 on: [pull_request, workflow_dispatch]
 
+env:
+  LANG: "de_DE.UTF-8"
+
 jobs:
   # Label of the container job
   integration-tests:

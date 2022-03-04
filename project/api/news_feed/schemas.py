@@ -1,4 +1,5 @@
 from marshmallow import fields, validate
+from marshmallow_enum import EnumField
 
 from project.api import marshmallow
 from project.api.schemas import (
@@ -9,7 +10,7 @@ from project.api.schemas import (
     TrackableSchemaMixin,
     WriteIdSchemaMixin,
 )
-from project.models import NewsFeed
+from project.models import NewsFeed, NewsFeedType
 
 
 class NewsFeedModelSchema(SQLAlchemyBaseSchema):
@@ -37,6 +38,10 @@ class NewsFeedBaseSchemaMixin(TrackableSchemaMixin):
     title_filter = marshmallow.auto_field(validate=[validate.Length(max=255)])
     title_sub_pattern = marshmallow.auto_field(validate=[validate.Length(max=255)])
     title_sub_repl = marshmallow.auto_field(validate=[validate.Length(max=255)])
+    feed_type = EnumField(
+        NewsFeedType,
+        missing=NewsFeedType.unknown,
+    )
 
 
 class NewsFeedSchema(NewsFeedIdSchema, NewsFeedBaseSchemaMixin):
@@ -45,6 +50,7 @@ class NewsFeedSchema(NewsFeedIdSchema, NewsFeedBaseSchemaMixin):
 
 class NewsFeedRefSchema(NewsFeedIdSchema):
     publisher = marshmallow.auto_field()
+    feed_type = EnumField(NewsFeedType)
 
 
 class NewsFeedListRequestSchema(PaginationRequestSchema):

@@ -8,8 +8,8 @@
         @shown="modalShown"
         @ok.prevent="handleSubmit(submitForm)"
       >
-        <b-form ref="formform">
-          <slot v-bind:formData="formData"></slot>
+        <b-form>
+          <slot v-bind:formData="internalFormData"></slot>
         </b-form>
         <template #modal-footer="{ ok, cancel }">
           <b-button
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import axios from "axios";
 
 export default {
@@ -54,21 +55,26 @@ export default {
   data() {
     return {
       isSubmitting: false,
+      internalFormData: Vue.util.extend({}, this.formData),
     };
   },
   methods: {
     modalShown() {
-      this.$refs["formform"].reset();
+      Object.keys(this.formData).forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(this.internalFormData, key)) {
+          this.internalFormData[key] = this.formData[key];
+        }
+      });
     },
     submitForm() {
       axios
-        .post(this.url, this.formData, {
+        .post(this.url, this.internalFormData, {
           handleLoading: (isLoading) => (this.isSubmitting = isLoading),
         })
         .then(() => {
           this.$root.makeSuccessToast(this.successMessage);
           this.hideModal();
-          this.$emit("created", this.formData);
+          this.$emit("created", this.internalFormData);
         });
     },
     showModal() {

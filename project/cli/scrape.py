@@ -15,6 +15,15 @@ def scrape_news():
     click.echo("Done.")
 
 
+@scrape_cli.command("weather_warnings")
+def scrape_weather_warnings():
+    from project.cli.scrape_weather_warnings import scrape
+
+    click.echo("Scraping weather warnings..")
+    scrape()
+    click.echo("Done.")
+
+
 @scrape_cli.command("recycling")
 def scrape_recycling():
     from project.cli.scrape_recycling import scrape

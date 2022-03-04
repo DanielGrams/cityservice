@@ -44,6 +44,7 @@ def db(app):
 
     with app.app_context():
         db.drop_all()
+        db.engine.execute("DROP TABLE IF EXISTS alembic_version;")
         db.create_all()
         stamp()
         create_initial_data()

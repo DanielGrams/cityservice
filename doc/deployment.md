@@ -7,4 +7,5 @@
 ## Cronjobs
 
 flask scrape news
+flask scrape weather_warnings
 flask scrape recycling

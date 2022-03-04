@@ -91,9 +91,9 @@ class Seeder(object):
         self._utils.logout()
         return user_id
 
-    def create_news_item(self, **kwargs) -> int:
+    def create_news_item(self, news_feed_id: int, **kwargs) -> int:
         with self._app.app_context():
-            news_item_id = self._model_seeder.create_news_item(**kwargs)
+            news_item_id = self._model_seeder.create_news_item(news_feed_id, **kwargs)
 
         return news_item_id
 
@@ -102,6 +102,12 @@ class Seeder(object):
             news_feed_id = self._model_seeder.create_news_feed(**kwargs)
 
         return news_feed_id
+
+    def create_weather_warning(self, **kwargs) -> int:
+        with self._app.app_context():
+            weather_warning_id = self._model_seeder.create_weather_warning(**kwargs)
+
+        return weather_warning_id
 
     def create_recycling_street(self, **kwargs) -> int:
         from project.models import RecyclingStreet

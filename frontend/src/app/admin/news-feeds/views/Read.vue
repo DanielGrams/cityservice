@@ -28,6 +28,7 @@
 <script>
 import axios from "axios";
 import Update from "../components/Update.vue";
+import { localizeFeedType } from "../common.js";
 
 export default {
   components: { Update },
@@ -44,6 +45,13 @@ export default {
         {
           key: "url",
           label: this.$t("app.admin.newsFeeds.url"),
+        },
+        {
+          key: "feed_type",
+          label: this.$t("app.admin.newsFeeds.feedType"),
+          formatter: (value) => {
+            return localizeFeedType(value);
+          },
         },
         {
           key: "title_filter",

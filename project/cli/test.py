@@ -58,9 +58,11 @@ app.cli.add_command(test_cli)
 
 @test_cli.command("news-item-create")
 def create_news_item():
-    news_item_id = seeder.create_news_item()
+    news_feed_id = seeder.create_news_feed()
+    news_item_id = seeder.create_news_item(news_feed_id)
     result = {
         "news_item_id": news_item_id,
+        "news_feed_id": news_feed_id,
     }
     click.echo(json.dumps(result))
 
