@@ -111,33 +111,3 @@ def test_pol(client, seeder: Seeder, utils: UtilActions, app, datadir, requests_
             == "Pressebericht des PK Bad Harzburg vom 22.01.2022 bis 23.01.2022"
         ).all()
         assert len(items) == 0
-
-
-def test_pol_decoding_error(
-    client, seeder: Seeder, utils: UtilActions, app, datadir, requests_mock
-):
-    utils.mock_now(2022, 3, 4)
-    feed_url = "http://www.presseportal.de/rss/dienststelle_56518.rss2"
-    seeder.create_news_feed(
-        url=feed_url,
-        title_filter=".*Goslar|Vienenburg.*",
-        title_sub_pattern="POL-GS: ",
-        title_sub_repl=None,
-    )
-    utils.mock_feedparser_http_get(
-        feed_url,
-        datadir,
-        "pol_decoding_error.rss",
-    )
-
-    # Invoke
-    runner = app.test_cli_runner()
-    result = runner.invoke(args=["scrape", "news"])
-    assert "Done." in result.output
-
-    # Test
-    with app.app_context():
-        from project.models import NewsItem
-
-        items = NewsItem.query.all()
-        assert len(items) > 1
