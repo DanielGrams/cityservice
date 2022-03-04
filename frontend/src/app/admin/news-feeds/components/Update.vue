@@ -34,6 +34,7 @@ export default {
       form: {
         publisher: null,
         url: null,
+        feed_type: null,
         title_filter: null,
         title_sub_pattern: null,
         title_sub_repl: null,

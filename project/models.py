@@ -1,5 +1,6 @@
 import datetime
 import time
+from enum import IntEnum
 
 from authlib.integrations.sqla_oauth2 import (
     OAuth2AuthorizationCodeMixin,
@@ -22,6 +23,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, deferred, object_session, relationship
 
 from project import db
+from project.dbtypes import IntegerEnum
 
 
 def _current_user_id_or_none():
@@ -199,6 +201,17 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
 # News
 
 
+class NewsFeedType(IntEnum):
+    unknown = 1
+    city = 2
+    district = 3  # Kreis
+    police = 4
+    fire_department = 5
+    culture = 6
+    citizen_participation = 7
+    civil_protection = 8
+
+
 class NewsFeed(db.Model, TrackableMixin):
     __tablename__ = "newsfeed"
     id = Column(Integer(), primary_key=True)
@@ -207,19 +220,40 @@ class NewsFeed(db.Model, TrackableMixin):
     title_filter = Column(Unicode(255))
     title_sub_pattern = Column(Unicode(255))
     title_sub_repl = Column(Unicode(255))
+    feed_type = Column(
+        IntegerEnum(NewsFeedType),
+        nullable=False,
+        default=NewsFeedType.unknown.value,
+        server_default=str(NewsFeedType.unknown.value),
+    )
+    news_items = relationship(
+        "NewsItem",
+        backref=backref("news_feed", lazy=False),
+        cascade="all, delete-orphan",
+    )
 
 
 class NewsItem(db.Model):
     __tablename__ = "newsitems"
 
     id = db.Column(db.Integer, primary_key=True)
+    news_feed_id = db.Column(db.Integer, db.ForeignKey("newsfeed.id"), nullable=False)
     source_id = db.Column(db.String())
-    publisher_name = db.Column(db.String())
-    publisher_icon_url = db.Column(db.String())
     content = db.Column(db.String())
     link_url = db.Column(db.String())
     published = db.Column(db.DateTime(timezone=True))
     fetched = db.Column(db.DateTime(timezone=True))
+
+
+class WeatherWarning(db.Model):
+    __tablename__ = "weatherwarning"
+
+    id = db.Column(db.Integer, primary_key=True)
+    headline = db.Column(db.String())
+    content = db.Column(db.String())
+    published = db.Column(db.DateTime(timezone=True))
+    start = db.Column(db.DateTime(timezone=True))
+    end = db.Column(db.DateTime(timezone=True))
 
 
 # Recycling

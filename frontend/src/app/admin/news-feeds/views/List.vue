@@ -48,6 +48,7 @@
 <script>
 import axios from "axios";
 import Create from "../components/Create.vue";
+import { localizeFeedType } from "../common.js";
 export default {
   components: { Create },
   data() {
@@ -57,6 +58,13 @@ export default {
         {
           key: "publisher",
           label: this.$t("app.admin.newsFeeds.publisher"),
+        },
+        {
+          key: "feed_type",
+          label: this.$t("app.admin.newsFeeds.feedType"),
+          formatter: (value) => {
+            return localizeFeedType(value);
+          },
         },
       ],
       totalRows: 0,
