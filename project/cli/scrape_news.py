@@ -1,12 +1,11 @@
 import datetime
 import re
-from pprint import pprint
 
 import feedparser
 from dateutil import parser
 from sqlalchemy.sql import and_, not_
 
-from project import db
+from project import app, db
 from project.dateutils import get_now
 from project.models import NewsFeed, NewsItem
 
@@ -50,7 +49,7 @@ def scrape_feed(now, min_date, news_feed: NewsFeed):
         url = news_feed.url
         title_filter = news_feed.title_filter
         title_sub_pattern = news_feed.title_sub_pattern
-        title_sub_repl = news_feed.title_sub_repl
+        title_sub_repl = news_feed.title_sub_repl if news_feed.title_sub_repl else ""
 
         print(url)
         channel = feedparser.parse(url)
@@ -97,8 +96,8 @@ def scrape_feed(now, min_date, news_feed: NewsFeed):
             )
         ).delete(synchronize_session=False)
 
-    except Exception as e:  # pragma: no cover
-        pprint(e)
+    except Exception:  # pragma: no cover
+        app.logger.exception(url)
     finally:
         db.session.commit()
 

@@ -1,12 +1,11 @@
 import re
 from datetime import datetime
-from pprint import pprint
 
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.sql import not_
 
-from project import db
+from project import app, db
 from project.dateutils import create_berlin_date, get_now
 from project.models import WeatherWarning
 
@@ -20,8 +19,21 @@ def scrape():
 
         warning_ids = list()
 
-        response = requests.get(url)
-        doc = BeautifulSoup(response.text, "lxml")
+        response = requests.get(
+            url,
+            headers={
+                "Host": "www.dwd.de",
+                "Accept": "*/*",
+                "User-Agent": "curl/7.77.0",
+            },
+        )
+
+        try:
+            html = response.content.decode("UTF-8")
+        except Exception:  # pragma: no cover
+            html = response.content.decode(response.apparent_encoding)
+
+        doc = BeautifulSoup(html, features="html.parser")
         published = now
 
         last_updated_prefix = "Letzte Aktualisierung: "
@@ -33,9 +45,10 @@ def scrape():
             published = _parse_date_time(now, last_updated_str)
 
         anchor = doc.find(id="Stadt Goslar")
+
         if anchor and anchor.nextSibling and anchor.nextSibling.name == "table":
             table = anchor.nextSibling
-            table_rows = table.find_all("tr", recursive=False)
+            table_rows = table.find_all("tr")
 
             for table_row in table_rows:
                 table_cols = table_row.find_all("td")
@@ -63,16 +76,16 @@ def scrape():
 
                     warning.published = published
                     warning_ids.append(warning.id)
-                except Exception as e:  # pragma: no cover
-                    pprint(e)
+                except Exception:  # pragma: no cover
+                    app.logger.exception(url)
 
         # Delete entries that are not part of the feed anymore
         WeatherWarning.query.filter(not_(WeatherWarning.id.in_(warning_ids))).delete(
             synchronize_session=False
         )
 
-    except Exception as e:  # pragma: no cover
-        pprint(e)
+    except Exception:  # pragma: no cover
+        app.logger.exception(url)
     finally:
         db.session.commit()
 
