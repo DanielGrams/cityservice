@@ -19,8 +19,21 @@ def scrape():
 
         warning_ids = list()
 
-        response = requests.get(url)
-        doc = BeautifulSoup(response.text, "lxml")
+        response = requests.get(
+            url,
+            headers={
+                "Host": "www.dwd.de",
+                "Accept": "*/*",
+                "User-Agent": "curl/7.77.0",
+            },
+        )
+
+        try:
+            html = response.content.decode("UTF-8")
+        except Exception:  # pragma: no cover
+            html = response.content.decode(response.apparent_encoding)
+
+        doc = BeautifulSoup(html, features="html.parser")
         published = now
 
         last_updated_prefix = "Letzte Aktualisierung: "
@@ -32,9 +45,10 @@ def scrape():
             published = _parse_date_time(now, last_updated_str)
 
         anchor = doc.find(id="Stadt Goslar")
+
         if anchor and anchor.nextSibling and anchor.nextSibling.name == "table":
             table = anchor.nextSibling
-            table_rows = table.find_all("tr", recursive=False)
+            table_rows = table.find_all("tr")
 
             for table_row in table_rows:
                 table_cols = table_row.find_all("td")
