@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from sqlalchemy.sql import not_
 
 from project import db
-from project.dateutils import create_berlin_date, get_now, setlocale
+from project.dateutils import create_berlin_date, get_now
 from project.models import WeatherWarning
 
 
@@ -78,11 +78,29 @@ def scrape():
 
 
 def _parse_date_time(now: datetime, input: str) -> datetime:
-    with setlocale("de_DE.UTF-8"):
-        parsed = datetime.strptime(input, "%a, %d. %b, %H:%M Uhr")
+    # Fr, 04. Mär, 07:33 Uhr
+    regex = r"\w{2}, (\d{2})\. (.{3}), (\d{2}):(\d{2})"
+    match = re.search(regex, input)
+    day_str, month_str, hour_str, minute_str = match.groups()
+
+    months = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mär": 3,
+        "Apr": 4,
+        "Mai": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Okt": 10,
+        "Nov": 11,
+        "Dez": 12,
+    }
+    month = months[month_str]
 
     result = create_berlin_date(
-        now.year, parsed.month, parsed.day, parsed.hour, parsed.minute
+        now.year, month, int(day_str), int(hour_str), int(minute_str)
     )
 
     age = now - result
