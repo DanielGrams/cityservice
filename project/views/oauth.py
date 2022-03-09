@@ -1,7 +1,7 @@
 from authlib.integrations.flask_oauth2 import current_token
 from authlib.oauth2 import OAuth2Error
 from flask import jsonify, redirect, render_template, request, url_for
-from flask_security import current_user
+from flask_security import anonymous_user_required, current_user
 
 from project import app
 from project.api import scope_list, scopes
@@ -36,6 +36,32 @@ def authorize():
             user=user,
             grant=grant,
         )
+
+
+@app.route("/oauth/anonym", methods=["POST"])
+@anonymous_user_required
+def authorize_anonymous():
+    from project.models import OAuth2Client
+    from project.services.user import create_user_anonymous
+
+    # Assert client exists
+    oauth2_client = OAuth2Client.query.filter(
+        OAuth2Client.client_id == request.form["client_id"]
+    ).first()
+    if not oauth2_client:  # pragma: no cover
+        return 400
+
+    # Create user
+    user = create_user_anonymous()
+
+    # Validate request
+    try:
+        authorization.validate_consent_request(end_user=user)
+    except OAuth2Error as error:  # pragma: no cover
+        return error.description, error.status_code
+
+    # Create response
+    return authorization.create_authorization_response(grant_user=user)
 
 
 @app.route("/oauth/token", methods=["POST"])

@@ -108,6 +108,7 @@ import project.api
 
 # Command line
 import project.cli.scrape
+import project.cli.user
 
 if os.getenv("TESTING", False):  # pragma: no cover
     import project.cli.test
