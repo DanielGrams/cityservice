@@ -48,3 +48,14 @@ def test_jwks(utils):
 
 def test_openid_configuration(utils):
     utils.get_endpoint_ok("openid_configuration")
+
+
+def test_authorize_anonymous(app, seeder: Seeder, utils: UtilActions):
+    seeder.authorize_api_access_anonymous()
+
+    with app.app_context():
+        from project.services.user import find_user_by_email
+
+        user = find_user_by_email("anonymous2@cityservice.de")
+        assert user is not None
+        assert user.anonymous

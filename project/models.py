@@ -122,6 +122,11 @@ class User(db.Model, UserMixin):
     current_login_ip = Column(String(100))
     login_count = Column(Integer)
     active = Column(Boolean())
+    anonymous = Column(
+        Boolean(),
+        server_default="0",
+        nullable=False,
+    )
     fs_uniquifier = Column(String(255))
     confirmed_at = Column(DateTime())
     roles = relationship(

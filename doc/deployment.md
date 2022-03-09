@@ -9,3 +9,4 @@
 flask scrape news
 flask scrape weather_warnings
 flask scrape recycling
+flask user delete-old-anonymous

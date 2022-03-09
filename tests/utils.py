@@ -245,7 +245,31 @@ class UtilActions(object):
             response,
             {},
         )
+        self._authorize_redirect(
+            response, client_id, client_secret, scope, redirect_uri
+        )
 
+    def authorize_anonymous(self, client_id, client_secret, scope):
+        # Authorize-Anonym
+        redirect_uri = self.get_url("swagger_oauth2_redirect")
+        url = self.get_url("authorize_anonymous")
+        response = self.post_form_data(
+            url,
+            {
+                "nonce": 4711,
+                "response_type": "code",
+                "client_id": client_id,
+                "scope": scope,
+                "redirect_uri": redirect_uri,
+            },
+        )
+        self._authorize_redirect(
+            response, client_id, client_secret, scope, redirect_uri
+        )
+
+    def _authorize_redirect(
+        self, response, client_id, client_secret, scope, redirect_uri
+    ):
         assert response.status_code == 302
         assert redirect_uri in response.headers["Location"]
 

@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from tests.model_seeder import ModelSeeder
 from tests.utils import UtilActions
 
@@ -71,13 +73,7 @@ class Seeder(object):
 
         return client_id
 
-    def setup_api_access(self, admin=True):
-        user_id = self.setup_base(admin=admin, log_in=False)
-        return self.authorize_api_access(user_id)
-
-    def authorize_api_access(self, user_id):
-        oauth2_client_id = self.insert_default_oauth2_client(user_id)
-
+    def get_oauth2_client(self, oauth2_client_id: int) -> Tuple:
         with self._app.app_context():
             from project.models import OAuth2Client
 
@@ -86,10 +82,27 @@ class Seeder(object):
             client_secret = oauth2_client.client_secret
             scope = oauth2_client.scope
 
+        return (client_id, client_secret, scope)
+
+    def setup_api_access(self, admin=True):
+        user_id = self.setup_base(admin=admin, log_in=False)
+        return self.authorize_api_access(user_id)
+
+    def authorize_api_access(self, user_id):
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+        client_id, client_secret, scope = self.get_oauth2_client(oauth2_client_id)
+
         self._utils.login(follow_redirects=False)
         self._utils.authorize(client_id, client_secret, scope)
         self._utils.logout()
         return user_id
+
+    def authorize_api_access_anonymous(self):
+        user_id = self.create_user()
+        oauth2_client_id = self.insert_default_oauth2_client(user_id)
+        client_id, client_secret, scope = self.get_oauth2_client(oauth2_client_id)
+
+        self._utils.authorize_anonymous(client_id, client_secret, scope)
 
     def create_news_item(self, news_feed_id: int, **kwargs) -> int:
         with self._app.app_context():
