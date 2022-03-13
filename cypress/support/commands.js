@@ -23,6 +23,10 @@ Cypress.Commands.add("createNewsFeed", () => {
   cy.logexec("flask test news-feed-create");
 });
 
+Cypress.Commands.add("createPlace", () => {
+  cy.logexec("flask test place-create");
+});
+
 Cypress.Commands.add("assertValid", (fieldId) => {
   cy.get("#" + fieldId).should("have.class", "is-valid");
   cy.get("#" + fieldId + "-error").should("have.value", "");

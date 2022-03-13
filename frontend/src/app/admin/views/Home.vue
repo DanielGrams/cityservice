@@ -15,6 +15,9 @@
           $t("app.admin.home.newsFeeds")
         }}</b-link>
       </li>
+      <li>
+        <b-link to="/admin/places">{{ $t("app.admin.home.places") }}</b-link>
+      </li>
     </ul>
   </div>
 </template>

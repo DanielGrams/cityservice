@@ -5,10 +5,9 @@
       v-on="$listeners"
       :id="id"
       :formData="form"
-      :removeFromSendData="['place.name']"
-      :title="$t('app.admin.newsFeeds.update.title')"
-      :successMessage="$t('app.admin.newsFeeds.update.successMessage')"
-      url="/api/news-feeds"
+      :title="$t('app.admin.places.update.title')"
+      :successMessage="$t('app.admin.places.update.successMessage')"
+      url="/api/places"
       #default="{ formData }"
     >
       <CreateFormPart :model="formData"></CreateFormPart>
@@ -33,13 +32,9 @@ export default {
   data() {
     return {
       form: {
-        publisher: null,
-        url: null,
-        feed_type: null,
-        title_filter: null,
-        title_sub_pattern: null,
-        title_sub_repl: null,
-        place: null,
+        name: null,
+        recycling_ids: null,
+        weather_warning_name: null,
       },
     };
   },

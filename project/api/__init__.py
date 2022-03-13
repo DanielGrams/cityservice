@@ -124,6 +124,9 @@ scope_list = [
     "user:write",
     "newsfeed:read",
     "newsfeed:write",
+    "user:write",
+    "place:read",
+    "place:write",
 ]
 scopes = {k: get_localized_scope(k) for v, k in enumerate(scope_list)}
 
@@ -190,6 +193,7 @@ marshmallow_plugin.converter.add_attribute_function(enum_to_properties)
 
 import project.api.news_feed.resources
 import project.api.news_item.resources
+import project.api.place.resources
 import project.api.recycling_event.resources
 import project.api.recycling_street.resources
 import project.api.user.resources

@@ -76,4 +76,13 @@ def create_news_feed():
     click.echo(json.dumps(result))
 
 
+@test_cli.command("place-create")
+def create_place():
+    place_id = seeder.create_place()
+    result = {
+        "place_id": place_id,
+    }
+    click.echo(json.dumps(result))
+
+
 app.cli.add_command(test_cli)

@@ -91,53 +91,15 @@ class TrackableMixin(object):
         )
 
 
-# User
+# Orte
 
 
-class RolesUsers(db.Model):
-    __tablename__ = "roles_users"
-    id = Column(Integer(), primary_key=True)
-    user_id = Column("user_id", Integer(), ForeignKey("user.id"))
-    role_id = Column("role_id", Integer(), ForeignKey("role.id"))
-
-
-class Role(db.Model, RoleMixin):
-    __tablename__ = "role"
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(80), unique=True)
-    title = Column(Unicode(255))
-    description = Column(String(255))
-    permissions = Column(UnicodeText())
-
-
-class User(db.Model, UserMixin):
-    __tablename__ = "user"
+class Place(db.Model, TrackableMixin):
+    __tablename__ = "place"
     id = Column(Integer, primary_key=True)
-    email = Column(String(255), unique=True)
-    username = Column(String(255))
-    password = Column(String(255))
-    last_login_at = Column(DateTime())
-    current_login_at = Column(DateTime())
-    last_login_ip = Column(String(100))
-    current_login_ip = Column(String(100))
-    login_count = Column(Integer)
-    active = Column(Boolean())
-    anonymous = Column(
-        Boolean(),
-        server_default="0",
-        nullable=False,
-    )
-    fs_uniquifier = Column(String(255))
-    confirmed_at = Column(DateTime())
-    roles = relationship(
-        "Role", secondary="roles_users", backref=backref("users", lazy="dynamic")
-    )
-
-    def get_user_id(self):
-        return self.id
-
-    def get_security_payload(self):
-        return {"email": self.email, "roles": [r.name for r in self.roles]}
+    name = Column(Unicode(255), nullable=False, unique=True)
+    recycling_ids = Column(Unicode(255))
+    weather_warning_name = Column(Unicode(255))
 
 
 # OAuth Server: Wir bieten an, dass sich ein Nutzer per OAuth2 auf unserer Seite anmeldet
@@ -236,6 +198,8 @@ class NewsFeed(db.Model, TrackableMixin):
         backref=backref("news_feed", lazy=False),
         cascade="all, delete-orphan",
     )
+    place_id = Column(db.Integer, db.ForeignKey("place.id"))
+    place = relationship("Place", uselist=False)
 
 
 class NewsItem(db.Model):
@@ -259,6 +223,8 @@ class WeatherWarning(db.Model):
     published = db.Column(db.DateTime(timezone=True))
     start = db.Column(db.DateTime(timezone=True))
     end = db.Column(db.DateTime(timezone=True))
+    place_id = Column(db.Integer, db.ForeignKey("place.id"))
+    place = relationship("Place", uselist=False)
 
 
 # Recycling
@@ -272,6 +238,8 @@ class RecyclingStreet(db.Model):
     town_id = db.Column(db.String())
     name = db.Column(db.String())
     events = db.relationship("RecyclingEvent", backref="street", lazy=True)
+    place_id = Column(db.Integer, db.ForeignKey("place.id"))
+    place = relationship("Place", uselist=False)
 
 
 class RecyclingEvent(db.Model):
@@ -284,3 +252,76 @@ class RecyclingEvent(db.Model):
     street_id = db.Column(
         db.Integer, db.ForeignKey("recyclingstreets.id"), nullable=False
     )
+
+
+# User
+
+
+class RolesUsers(db.Model):
+    __tablename__ = "roles_users"
+    id = Column(Integer(), primary_key=True)
+    user_id = Column("user_id", Integer(), ForeignKey("user.id"))
+    role_id = Column("role_id", Integer(), ForeignKey("role.id"))
+
+
+class Role(db.Model, RoleMixin):
+    __tablename__ = "role"
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(80), unique=True)
+    title = Column(Unicode(255))
+    description = Column(String(255))
+    permissions = Column(UnicodeText())
+
+
+class RecyclingStreetsUsers(db.Model):
+    __tablename__ = "recyclingstreets_users"
+    id = Column(Integer(), primary_key=True)
+    user_id = Column("user_id", Integer(), ForeignKey("user.id"))
+    recyclingstreet_id = Column(
+        "recyclingstreet_id", Integer(), ForeignKey("recyclingstreets.id")
+    )
+
+
+class PlacesUsers(db.Model):
+    __tablename__ = "places_users"
+    id = Column(Integer(), primary_key=True)
+    user_id = Column("user_id", Integer(), ForeignKey("user.id"))
+    place_id = Column("place_id", Integer(), ForeignKey("place.id"))
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = "user"
+    id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True)
+    username = Column(String(255))
+    password = Column(String(255))
+    last_login_at = Column(DateTime())
+    current_login_at = Column(DateTime())
+    last_login_ip = Column(String(100))
+    current_login_ip = Column(String(100))
+    login_count = Column(Integer)
+    active = Column(Boolean())
+    anonymous = Column(
+        Boolean(),
+        server_default="0",
+        nullable=False,
+    )
+    fs_uniquifier = Column(String(255))
+    confirmed_at = Column(DateTime())
+    roles = relationship(
+        "Role", secondary="roles_users", backref=backref("users", lazy="dynamic")
+    )
+    places = relationship(
+        "Place", secondary="places_users", backref=backref("users", lazy="dynamic")
+    )
+    recyclingstreets = relationship(
+        "RecyclingStreet",
+        secondary="recyclingstreets_users",
+        backref=backref("users", lazy="dynamic"),
+    )
+
+    def get_user_id(self):
+        return self.id
+
+    def get_security_payload(self):
+        return {"email": self.email, "roles": [r.name for r in self.roles]}

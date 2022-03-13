@@ -32,6 +32,20 @@ class ModelSeeder(object):
         self._db.session.commit()
         return news_feed.id
 
+    def create_place(self, **kwargs) -> int:
+        from project.models import Place
+
+        place = Place(
+            name="Goslar",
+            recycling_ids="2523.1,2523.8,2523.10",
+            weather_warning_name="Stadt Goslar",
+        )
+        place.__dict__.update(kwargs)
+
+        self._db.session.add(place)
+        self._db.session.commit()
+        return place.id
+
     def create_weather_warning(self, **kwargs) -> int:
         from project.dateutils import create_berlin_date
         from project.models import WeatherWarning
