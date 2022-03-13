@@ -363,8 +363,10 @@ class UtilActions(object):
     def mock_get_request_with_content(self, url: str, content):
         self._requests_mock.get(url, content=content)
 
-    def mock_get_request_with_file(self, url: str, path: pathlib.Path, filename: str):
-        text = (path / filename).read_text()
+    def mock_get_request_with_file(
+        self, url: str, path: pathlib.Path, filename: str, encoding="utf-8"
+    ):
+        text = (path / filename).read_text(encoding=encoding)
         self.mock_get_request_with_text(url, text)
 
     def mock_feedparser_http_get(

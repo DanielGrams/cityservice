@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-overlay :show="isLoading">
-      <div v-if="newsFeed">
+      <div v-if="place">
         <b-button-group class="my-4">
           <b-button
             @click="$refs.update.showModal()"
@@ -17,7 +17,7 @@
 
         <Update ref="update" :id="$route.params.id" @updated="loadData" />
 
-        <h3>{{ newsFeed.publisher }}</h3>
+        <h3>{{ place.name }}</h3>
         <b-table stacked :fields="propertyFields" :items="properties">
         </b-table>
       </div>
@@ -28,72 +28,52 @@
 <script>
 import axios from "axios";
 import Update from "../components/Update.vue";
-import { localizeFeedType } from "../common.js";
 
 export default {
   components: { Update },
   computed: {
     properties() {
-      return [this.newsFeed];
+      return [this.place];
     },
   },
   data() {
     return {
       isLoading: false,
-      newsFeed: null,
+      place: null,
       propertyFields: [
         {
-          key: "url",
-          label: this.$t("app.admin.newsFeeds.url"),
+          key: "recycling_ids",
+          label: this.$t("app.admin.places.recyclingIds"),
         },
         {
-          key: "feed_type",
-          label: this.$t("app.admin.newsFeeds.feedType"),
-          formatter: (value) => {
-            return localizeFeedType(value);
-          },
-        },
-        {
-          key: "place.name",
-          label: this.$t("app.admin.newsFeeds.place"),
-        },
-        {
-          key: "title_filter",
-          label: this.$t("app.admin.newsFeeds.titleFilter"),
-        },
-        {
-          key: "title_sub_pattern",
-          label: this.$t("app.admin.newsFeeds.titleSubPattern"),
-        },
-        {
-          key: "title_sub_repl",
-          label: this.$t("app.admin.newsFeeds.titleSubRepl"),
+          key: "weather_warning_name",
+          label: this.$t("app.admin.places.weatherWarningName"),
         },
       ],
     };
   },
   mounted() {
     this.isLoading = false;
-    this.newsFeed = null;
+    this.place = null;
     this.loadData();
   },
   methods: {
     loadData() {
       axios
-        .get(`/api/news-feeds/${this.$route.params.id}`, {
+        .get(`/api/places/${this.$route.params.id}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
         .then((response) => {
-          this.newsFeed = response.data;
+          this.place = response.data;
         });
     },
     deleteItem() {
-      if (confirm(this.$t("app.admin.newsFeeds.deleteConfirmation"))) {
-        axios.delete(`/api/news-feeds/${this.$route.params.id}`).then(() => {
+      if (confirm(this.$t("app.admin.places.deleteConfirmation"))) {
+        axios.delete(`/api/places/${this.$route.params.id}`).then(() => {
           this.$root.makeSuccessToast(
-            this.$t("app.admin.newsFeeds.deletedMessage")
+            this.$t("app.admin.places.deletedMessage")
           );
-          this.$root.goBack(`/admin/news-feeds`);
+          this.$root.goBack(`/admin/places`);
         });
       }
     },

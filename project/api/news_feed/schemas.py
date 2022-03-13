@@ -2,6 +2,7 @@ from marshmallow import fields, validate
 from marshmallow_enum import EnumField
 
 from project.api import marshmallow
+from project.api.place.schemas import PlaceRefSchema, PlaceWriteIdSchema
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
@@ -45,7 +46,7 @@ class NewsFeedBaseSchemaMixin(TrackableSchemaMixin):
 
 
 class NewsFeedSchema(NewsFeedIdSchema, NewsFeedBaseSchemaMixin):
-    pass
+    place = fields.Nested(PlaceRefSchema)
 
 
 class NewsFeedRefSchema(NewsFeedIdSchema):
@@ -63,13 +64,24 @@ class NewsFeedListResponseSchema(PaginationResponseSchema):
     )
 
 
-class NewsFeedPostRequestSchema(NewsFeedModelSchema, NewsFeedBaseSchemaMixin):
+class NewsFeedWriteSchemaMixin(object):
+    place = fields.Nested(
+        PlaceWriteIdSchema,
+        required=False,
+    )
+
+
+class NewsFeedPostRequestSchema(
+    NewsFeedModelSchema, NewsFeedBaseSchemaMixin, NewsFeedWriteSchemaMixin
+):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.make_post_schema()
 
 
-class NewsFeedPatchRequestSchema(NewsFeedModelSchema, NewsFeedBaseSchemaMixin):
+class NewsFeedPatchRequestSchema(
+    NewsFeedModelSchema, NewsFeedBaseSchemaMixin, NewsFeedWriteSchemaMixin
+):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.make_patch_schema()

@@ -3,6 +3,7 @@
     "admin": {
       "home": {
         "newsFeeds": "News Feeds",
+        "places": "Orte",
         "title": "Admin"
       },
       "newsFeeds": {
@@ -14,18 +15,19 @@
         "deletedMessage": "Newsfeed erfolgreich gelöscht",
         "feedType": "Typ",
         "feedTypes": {
-          "unknown": "Unbekannt",
-          "city": "Stadt/Gemeinde",
-          "district": "Landkreis",
-          "police": "Polizei",
-          "fire_department": "Feuerwehr",
-          "culture": "Kultur",
           "citizen_participation": "Bürgerbeteiligung",
-          "civil_protection": "Bevölkerungsschutz"
+          "city": "Stadt/Gemeinde",
+          "civil_protection": "Bevölkerungsschutz",
+          "culture": "Kultur",
+          "district": "Landkreis",
+          "fire_department": "Feuerwehr",
+          "police": "Polizei",
+          "unknown": "Unbekannt"
         },
         "list": {
           "title": "News Feeds"
         },
+        "place": "Ort",
         "publisher": "Herausgeber",
         "titleFilter": "Titel Filter",
         "titleFilterDescription": "Regulärer Ausdruck im Python-Format. Wenn der Titel nicht auf den regulären Ausdruck passt, wird er ignoriert.",
@@ -38,6 +40,24 @@
           "title": "Newsfeed bearbeiten"
         },
         "url": "URL"
+      },
+      "places": {
+        "create": {
+          "successMessage": "Ort erfolgreich angelegt",
+          "title": "Orte"
+        },
+        "deleteConfirmation": "Möchten Sie den Ort wirklich löschen?",
+        "deletedMessage": "Ort erfolgreich gelöscht",
+        "list": {
+          "title": "Orte"
+        },
+        "name": "Name",
+        "recyclingIds": "Recycling IDs",
+        "update": {
+          "successMessage": "Ort erfolgreich aktualisiert",
+          "title": "Ort bearbeiten"
+        },
+        "weatherWarningName": "Wetterwarnungsname"
       }
     },
     "auth": {
@@ -78,6 +98,9 @@
     "toast": {
       "errorTitle": "Fehler",
       "successTitle": "Erfolg"
+    },
+    "typeahead": {
+      "instruction": "Tippen um zu suchen"
     }
   }
 }

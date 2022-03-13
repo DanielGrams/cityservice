@@ -1,6 +1,7 @@
 const Module = () => import("./Module.vue");
 const Home = () => import("./views/Home.vue");
 import newsFeedsRoutes from "./news-feeds/router";
+import placesRoutes from "./places/router";
 
 const routes = [
   {
@@ -15,6 +16,7 @@ const routes = [
         component: Home,
       },
       ...newsFeedsRoutes,
+      ...placesRoutes,
     ],
   },
 ];

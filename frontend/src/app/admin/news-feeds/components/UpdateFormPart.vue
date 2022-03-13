@@ -1,5 +1,13 @@
 <template>
   <div>
+    <ValidatedTypeahead
+      :labelValue="$t('app.admin.newsFeeds.place')"
+      name="place"
+      v-model="innerModel.place"
+      fetchURL="/api/places?keyword={query}"
+      :serializer="(i) => i.name"
+      rules=""
+    />
     <ValidatedInput
       :label="$t('app.admin.newsFeeds.titleFilter')"
       :description="$t('app.admin.newsFeeds.titleFilterDescription')"
@@ -27,8 +35,9 @@
 <script>
 import FormPartMixin from "@/mixins/FormPartMixin.js";
 import ValidatedInput from "@/components/ValidatedInput.vue";
+import ValidatedTypeahead from "@/components/ValidatedTypeahead.vue";
 export default {
   mixins: [FormPartMixin],
-  components: { ValidatedInput },
+  components: { ValidatedInput, ValidatedTypeahead },
 };
 </script>

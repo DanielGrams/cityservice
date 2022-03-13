@@ -36,7 +36,9 @@
 </template>
 
 <script>
+import Vue from "vue";
 import axios from "axios";
+import _omit from "lodash/omit";
 
 export default {
   props: {
@@ -54,6 +56,9 @@ export default {
     },
     formData: {
       type: Object,
+    },
+    removeFromSendData: {
+      type: Array,
     },
   },
   data() {
@@ -88,8 +93,14 @@ export default {
         });
     },
     submitForm() {
+      let putData = Vue.util.extend({}, this.formData);
+
+      if (this.removeFromSendData != null) {
+        putData = _omit(this.formData, this.removeFromSendData);
+      }
+
       axios
-        .put(`${this.url}/${this.id}`, this.formData, {
+        .put(`${this.url}/${this.id}`, putData, {
           handleLoading: (isLoading) => (this.isSubmitting = isLoading),
         })
         .then(() => {

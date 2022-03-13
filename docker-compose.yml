@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   db:
-    image: mdillon/postgis
+    image: postgres
     environment:
       - POSTGRES_DB=cityservice
       - POSTGRES_USER=user

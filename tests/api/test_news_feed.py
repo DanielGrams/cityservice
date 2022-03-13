@@ -71,6 +71,7 @@ def test_post(client, app, seeder: Seeder, utils: UtilActions):
 
 def test_put(client, seeder: Seeder, utils, app):
     news_feed_id = seeder.create_news_feed()
+    place_id = seeder.create_place()
     seeder.setup_base(admin=True)
 
     url = utils.get_url("api_news_feed", id=news_feed_id)
@@ -80,6 +81,9 @@ def test_put(client, seeder: Seeder, utils, app):
             "publisher": "Polizei",
             "url": "http://www.polizei.de",
             "feed_type": "fire_department",
+            "place": {
+                "id": place_id,
+            },
         },
     )
     utils.assert_response_no_content(response)
@@ -91,6 +95,7 @@ def test_put(client, seeder: Seeder, utils, app):
         assert news_feed.publisher == "Polizei"
         assert news_feed.url == "http://www.polizei.de"
         assert news_feed.feed_type == NewsFeedType.fire_department
+        assert news_feed.place_id == place_id
 
 
 def test_patch(client, seeder, utils, app):
