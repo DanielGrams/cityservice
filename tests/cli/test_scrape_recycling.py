@@ -10,6 +10,15 @@ def test_scrape(
     from project.dateutils import create_berlin_date
     from project.models import RecyclingStreet
 
+    place_id = seeder.create_place()
+
+    # Index
+    mock_url = (
+        "https://www.kwb-goslar.de/Abfallwirtschaft/Abfuhr/Online-Abfuhrkalender-2022/"
+    )
+    filename = "index.html"
+    utils.mock_get_request_with_file(mock_url, datadir, filename, encoding="latin-1")
+
     # Town
     town_id = "2523.1"
     mock_url = (
@@ -44,6 +53,7 @@ def test_scrape(
         assert len(streets) == 1
 
         street = streets[0]
+        assert street.place_id == place_id
         assert street.source_id == street_id
         assert street.town_id == town_id
         assert street.name == "Ortsteil - Hahndorf, Goslar"

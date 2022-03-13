@@ -7,7 +7,7 @@ from sqlalchemy.sql import not_
 
 from project import app, db
 from project.dateutils import create_berlin_date, get_now
-from project.models import WeatherWarning
+from project.models import Place, WeatherWarning
 
 
 def scrape():
@@ -44,40 +44,10 @@ def scrape():
             )
             published = _parse_date_time(now, last_updated_str)
 
-        anchor = doc.find(id="Stadt Goslar")
-
-        if anchor and anchor.nextSibling and anchor.nextSibling.name == "table":
-            table = anchor.nextSibling
-            table_rows = table.find_all("tr")
-
-            for table_row in table_rows:
-                table_cols = table_row.find_all("td")
-
-                if len(table_cols) != 4:  # pragma: no cover
-                    continue
-
-                try:
-                    (headline, start_str, end_str, content) = [
-                        c.text for c in table_cols
-                    ]
-                    start = _parse_date_time(now, start_str)
-                    end = _parse_date_time(now, end_str)
-
-                    warning = WeatherWarning.query.filter_by(
-                        headline=headline, content=content, start=start, end=end
-                    ).first()
-
-                    if warning is None:
-                        warning = WeatherWarning(
-                            headline=headline, content=content, start=start, end=end
-                        )
-                        db.session.add(warning)
-                        db.session.flush()
-
-                    warning.published = published
-                    warning_ids.append(warning.id)
-                except Exception:  # pragma: no cover
-                    app.logger.exception(url)
+        # Scrape all places
+        places = Place.query.filter(Place.weather_warning_name.isnot(None)).all()
+        for place in places:
+            scrape_place(place, doc, now, published, warning_ids)
 
         # Delete entries that are not part of the feed anymore
         WeatherWarning.query.filter(not_(WeatherWarning.id.in_(warning_ids))).delete(
@@ -88,6 +58,55 @@ def scrape():
         app.logger.exception(url)
     finally:
         db.session.commit()
+
+
+def scrape_place(
+    place: Place,
+    doc: BeautifulSoup,
+    now: datetime,
+    published: datetime,
+    warning_ids: list,
+):
+    anchor = doc.find(id=place.weather_warning_name)
+
+    if anchor and anchor.nextSibling and anchor.nextSibling.name == "table":
+        table = anchor.nextSibling
+        table_rows = table.find_all("tr")
+
+        for table_row in table_rows:
+            table_cols = table_row.find_all("td")
+
+            if len(table_cols) != 4:  # pragma: no cover
+                continue
+
+            try:
+                (headline, start_str, end_str, content) = [c.text for c in table_cols]
+                start = _parse_date_time(now, start_str)
+                end = _parse_date_time(now, end_str)
+
+                warning = WeatherWarning.query.filter_by(
+                    place_id=place.id,
+                    headline=headline,
+                    content=content,
+                    start=start,
+                    end=end,
+                ).first()
+
+                if warning is None:
+                    warning = WeatherWarning(
+                        place_id=place.id,
+                        headline=headline,
+                        content=content,
+                        start=start,
+                        end=end,
+                    )
+                    db.session.add(warning)
+                    db.session.flush()
+
+                warning.published = published
+                warning_ids.append(warning.id)
+            except Exception:  # pragma: no cover
+                app.logger.exception()
 
 
 def _parse_date_time(now: datetime, input: str) -> datetime:

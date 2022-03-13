@@ -4,16 +4,23 @@ from flask_apispec import doc, marshal_with
 from project.api import add_api_resource
 from project.api.news_item.schemas import NewsItemSchema
 from project.api.resources import BaseResource
-from project.models import NewsFeedType, NewsItem, WeatherWarning
+from project.models import NewsFeed, NewsFeedType, NewsItem, WeatherWarning
+from project.services.place import get_place_query
 
 
 class NewsItemListResource(BaseResource):
     @doc(summary="List news items", tags=["News"])
     @marshal_with(NewsItemSchema(many=True))
     def get(self):
+        # Legacy: Goslar only
+        place = get_place_query("Goslar").first()
+        place_id = place.id if place else None
+
         items = list()
 
-        news_items = NewsItem.query.all()
+        news_items = (
+            NewsItem.query.join(NewsFeed).filter(NewsFeed.place_id == place_id).all()
+        )
         for news_item in news_items:
             item = {
                 "publisher_name": news_item.news_feed.publisher,
@@ -26,7 +33,9 @@ class NewsItemListResource(BaseResource):
             }
             items.append(item)
 
-        weather_warnings = WeatherWarning.query.all()
+        weather_warnings = WeatherWarning.query.filter(
+            WeatherWarning.place_id == place_id
+        ).all()
         number_of_weather_warnings = len(weather_warnings)
         if number_of_weather_warnings > 0:
             weather_warning = weather_warnings[0]

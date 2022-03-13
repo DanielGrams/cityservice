@@ -9,6 +9,7 @@ def test_scrape(
 ):
     utils.mock_now(2022, 3, 4)
     utils.mock_feedparser_http_get()
+    place_id = seeder.create_place()
 
     # Warnings
     mock_url = "https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnings_gemeinde_nib.html"
@@ -33,6 +34,7 @@ def test_scrape(
         assert item.start == create_berlin_date(2022, 3, 3, 19)
         assert item.end == create_berlin_date(2022, 3, 4, 10)
         assert item.published == create_berlin_date(2022, 3, 4, 7, 33)
+        assert item.place_id == place_id
 
     # No warnings
     utils.mock_get_request_with_file(mock_url, datadir, "dwd_no_warnings.html")

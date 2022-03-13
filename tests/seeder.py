@@ -116,7 +116,6 @@ class Seeder(object):
 
         return news_feed_id
 
-
     def create_place(self, **kwargs) -> int:
         with self._app.app_context():
             place_id = self._model_seeder.create_place(**kwargs)

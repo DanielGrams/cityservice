@@ -1,11 +1,15 @@
+import pytest
+
 from tests.seeder import Seeder
 from tests.utils import UtilActions
 
 
-def test_list(client, seeder: Seeder, utils: UtilActions):
-    news_feed_id = seeder.create_news_feed()
+@pytest.mark.parametrize("with_place", [False, True])
+def test_list(client, seeder: Seeder, utils: UtilActions, with_place):
+    place_id = seeder.create_place() if with_place else None
+    news_feed_id = seeder.create_news_feed(place_id=place_id)
     seeder.create_news_item(news_feed_id)
-    seeder.create_weather_warning()
+    seeder.create_weather_warning(place_id=place_id)
 
     url = utils.get_url("api_news_item_list")
     response = utils.get_ok(url)
