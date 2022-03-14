@@ -8,6 +8,7 @@ from sqlalchemy.sql import not_
 from project import app, db
 from project.dateutils import create_berlin_date, get_now
 from project.models import Place, WeatherWarning
+from project.utils import get_content_from_response
 
 
 def scrape():
@@ -28,11 +29,7 @@ def scrape():
             },
         )
 
-        try:
-            html = response.content.decode("UTF-8")
-        except Exception:  # pragma: no cover
-            html = response.content.decode(response.apparent_encoding)
-
+        html = get_content_from_response(response)
         doc = BeautifulSoup(html, features="html.parser")
         published = now
 
