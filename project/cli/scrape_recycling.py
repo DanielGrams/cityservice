@@ -9,6 +9,7 @@ from sqlalchemy.sql.expression import func
 from project import app, db
 from project.dateutils import get_now
 from project.models import Place, RecyclingEvent, RecyclingStreet
+from project.utils import get_content_from_response
 
 # Town IDs vor 2022
 # towns.append(ScrapeTown('62.1', 'Goslar'))
@@ -48,7 +49,7 @@ def scrape_index() -> dict:
 
     try:
         response = requests.get(url, headers={"referer": "https://www.kwb-goslar.de"})
-        html = response.content.decode("UTF-8")
+        html = get_content_from_response(response)
         doc = BeautifulSoup(html, features="html.parser")
         options = doc.find(id="sf_locid").find_all("option")
 
