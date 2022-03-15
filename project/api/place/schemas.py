@@ -62,3 +62,14 @@ class PlacePatchRequestSchema(PlaceModelSchema, PlaceBaseSchemaMixin):
     def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
         self.make_patch_schema()
+
+
+class UserPlaceListRequestSchema(PaginationRequestSchema):
+    pass
+
+
+class UserPlaceListResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(PlaceRefSchema),
+        metadata={"description": "Places"},
+    )

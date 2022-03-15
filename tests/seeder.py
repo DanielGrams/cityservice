@@ -84,11 +84,11 @@ class Seeder(object):
 
         return (client_id, client_secret, scope)
 
-    def setup_api_access(self, admin=True):
+    def setup_api_access(self, admin=True) -> int:
         user_id = self.setup_base(admin=admin, log_in=False)
         return self.authorize_api_access(user_id)
 
-    def authorize_api_access(self, user_id):
+    def authorize_api_access(self, user_id) -> int:
         oauth2_client_id = self.insert_default_oauth2_client(user_id)
         client_id, client_secret, scope = self.get_oauth2_client(oauth2_client_id)
 
@@ -167,3 +167,19 @@ class Seeder(object):
             recycling_event_id = recycling_event.id
 
         return recycling_event_id
+
+    def add_user_recycling_street(self, user_id, recyclingstreet_id):
+        with self._app.app_context():
+            self._model_seeder.add_user_recycling_street(user_id, recyclingstreet_id)
+
+    def remove_user_recycling_street(self, user_id, recyclingstreet_id):
+        with self._app.app_context():
+            self._model_seeder.remove_user_recycling_street(user_id, recyclingstreet_id)
+
+    def add_user_place(self, user_id, recyclingstreet_id):
+        with self._app.app_context():
+            self._model_seeder.add_user_place(user_id, recyclingstreet_id)
+
+    def remove_user_place(self, user_id, recyclingstreet_id):
+        with self._app.app_context():
+            self._model_seeder.remove_user_place(user_id, recyclingstreet_id)
