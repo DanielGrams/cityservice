@@ -7,6 +7,7 @@ from sqlalchemy.sql import and_
 
 from project import user_datastore
 from project.dateutils import get_now
+from project.models import Place, PlacesUsers, RecyclingStreet, RecyclingStreetsUsers
 
 
 def create_user(email, password):
@@ -63,3 +64,93 @@ def upsert_user_role(role_name, role_title, permissions):
     role.remove_permissions(role.get_permissions())
     role.add_permissions(permissions)
     return role
+
+
+def get_user_recycling_streets_query(user_id: int):
+    return RecyclingStreet.query.join(
+        RecyclingStreetsUsers,
+        RecyclingStreetsUsers.recyclingstreet_id == RecyclingStreet.id,
+    ).filter(RecyclingStreetsUsers.user_id == user_id)
+
+
+def get_user_recycling_street(user_id: int, recyclingstreet_id: int) -> RecyclingStreet:
+    return RecyclingStreetsUsers.query.filter(
+        RecyclingStreetsUsers.recyclingstreet_id == recyclingstreet_id,
+        RecyclingStreetsUsers.user_id == user_id,
+    ).first()
+
+
+def has_user_recycling_street(user_id: int, recyclingstreet_id: int) -> bool:
+    if get_user_recycling_street(user_id, recyclingstreet_id):  # pragma: no cover
+        return True
+
+    return False
+
+
+def add_user_recycling_street(user_id: int, recyclingstreet_id: int) -> bool:
+    from project import db
+
+    if has_user_recycling_street(user_id, recyclingstreet_id):  # pragma: no cover
+        return False
+
+    user_recycling_street = RecyclingStreetsUsers(
+        user_id=user_id, recyclingstreet_id=recyclingstreet_id
+    )
+    db.session.add(user_recycling_street)
+    return True
+
+
+def remove_user_recycling_street(user_id: int, recyclingstreet_id: int):
+    from project import db
+
+    user_recycling_street = get_user_recycling_street(user_id, recyclingstreet_id)
+
+    if not user_recycling_street:  # pragma: no cover
+        return False
+
+    db.session.delete(user_recycling_street)
+    return True
+
+
+def get_user_places_query(user_id: int):
+    return Place.query.join(
+        PlacesUsers,
+        PlacesUsers.place_id == Place.id,
+    ).filter(PlacesUsers.user_id == user_id)
+
+
+def get_user_place(user_id: int, place_id: int) -> Place:
+    return PlacesUsers.query.filter(
+        PlacesUsers.place_id == place_id,
+        PlacesUsers.user_id == user_id,
+    ).first()
+
+
+def has_user_place(user_id: int, place_id: int) -> bool:
+    if get_user_place(user_id, place_id):  # pragma: no cover
+        return True
+
+    return False
+
+
+def add_user_place(user_id: int, place_id: int) -> bool:
+    from project import db
+
+    if has_user_place(user_id, place_id):  # pragma: no cover
+        return False
+
+    user_place = PlacesUsers(user_id=user_id, place_id=place_id)
+    db.session.add(user_place)
+    return True
+
+
+def remove_user_place(user_id: int, place_id: int):
+    from project import db
+
+    user_place = get_user_place(user_id, place_id)
+
+    if not user_place:  # pragma: no cover
+        return False
+
+    db.session.delete(user_place)
+    return True

@@ -62,3 +62,27 @@ class ModelSeeder(object):
         self._db.session.add(weather_warning)
         self._db.session.commit()
         return weather_warning.id
+
+    def add_user_recycling_street(self, user_id, recyclingstreet_id):
+        from project.services.user import add_user_recycling_street
+
+        if add_user_recycling_street(user_id, recyclingstreet_id):
+            self._db.session.commit()
+
+    def remove_user_recycling_street(self, user_id, recyclingstreet_id):
+        from project.services.user import remove_user_recycling_street
+
+        if remove_user_recycling_street(user_id, recyclingstreet_id):
+            self._db.session.commit()
+
+    def add_user_place(self, user_id, recyclingstreet_id):
+        from project.services.user import add_user_place
+
+        if add_user_place(user_id, recyclingstreet_id):
+            self._db.session.commit()
+
+    def remove_user_place(self, user_id, recyclingstreet_id):
+        from project.services.user import remove_user_place
+
+        if remove_user_place(user_id, recyclingstreet_id):
+            self._db.session.commit()
