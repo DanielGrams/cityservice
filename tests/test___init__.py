@@ -1,4 +1,5 @@
 from tests.seeder import Seeder
+from tests.utils import UtilActions
 
 
 def drop_db(db):
@@ -48,3 +49,7 @@ END $$;
 
         news_items = NewsItem.query.all()
         assert len(news_items) == 0
+
+
+def test_common_scenario(app, db, seeder: Seeder, utils: UtilActions):
+    seeder.create_common_scenario()

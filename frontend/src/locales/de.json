@@ -82,8 +82,29 @@
       "title": "Goslar Service App"
     },
     "user": {
+      "places": {
+        "title": "Meine Orte wählen"
+      },
       "profile": {
+        "places": {
+          "deleteConfirmation": "Möchten Sie den Ort wirklich entfernen?",
+          "deletedMessage": "Ort erfolgreich entfernt",
+          "title": "Meine Orte"
+        },
+        "recyclingStreets": {
+          "deleteConfirmation": "Möchten Sie den Eintrag wirklich entfernen?",
+          "deletedMessage": "Eintrag erfolgreich entfernt",
+          "title": "Meine Müllabfuhr"
+        },
         "title": "Profil"
+      },
+      "recyclingStreets": {
+        "places": {
+          "title": "Ort wählen"
+        },
+        "recyclingStreets": {
+          "title": "Ortsteile oder Straßen wählen"
+        }
       }
     }
   },

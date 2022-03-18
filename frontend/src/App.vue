@@ -16,6 +16,11 @@
         <b-navbar-nav>
           <b-nav-item to="/news">{{ $t("app.menu.news") }}</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav v-if="currentUser">
+          <b-nav-item to="/user/profile">{{
+            $t("app.menu.profile")
+          }}</b-nav-item>
+        </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item v-if="!currentUser" to="/login">{{
             $t("app.menu.login")
@@ -24,9 +29,6 @@
             <template #button-content>
               {{ currentUser.email }}
             </template>
-            <b-dropdown-item to="/user/profile">{{
-              $t("app.menu.profile")
-            }}</b-dropdown-item>
             <b-dropdown-item v-if="isAdmin" to="/admin">{{
               $t("app.menu.admin")
             }}</b-dropdown-item>

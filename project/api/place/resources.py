@@ -1,5 +1,6 @@
 from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
+from sqlalchemy import func
 
 from project import db
 from project.api import add_api_resource
@@ -11,12 +12,18 @@ from project.api.place.schemas import (
     PlacePostRequestSchema,
     PlaceSchema,
 )
+from project.api.recycling_street.schemas import (
+    PlaceRecyclingStreetListRequestSchema,
+    PlaceRecyclingStreetListResponseSchema,
+)
 from project.api.resources import (
     BaseResource,
+    login_api_user,
     login_api_user_or_401,
     require_api_access,
 )
-from project.models import Place
+from project.models import Place, RecyclingStreet
+from project.oauth2 import require_oauth
 from project.services.place import get_place_query
 
 
@@ -24,13 +31,12 @@ class PlaceListResource(BaseResource):
     @doc(
         summary="List places",
         tags=["Places"],
-        security=[{"oauth2": ["place:read"]}],
     )
     @use_kwargs(PlaceListRequestSchema, location=("query"))
     @marshal_with(PlaceListResponseSchema)
-    @require_api_access("place:read")
+    @require_oauth(optional=True)
     def get(self, **kwargs):
-        login_api_user_or_401("admin")
+        login_api_user()
         keyword = kwargs["keyword"] if "keyword" in kwargs else None
 
         pagination = get_place_query(keyword).paginate()
@@ -58,12 +64,11 @@ class PlaceResource(BaseResource):
     @doc(
         summary="Get place",
         tags=["Place"],
-        security=[{"oauth2": ["place:read"]}],
     )
     @marshal_with(PlaceSchema)
-    @require_api_access("place:read")
+    @require_oauth(optional=True)
     def get(self, id):
-        login_api_user_or_401("admin")
+        login_api_user()
         return Place.query.get_or_404(id)
 
     @doc(
@@ -117,5 +122,32 @@ class PlaceResource(BaseResource):
         return make_response("", 204)
 
 
+class PlaceRecyclingStreetListResource(BaseResource):
+    @doc(
+        summary="List recycling streets of place",
+        tags=["Places", "Recycling"],
+        security=[{"oauth2": ["place:read"]}],
+    )
+    @use_kwargs(PlaceRecyclingStreetListRequestSchema, location=("query"))
+    @marshal_with(PlaceRecyclingStreetListResponseSchema)
+    @require_api_access("place:read")
+    def get(self, id, **kwargs):
+        pagination = (
+            RecyclingStreet.query.filter(RecyclingStreet.place_id == id)
+            .order_by(
+                db.case(((RecyclingStreet.name.ilike("Ortsteil%"), 0),), else_=1),
+                db.case(((RecyclingStreet.name.ilike("Stadtteil%"), 0),), else_=1),
+                func.lower(RecyclingStreet.name),
+            )
+            .paginate()
+        )
+        return pagination
+
+
 add_api_resource(PlaceListResource, "/places", "api_place_list")
 add_api_resource(PlaceResource, "/places/<int:id>", "api_place")
+add_api_resource(
+    PlaceRecyclingStreetListResource,
+    "/places/<int:id>/recycling-streets",
+    "api_v1_place_recycling_street_list",
+)

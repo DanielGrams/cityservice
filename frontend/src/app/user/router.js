@@ -1,5 +1,7 @@
 const Module = () => import("./Module.vue");
-const Profile = () => import("./views/Profile.vue");
+import profileRoutes from "./profile/router";
+import placesRoutes from "./places/router";
+import recyclingStreetsRoutes from "./recycling-streets/router";
 
 const routes = [
   {
@@ -9,10 +11,9 @@ const routes = [
       requiresAuth: true,
     },
     children: [
-      {
-        path: "profile",
-        component: Profile,
-      },
+      ...profileRoutes,
+      ...placesRoutes,
+      ...recyclingStreetsRoutes,
     ],
   },
 ];
