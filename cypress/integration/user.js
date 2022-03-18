@@ -66,7 +66,7 @@ describe("User", () => {
     cy.screenshot("admin");
   });
 
-  it.only("profile", () => {
+  it("profile", () => {
     cy.createCommonScenario().then(function () {
       cy.login("test@test.de");
       cy.visit("/user/profile");
