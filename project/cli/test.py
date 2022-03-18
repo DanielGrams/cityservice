@@ -54,7 +54,7 @@ def seed():
 
 
 @test_cli.command("create-common-scenario")
-def seed():
+def create_common_scenario():
     seeder.create_common_scenario()
     click.echo("Created common scenario.")
 
