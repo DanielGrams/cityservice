@@ -99,3 +99,20 @@ def test_delete(client, seeder, utils, app):
 
         place = Place.query.get(place_id)
         assert place is None
+
+
+def test_recycling_street_list(client, seeder: Seeder, utils: UtilActions):
+    seeder.setup_api_access()
+    place_id = seeder.create_place()
+    schreiber_id = seeder.create_recycling_street(
+        place_id=place_id, name="Schreiberstraße"
+    )
+    stadtteil_id = seeder.create_recycling_street(place_id=place_id, name="Stadtteil")
+    ortsteil_id = seeder.create_recycling_street(place_id=place_id, name="Ortsteil")
+
+    url = utils.get_url("api_v1_place_recycling_street_list", id=place_id)
+    response = utils.get_json(url)
+    assert len(response.json["items"]) == 3
+    assert response.json["items"][0]["id"] == ortsteil_id
+    assert response.json["items"][1]["id"] == stadtteil_id
+    assert response.json["items"][2]["id"] == schreiber_id

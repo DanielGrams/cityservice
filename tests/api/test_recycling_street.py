@@ -12,4 +12,4 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
 
     news_item = response.json[0]
     assert news_item["id"] == recycling_street_id
-    assert news_item["name"] == "Schreiberstraße"
+    assert news_item["name"] == "Schreiberstraße, Goslar"

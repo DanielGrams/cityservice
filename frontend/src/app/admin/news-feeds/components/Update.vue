@@ -5,7 +5,7 @@
       v-on="$listeners"
       :id="id"
       :formData="form"
-      :removeFromSendData="['place.name']"
+      :removeFromSendData="['place.name', 'place.is_favored']"
       :title="$t('app.admin.newsFeeds.update.title')"
       :successMessage="$t('app.admin.newsFeeds.update.successMessage')"
       url="/api/news-feeds"

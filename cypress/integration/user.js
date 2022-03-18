@@ -66,4 +66,31 @@ describe("User", () => {
     cy.screenshot("admin");
   });
 
+  it.only("profile", () => {
+    cy.createCommonScenario().then(function () {
+      cy.login("test@test.de");
+      cy.visit("/user/profile");
+      cy.screenshot("Profile");
+      cy.get(".remove-place-btn:first").click();
+      cy.get(".remove-recycling-street-btn:first").click();
+
+      cy.assertNoToast();
+      cy.get("#add-place-btn").click();
+      cy.screenshot("Places");
+      cy.get(".favorite-btn:first").click();
+      cy.wait(2000);
+      cy.get(".favorite-btn:first").click();
+
+      cy.visit("/user/profile");
+      cy.get("#add-recycling-street-btn").click();
+      cy.screenshot("Recycling streets places");
+
+      cy.get("#select-place-table td").eq(3).click();
+      cy.screenshot("Recycling streets");
+      cy.get(".favorite-btn:first").click();
+      cy.wait(2000);
+      cy.get(".favorite-btn:first").click();
+    });
+  });
+
 });

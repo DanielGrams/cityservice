@@ -1,3 +1,4 @@
+from flask_security import current_user
 from marshmallow import fields, validate
 
 from project.api import marshmallow
@@ -34,7 +35,22 @@ class PlaceBaseSchemaMixin(TrackableSchemaMixin):
     weather_warning_name = marshmallow.auto_field(validate=[validate.Length(max=255)])
 
 
-class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin):
+class PlaceCurrentUserMixin(object):
+    is_favored = fields.Method(
+        "get_is_favored",
+        metadata={"description": "True, if place is favored by current user"},
+    )
+
+    def get_is_favored(self, event):
+        if not current_user or not current_user.is_authenticated:  # pragma: no cover
+            return False
+
+        from project.services.user import has_user_place
+
+        return has_user_place(current_user.id, event.id)
+
+
+class PlaceSchema(PlaceIdSchema, PlaceBaseSchemaMixin, PlaceCurrentUserMixin):
     pass
 
 
@@ -46,9 +62,13 @@ class PlaceListRequestSchema(PaginationRequestSchema):
     keyword = fields.Str()
 
 
+class PlaceListItemSchema(PlaceRefSchema, PlaceCurrentUserMixin):
+    pass
+
+
 class PlaceListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(PlaceRefSchema), metadata={"description": "Places"}
+        fields.Nested(PlaceListItemSchema), metadata={"description": "Places"}
     )
 
 

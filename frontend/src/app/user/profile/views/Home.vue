@@ -4,16 +4,17 @@
     <p>
       {{ currentUser.email }}
     </p>
-    <ul>
-      <li v-for="(role, index) in currentUser.roles" :key="index">
-        {{ role }}
-      </li>
-    </ul>
+
+    <UserPlaceList />
+    <UserRecyclingStreetList />
   </div>
 </template>
 
 <script>
+import UserPlaceList from "../components/UserPlaceList.vue";
+import UserRecyclingStreetList from "../components/UserRecyclingStreetList.vue";
 export default {
+  components: { UserPlaceList, UserRecyclingStreetList },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;

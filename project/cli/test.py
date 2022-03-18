@@ -53,7 +53,10 @@ def seed():
     click.echo("Seed done.")
 
 
-app.cli.add_command(test_cli)
+@test_cli.command("create-common-scenario")
+def seed():
+    seeder.create_common_scenario()
+    click.echo("Created common scenario.")
 
 
 @test_cli.command("news-item-create")

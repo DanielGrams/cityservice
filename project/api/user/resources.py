@@ -150,12 +150,12 @@ class UserPlaceListWriteResource(BaseResource):
 add_api_resource(UserResource, "/user", "api_user")
 add_api_resource(
     UserRecyclingStreetListResource,
-    "/user/recycling_streets",
+    "/user/recycling-streets",
     "api_v1_user_recycling_street_list",
 )
 add_api_resource(
     UserRecyclingStreetListWriteResource,
-    "/user/recycling_streets/<int:recycling_street_id>",
+    "/user/recycling-streets/<int:recycling_street_id>",
     "api_v1_user_recycling_street_list_write",
 )
 add_api_resource(

@@ -25,28 +25,8 @@ class Seeder(object):
     def create_user(
         self, email="test@test.de", password="MeinPasswortIstDasBeste", admin=False
     ):
-        from flask_security.confirmable import confirm_user
-
-        from project.services.user import (
-            add_admin_roles_to_user,
-            create_user,
-            find_user_by_email,
-        )
-
         with self._app.app_context():
-            user = find_user_by_email(email)
-
-            if user is None:
-                user = create_user(email, password)
-                confirm_user(user)
-
-            if admin:
-                add_admin_roles_to_user(email)
-
-            self._db.session.commit()
-            user_id = user.id
-
-        return user_id
+            return self._model_seeder.create_user(email, password, admin)
 
     def insert_default_oauth2_client(self, user_id):
         from project.api import scope_list
@@ -129,42 +109,16 @@ class Seeder(object):
         return weather_warning_id
 
     def create_recycling_street(self, **kwargs) -> int:
-        from project.models import RecyclingStreet
-
         with self._app.app_context():
-            recycling_street = RecyclingStreet()
-            recycling_street.town_id = (
-                kwargs["town_id"] if "town_id" in kwargs else "38640"
-            )
-            recycling_street.name = (
-                kwargs["name"] if "name" in kwargs else "Schreiberstraße"
-            )
-
-            self._db.session.add(recycling_street)
-            self._db.session.commit()
-            recycling_street_id = recycling_street.id
+            recycling_street_id = self._model_seeder.create_recycling_street(**kwargs)
 
         return recycling_street_id
 
     def create_recycling_event(self, street_id: int, **kwargs) -> int:
-        from project.dateutils import create_berlin_date
-        from project.models import RecyclingEvent
-
         with self._app.app_context():
-            recycling_event = RecyclingEvent()
-            recycling_event.street_id = street_id
-            recycling_event.category = (
-                kwargs["category"] if "category" in kwargs else "Biotonne"
+            recycling_event_id = self._model_seeder.create_recycling_event(
+                street_id, **kwargs
             )
-            recycling_event.date = (
-                kwargs["date"]
-                if "date" in kwargs
-                else create_berlin_date(2050, 1, 1, 12)
-            )
-
-            self._db.session.add(recycling_event)
-            self._db.session.commit()
-            recycling_event_id = recycling_event.id
 
         return recycling_event_id
 
@@ -176,10 +130,14 @@ class Seeder(object):
         with self._app.app_context():
             self._model_seeder.remove_user_recycling_street(user_id, recyclingstreet_id)
 
-    def add_user_place(self, user_id, recyclingstreet_id):
+    def add_user_place(self, user_id, place_id):
         with self._app.app_context():
-            self._model_seeder.add_user_place(user_id, recyclingstreet_id)
+            self._model_seeder.add_user_place(user_id, place_id)
 
-    def remove_user_place(self, user_id, recyclingstreet_id):
+    def remove_user_place(self, user_id, place_id):
         with self._app.app_context():
-            self._model_seeder.remove_user_place(user_id, recyclingstreet_id)
+            self._model_seeder.remove_user_place(user_id, place_id)
+
+    def create_common_scenario(self):
+        with self._app.app_context():
+            self._model_seeder.create_common_scenario()
