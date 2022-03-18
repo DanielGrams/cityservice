@@ -18,6 +18,7 @@ describe("Places", () => {
     cy.get("#name").clear().type("Seesen");
     cy.get(".submit-update-modal-btn").click();
 
+    cy.assertNoToast();
     cy.get(".delete-btn").click();
   });
 });

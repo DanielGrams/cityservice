@@ -22,6 +22,7 @@ describe("NewsFeeds", () => {
       cy.get(".vbt-autcomplete-list").click();
       cy.get(".submit-update-modal-btn").click();
 
+      cy.assertNoToast();
       cy.get(".delete-btn").click();
     });
   });
