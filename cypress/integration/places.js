@@ -4,6 +4,7 @@ describe("Places", () => {
       cy.login("test@test.de");
       cy.visit("/places");
       cy.screenshot("Places");
+      cy.wait(2000);
       cy.get("#main-table td").eq(0).click();
 
       cy.screenshot("Place");
