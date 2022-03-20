@@ -141,8 +141,10 @@ class ModelSeeder(object):
         import datetime
 
         from project.dateutils import get_today
+        from project.models import NewsFeed, NewsFeedType, Place
 
         today = get_today()
+        yesterday = today + datetime.timedelta(days=-1)
         tomorrow = today + datetime.timedelta(days=1)
 
         # User
@@ -186,9 +188,71 @@ class ModelSeeder(object):
             weather_warning_name="Stadt Seesen",
         )
 
-        # News
-        news_feed_id = self.create_news_feed(place_id=goslar_id)
-        self.create_news_item(news_feed_id)
+        # News feeds
+        places = Place.query.all()
+        for place in places:
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Stadt",
+                feed_type=NewsFeedType.city,
+                url="https://www.goslar.de/presse/pressemitteilungen?format=feed&type=rss",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Landkreis",
+                feed_type=NewsFeedType.district,
+                url="https://www.landkreis-goslar.de/media/rss/Pressemitteilung.xml",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="KWB",
+                feed_type=NewsFeedType.district,
+                url="https://www.kwb-goslar.de/media/rss/Pressemitteilungen.xml",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Polizei",
+                feed_type=NewsFeedType.police,
+                url="http://www.presseportal.de/rss/dienststelle_56518.rss2",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Stadtbibliothek",
+                feed_type=NewsFeedType.city,
+                url="https://stadtbibliothek.goslar.de/stadtbibliothek/aktuelles?format=feed&type=rss",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Mach mit!",
+                feed_type=NewsFeedType.citizen_participation,
+                url="https://machmit.goslar.de/category/machmit-prozess/feed",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Feuerwehr",
+                feed_type=NewsFeedType.fire_department,
+                url="https://feuerwehr-goslar.de/feed/",
+            )
+            self.create_news_feed(
+                place_id=place.id,
+                publisher="Bevölkerungsschutz",
+                feed_type=NewsFeedType.civil_protection,
+                url="https://warnung.bund.de/bbk.mowas/rss/031530000000.xml",
+            )
+
+        # News items
+        news_feeds = NewsFeed.query.all()
+        for news_feed in news_feeds:
+            self.create_news_item(
+                news_feed.id,
+                content="Es gibt etwas Neues!",
+                published=today,
+            )
+            self.create_news_item(
+                news_feed.id,
+                content="Es wird etwas Neues geben!",
+                published=yesterday,
+            )
 
         # Recycling Streets
         street_names = [

@@ -19,7 +19,7 @@
 
       <b-table
         ref="table"
-        id="main-table"
+        id="user-recycling-street-table"
         :fields="fields"
         :items="loadTableData"
         :current-page="currentPage"
@@ -46,7 +46,7 @@
         v-model="currentPage"
         :total-rows="totalRows"
         :per-page="perPage"
-        aria-controls="main-table"
+        aria-controls="user-recycling-street-table"
       ></b-pagination>
     </div>
   </b-overlay>
