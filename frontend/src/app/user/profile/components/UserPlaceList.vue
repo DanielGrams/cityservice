@@ -16,18 +16,21 @@
 
       <b-table
         ref="table"
-        id="main-table"
+        id="user-place-table"
         :fields="fields"
         :items="loadTableData"
         :current-page="currentPage"
         :per-page="perPage"
         primary-key="id"
         outlined
+        hover
         responsive
         thead-class="d-none"
         show-empty
         :empty-text="$t('shared.emptyData')"
         style="min-height: 120px"
+        selectable
+        @row-selected="onRowSelected"
       >
         <template #cell(actions)="data">
           <b-button
@@ -43,7 +46,7 @@
         v-model="currentPage"
         :total-rows="totalRows"
         :per-page="perPage"
-        aria-controls="main-table"
+        aria-controls="user-place-table"
       ></b-pagination>
     </div>
   </b-overlay>
@@ -110,6 +113,14 @@ export default {
           this.refreshTableData();
         });
       }
+    },
+    onRowSelected(items) {
+      /* istanbul ignore next */
+      if (items.length < 1) {
+        return;
+      }
+
+      this.$router.push({ path: `/places/${items[0].id}` });
     },
   },
 };

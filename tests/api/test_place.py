@@ -116,3 +116,23 @@ def test_recycling_street_list(client, seeder: Seeder, utils: UtilActions):
     assert response.json["items"][0]["id"] == ortsteil_id
     assert response.json["items"][1]["id"] == stadtteil_id
     assert response.json["items"][2]["id"] == schreiber_id
+
+
+def test_news_item_list(client, seeder: Seeder, utils: UtilActions):
+    place_id = seeder.create_place()
+    news_feed_id = seeder.create_news_feed(place_id=place_id)
+    seeder.create_news_item(news_feed_id)
+
+    url = utils.get_url("api_v1_place_news_item_list", id=place_id)
+    response = utils.get_ok(url)
+
+    assert len(response.json["items"]) == 1
+
+    news_item = response.json["items"][0]
+    assert news_item["news_feed"]["publisher"] == "Feuerwehr"
+    assert news_item["content"] == "Ein Einsatz war"
+    assert news_item["link_url"] == "https://example.com"
+    assert news_item["published"] == "2050-01-01T12:00:00+01:00"
+    assert (
+        news_item["publisher_icon_url"] == "http://localhost/media/taxi-solid-red.png"
+    )

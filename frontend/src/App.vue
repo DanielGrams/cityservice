@@ -16,6 +16,9 @@
         <b-navbar-nav>
           <b-nav-item to="/news">{{ $t("app.menu.news") }}</b-nav-item>
         </b-navbar-nav>
+        <b-navbar-nav>
+          <b-nav-item to="/places">{{ $t("app.menu.places") }}</b-nav-item>
+        </b-navbar-nav>
         <b-navbar-nav v-if="currentUser">
           <b-nav-item to="/user/profile">{{
             $t("app.menu.profile")

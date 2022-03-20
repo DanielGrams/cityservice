@@ -90,6 +90,11 @@ describe("User", () => {
       cy.get(".favorite-btn:first").click();
       cy.wait(2000);
       cy.get(".favorite-btn:first").click();
+
+      cy.visit("/user/profile");
+      cy.wait(2000);
+      cy.get("#user-place-table td:first").click();
+      cy.url().should("include", "/places/");
     });
   });
 

@@ -4,6 +4,10 @@ from sqlalchemy import func
 
 from project import db
 from project.api import add_api_resource
+from project.api.news_item.schemas import (
+    NewsItemListRequestSchema,
+    NewsItemListResponseSchema,
+)
 from project.api.place.schemas import (
     PlaceIdSchema,
     PlaceListRequestSchema,
@@ -22,7 +26,7 @@ from project.api.resources import (
     login_api_user_or_401,
     require_api_access,
 )
-from project.models import Place, RecyclingStreet
+from project.models import NewsFeed, NewsItem, Place, RecyclingStreet
 from project.oauth2 import require_oauth
 from project.services.place import get_place_query
 
@@ -144,10 +148,32 @@ class PlaceRecyclingStreetListResource(BaseResource):
         return pagination
 
 
+class PlaceNewsItemListResource(BaseResource):
+    @doc(
+        summary="List news items of place",
+        tags=["Places", "News"],
+    )
+    @use_kwargs(NewsItemListRequestSchema, location=("query"))
+    @marshal_with(NewsItemListResponseSchema)
+    def get(self, id, **kwargs):
+        pagination = (
+            NewsItem.query.join(NewsFeed)
+            .filter(NewsFeed.place_id == id)
+            .order_by(NewsItem.published.desc())
+            .paginate()
+        )
+        return pagination
+
+
 add_api_resource(PlaceListResource, "/places", "api_place_list")
 add_api_resource(PlaceResource, "/places/<int:id>", "api_place")
 add_api_resource(
     PlaceRecyclingStreetListResource,
     "/places/<int:id>/recycling-streets",
     "api_v1_place_recycling_street_list",
+)
+add_api_resource(
+    PlaceNewsItemListResource,
+    "/places/<int:id>/news-items",
+    "api_v1_place_news_item_list",
 )
