@@ -1,6 +1,5 @@
 from flask import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
-from sqlalchemy import func
 
 from project import db
 from project.api import add_api_resource
@@ -30,9 +29,9 @@ from project.api.weather_warning.schemas import (
     PlaceWeatherWarningListRequestSchema,
     PlaceWeatherWarningListResponseSchema,
 )
-from project.models import NewsFeed, NewsItem, Place, RecyclingStreet, WeatherWarning
+from project.models import NewsFeed, NewsItem, Place, WeatherWarning
 from project.oauth2 import require_oauth
-from project.services.place import get_place_query
+from project.services.place import get_place_query, get_place_recycling_streets_query
 
 
 class PlaceListResource(BaseResource):
@@ -138,15 +137,9 @@ class PlaceRecyclingStreetListResource(BaseResource):
     @use_kwargs(PlaceRecyclingStreetListRequestSchema, location=("query"))
     @marshal_with(PlaceRecyclingStreetListResponseSchema)
     def get(self, id, **kwargs):
-        pagination = (
-            RecyclingStreet.query.filter(RecyclingStreet.place_id == id)
-            .order_by(
-                db.case(((RecyclingStreet.name.ilike("Ortsteil%"), 0),), else_=1),
-                db.case(((RecyclingStreet.name.ilike("Stadtteil%"), 0),), else_=1),
-                func.lower(RecyclingStreet.name),
-            )
-            .paginate()
-        )
+        keyword = kwargs["keyword"] if "keyword" in kwargs else None
+        query = get_place_recycling_streets_query(id, keyword)
+        pagination = query.paginate()
         return pagination
 
 

@@ -117,6 +117,12 @@ def test_recycling_street_list(client, seeder: Seeder, utils: UtilActions):
     assert response.json["items"][1]["id"] == stadtteil_id
     assert response.json["items"][2]["id"] == schreiber_id
 
+    url = utils.get_url(
+        "api_v1_place_recycling_street_list", id=place_id, keyword="schreiber"
+    )
+    response = utils.get_json(url)
+    assert len(response.json["items"]) == 1
+
 
 def test_news_item_list(client, seeder: Seeder, utils: UtilActions):
     place_id = seeder.create_place()
