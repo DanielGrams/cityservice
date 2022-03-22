@@ -132,6 +132,9 @@
       "uniqueViolation": "Ein Eintrag mit den eingegebenen Werten existiert bereits. Doppelte Einträge sind nicht erlaubt.",
       "unprocessableEntity": "Die Anfrage konnte aufgrund von semantischen Fehlern nicht beantwortet werden."
     },
+    "filter": {
+      "instruction": "Tippen um zu filtern"
+    },
     "submit": "Senden",
     "toast": {
       "errorTitle": "Fehler",
