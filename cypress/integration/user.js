@@ -97,6 +97,8 @@ describe("User", () => {
       cy.get(".favorite-btn:first").click();
       cy.wait(2000);
       cy.get(".favorite-btn:first").click();
+      cy.get("#filter-input").type("berg");
+      cy.wait(2000);
 
       cy.visit("/user/profile");
       cy.wait(2000);

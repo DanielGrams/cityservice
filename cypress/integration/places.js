@@ -17,6 +17,8 @@ describe("Places", () => {
 
       cy.get(".tabs li.nav-item").eq(2).click();
       cy.screenshot("Recycling");
+      cy.get("#filter-input").type("berg");
+      cy.wait(2000);
       cy.get("#select-recycling-street-table td:first").click();
       cy.screenshot("RecyclingStreet");
       cy.get(".favorite-btn").click();

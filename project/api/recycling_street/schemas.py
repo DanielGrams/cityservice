@@ -59,7 +59,7 @@ class RecyclingStreetRefSchema(RecyclingStreetIdSchema):
 
 
 class PlaceRecyclingStreetListRequestSchema(PaginationRequestSchema):
-    pass
+    keyword = fields.Str()
 
 
 class RecyclingStreetListItemSchema(
