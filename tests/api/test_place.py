@@ -136,3 +136,21 @@ def test_news_item_list(client, seeder: Seeder, utils: UtilActions):
     assert (
         news_item["publisher_icon_url"] == "http://localhost/media/taxi-solid-red.png"
     )
+
+
+def test_weather_warning_list(client, seeder: Seeder, utils: UtilActions):
+    place_id = seeder.create_place()
+    weather_warning_id = seeder.create_weather_warning(place_id=place_id)
+
+    url = utils.get_url("api_v1_place_weather_warning_list", id=place_id)
+    response = utils.get_ok(url)
+
+    assert len(response.json["items"]) == 1
+
+    warning = response.json["items"][0]
+    assert warning["id"] == weather_warning_id
+    assert warning["content"] == "Es tritt mäßiger Frost zwischen -3 °C und -6 °C auf."
+    assert warning["headline"] == "Amtliche WARNUNG vor FROST"
+    assert warning["published"] == "2050-01-01T13:00:00+01:00"
+    assert warning["start"] == "2050-01-01T14:00:00+01:00"
+    assert warning["end"] == "2050-01-01T20:00:00+01:00"

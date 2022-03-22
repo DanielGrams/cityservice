@@ -5,14 +5,23 @@ describe("Places", () => {
       cy.visit("/places");
       cy.screenshot("Places");
       cy.wait(2000);
-      cy.get("#main-table td").eq(0).click();
+      cy.get("#main-table td:contains(Goslar)").click();
 
       cy.screenshot("Place");
       cy.get(".favorite-btn").click();
       cy.wait(2000);
       cy.get(".favorite-btn").click();
 
-      cy.get(".page-link:contains(2)").click();
+      cy.get(".tabs li.nav-item").eq(1).click();
+      cy.screenshot("Weather");
+
+      cy.get(".tabs li.nav-item").eq(2).click();
+      cy.screenshot("Recycling");
+      cy.get("#select-recycling-street-table td:first").click();
+      cy.screenshot("RecyclingStreet");
+      cy.get(".favorite-btn").click();
+      cy.wait(2000);
+      cy.get(".favorite-btn").click();
     });
   });
 });

@@ -3,15 +3,15 @@ from flask_apispec import doc, marshal_with
 from sqlalchemy import and_
 
 from project.api import add_api_resource
-from project.api.recycling_event.schemas import RecyclingEventSchema
+from project.api.recycling_event.schemas import LegacyRecyclingEventSchema
 from project.api.resources import BaseResource
 from project.dateutils import get_today
 from project.models import RecyclingEvent, RecyclingStreet
 
 
-class RecyclingEventListResource(BaseResource):
+class LegacyRecyclingEventListResource(BaseResource):
     @doc(summary="List recycling events for street", tags=["Recycling"])
-    @marshal_with(RecyclingEventSchema(many=True))
+    @marshal_with(LegacyRecyclingEventSchema(many=True))
     def get(self, street_id):
         street = RecyclingStreet.query.filter_by(id=street_id).first_or_404(
             description="Die Straße ist nicht vorhanden."
@@ -50,7 +50,7 @@ class RecyclingEventListResource(BaseResource):
 
 
 add_api_resource(
-    RecyclingEventListResource,
+    LegacyRecyclingEventListResource,
     "/recycling/street/<street_id>/events",
     "api_recycling_street_event_list",
 )

@@ -26,7 +26,11 @@ from project.api.resources import (
     login_api_user_or_401,
     require_api_access,
 )
-from project.models import NewsFeed, NewsItem, Place, RecyclingStreet
+from project.api.weather_warning.schemas import (
+    PlaceWeatherWarningListRequestSchema,
+    PlaceWeatherWarningListResponseSchema,
+)
+from project.models import NewsFeed, NewsItem, Place, RecyclingStreet, WeatherWarning
 from project.oauth2 import require_oauth
 from project.services.place import get_place_query
 
@@ -130,11 +134,9 @@ class PlaceRecyclingStreetListResource(BaseResource):
     @doc(
         summary="List recycling streets of place",
         tags=["Places", "Recycling"],
-        security=[{"oauth2": ["place:read"]}],
     )
     @use_kwargs(PlaceRecyclingStreetListRequestSchema, location=("query"))
     @marshal_with(PlaceRecyclingStreetListResponseSchema)
-    @require_api_access("place:read")
     def get(self, id, **kwargs):
         pagination = (
             RecyclingStreet.query.filter(RecyclingStreet.place_id == id)
@@ -165,6 +167,22 @@ class PlaceNewsItemListResource(BaseResource):
         return pagination
 
 
+class PlaceWeatherWarningListResource(BaseResource):
+    @doc(
+        summary="List weather warnings of place",
+        tags=["Places", "Weather"],
+    )
+    @use_kwargs(PlaceWeatherWarningListRequestSchema, location=("query"))
+    @marshal_with(PlaceWeatherWarningListResponseSchema)
+    def get(self, id, **kwargs):
+        pagination = (
+            WeatherWarning.query.filter(WeatherWarning.place_id == id)
+            .order_by(WeatherWarning.published.desc())
+            .paginate()
+        )
+        return pagination
+
+
 add_api_resource(PlaceListResource, "/places", "api_place_list")
 add_api_resource(PlaceResource, "/places/<int:id>", "api_place")
 add_api_resource(
@@ -176,4 +194,9 @@ add_api_resource(
     PlaceNewsItemListResource,
     "/places/<int:id>/news-items",
     "api_v1_place_news_item_list",
+)
+add_api_resource(
+    PlaceWeatherWarningListResource,
+    "/places/<int:id>/weather-warnings",
+    "api_v1_place_weather_warning_list",
 )

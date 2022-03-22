@@ -5,7 +5,7 @@
     </div>
     <b-table
       ref="table"
-      id="news-item-table"
+      id="select-recycling-street-table"
       :fields="fields"
       :items="loadTableData"
       :current-page="currentPage"
@@ -13,39 +13,21 @@
       primary-key="id"
       thead-class="d-none"
       outlined
+      hover
       responsive
       show-empty
       :empty-text="$t('shared.emptyData')"
       style="min-height: 120px"
+      selectable
+      @row-selected="onRowSelected"
     >
-      <template #cell(content)="data">
-        <div class="d-flex flex-row align-items-center position-relative">
-          <div class="m-3" style="max-width: 40px">
-            <img
-              :src="data.item.publisher_icon_url"
-              class="img-fluid rounded"
-              style="max-width: 40px"
-            />
-          </div>
-          <div>
-            <small>{{ data.item.published | moment("dd. DD.MM.YYYY") }}</small>
-            <h5 class="mb-1">{{ data.item.news_feed.publisher }}</h5>
-            <p class="mb-1">{{ data.item.content }}</p>
-          </div>
-          <a
-            :href="data.item.link_url"
-            target="_blank"
-            class="stretched-link"
-          ></a>
-        </div>
-      </template>
     </b-table>
     <b-pagination
       v-if="totalRows > perPage"
       v-model="currentPage"
       :total-rows="totalRows"
       :per-page="perPage"
-      aria-controls="news-item-table"
+      aria-controls="select-recycling-street-table"
     ></b-pagination>
   </div>
 </template>
@@ -56,18 +38,25 @@ export default {
   data() {
     return {
       errorMessage: null,
-      fields: ["content"],
+      fields: [
+        {
+          key: "name",
+          tdClass: "align-middle",
+        },
+      ],
       totalRows: 0,
       currentPage: 1,
       perPage: 10,
-      items: [],
+      searchResult: {
+        items: [],
+      },
     };
   },
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
       axios
-        .get(`/api/places/${this.$route.params.id}/news-items`, {
+        .get(`/api/places/${this.$route.params.id}/recycling-streets`, {
           params: {
             page: ctx.currentPage,
             per_page: ctx.perPage,
@@ -86,6 +75,14 @@ export default {
           callback(response.data.items);
         });
       return null;
+    },
+    onRowSelected(items) {
+      /* istanbul ignore next */
+      if (items.length < 1) {
+        return;
+      }
+
+      this.$router.push({ path: `/recycling-streets/${items[0].id}` });
     },
   },
 };

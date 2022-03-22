@@ -37,7 +37,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('frontend.index', path='news') }}">News</a>
+              <a class="nav-item nav-link" href="/news">News</a>
           </div>
           {% if current_user.is_authenticated %}
             <div class="navbar-nav navbar-right">
