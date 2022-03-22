@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h3>{{ $t("app.admin.places.list.title") }}</h3>
+    <h3>{{ $t("app.places.list.title") }}</h3>
 
     <div class="alert alert-danger" role="alert" v-if="errorMessage">
       {{ errorMessage }}

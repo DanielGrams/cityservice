@@ -26,11 +26,14 @@
         :per-page="perPage"
         primary-key="id"
         outlined
+        hover
         responsive
         thead-class="d-none"
         show-empty
         :empty-text="$t('shared.emptyData')"
         style="min-height: 120px"
+        selectable
+        @row-selected="onRowSelected"
       >
         <template #cell(actions)="data">
           <b-button
@@ -117,6 +120,14 @@ export default {
             this.refreshTableData();
           });
       }
+    },
+    onRowSelected(items) {
+      /* istanbul ignore next */
+      if (items.length < 1) {
+        return;
+      }
+
+      this.$router.push({ path: `/recycling-streets/${items[0].id}` });
     },
   },
 };

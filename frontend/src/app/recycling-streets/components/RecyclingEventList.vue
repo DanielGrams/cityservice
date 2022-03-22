@@ -5,7 +5,7 @@
     </div>
     <b-table
       ref="table"
-      id="news-item-table"
+      id="recycling-events-table"
       :fields="fields"
       :items="loadTableData"
       :current-page="currentPage"
@@ -19,24 +19,18 @@
       style="min-height: 120px"
     >
       <template #cell(content)="data">
-        <div class="d-flex flex-row align-items-center position-relative">
-          <div class="m-3" style="max-width: 40px">
+        <div class="d-flex flex-row align-items-center">
+          <div class="m-2" style="max-width: 40px">
             <img
-              :src="data.item.publisher_icon_url"
+              :src="data.item.category_icon_url"
               class="img-fluid rounded"
               style="max-width: 40px"
             />
           </div>
           <div>
-            <small>{{ data.item.published | moment("dd. DD.MM.YYYY") }}</small>
-            <h5 class="mb-1">{{ data.item.news_feed.publisher }}</h5>
-            <p class="mb-1">{{ data.item.content }}</p>
+            <small>{{ data.item.date | moment("dd. DD.MM.YYYY") }}</small>
+            <h5 class="mb-1">{{ data.item.category }}</h5>
           </div>
-          <a
-            :href="data.item.link_url"
-            target="_blank"
-            class="stretched-link"
-          ></a>
         </div>
       </template>
     </b-table>
@@ -45,7 +39,7 @@
       v-model="currentPage"
       :total-rows="totalRows"
       :per-page="perPage"
-      aria-controls="news-item-table"
+      aria-controls="recycling-events-table"
     ></b-pagination>
   </div>
 </template>
@@ -60,14 +54,13 @@ export default {
       totalRows: 0,
       currentPage: 1,
       perPage: 10,
-      items: [],
     };
   },
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
       axios
-        .get(`/api/places/${this.$route.params.id}/news-items`, {
+        .get(`/api/recycling-streets/${this.$route.params.id}/events`, {
           params: {
             page: ctx.currentPage,
             per_page: ctx.perPage,

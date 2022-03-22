@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import store from "../store";
 import newsRoutes from "./news/router";
 import placesRoutes from "./places/router";
+import recyclingStreetsRoutes from "./recycling-streets/router";
 import adminRoutes from "./admin/router";
 import userRoutes from "./user/router";
 import authRoutes from "./auth/router";
@@ -16,6 +17,7 @@ const routes = [
   ...authRoutes,
   ...newsRoutes,
   ...placesRoutes,
+  ...recyclingStreetsRoutes,
   ...userRoutes,
   ...adminRoutes,
 ];

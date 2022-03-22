@@ -13,10 +13,10 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
 
     assert len(response.json) == 1
 
-    news_item = response.json[0]
-    assert news_item["date"] == "2050-01-01T12:00:00+01:00"
-    assert news_item["category"] == "Biotonne"
-    assert news_item["category_icon_url"] == "http://localhost/media/1.4.png"
+    event_item = response.json[0]
+    assert event_item["date"] == "2050-01-01T12:00:00+01:00"
+    assert event_item["category"] == "Biotonne"
+    assert event_item["category_icon_url"] == "http://localhost/media/1.4.png"
 
     # All
     url = utils.get_url(
@@ -36,7 +36,7 @@ def test_list_street_before_2022(client, seeder: Seeder, utils: UtilActions):
 
     assert len(response.json) == 1
 
-    news_item = response.json[0]
-    assert news_item["date"] == "2050-01-01T12:00:00+01:00"
-    assert news_item["category"] == "Biotonne"
-    assert news_item["category_icon_url"] == "http://localhost/media/1.4.png"
+    event_item = response.json[0]
+    assert event_item["date"] == "2050-01-01T12:00:00+01:00"
+    assert event_item["category"] == "Biotonne"
+    assert event_item["category_icon_url"] == "http://localhost/media/1.4.png"

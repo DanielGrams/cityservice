@@ -82,6 +82,22 @@
       "profile": "Profil",
       "title": "Goslar Service App"
     },
+    "places": {
+      "list": {
+        "title": "Orte"
+      },
+      "read": {
+        "news": {
+          "title": "News"
+        },
+        "recycling": {
+          "title": "Müllabfuhr"
+        },
+        "weather": {
+          "title": "Wetter"
+        }
+      }
+    },
     "user": {
       "places": {
         "title": "Meine Orte wählen"

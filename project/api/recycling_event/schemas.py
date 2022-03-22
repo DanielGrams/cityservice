@@ -3,15 +3,26 @@ from marshmallow import fields
 
 from project.api import marshmallow
 from project.api.fields import CustomDateTimeField
-from project.api.schemas import SQLAlchemyBaseSchema
+from project.api.schemas import (
+    IdSchemaMixin,
+    PaginationRequestSchema,
+    PaginationResponseSchema,
+    SQLAlchemyBaseSchema,
+)
 from project.models import RecyclingEvent
 
 
-class RecyclingEventSchema(SQLAlchemyBaseSchema):
+class RecyclingEventModelSchema(SQLAlchemyBaseSchema):
     class Meta:
         model = RecyclingEvent
         load_instance = True
 
+
+class RecyclingEventIdSchema(RecyclingEventModelSchema, IdSchemaMixin):
+    pass
+
+
+class RecyclingEventBaseSchemaMixin(object):
     category = marshmallow.auto_field()
     date = CustomDateTimeField()
     category_icon_url = fields.Method("get_category_icon_url")
@@ -31,3 +42,26 @@ class RecyclingEventSchema(SQLAlchemyBaseSchema):
             return url_for("serve_file_in_dir", path="1.6.png", _external=True)
         elif item.category == "Wertstofftonne danach":
             return url_for("serve_file_in_dir", path="2523.1.png", _external=True)
+
+
+class LegacyRecyclingEventSchema(
+    RecyclingEventModelSchema, RecyclingEventBaseSchemaMixin
+):
+    pass
+
+
+class RecyclingEventSchema(RecyclingEventIdSchema, RecyclingEventBaseSchemaMixin):
+    pass
+
+
+class RecyclingEventListRequestSchema(PaginationRequestSchema):
+    all = fields.Boolean(
+        required=False,
+        default=False,
+    )
+
+
+class RecyclingEventListResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(RecyclingEventSchema), metadata={"description": "Events"}
+    )

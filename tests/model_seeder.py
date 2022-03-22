@@ -140,12 +140,11 @@ class ModelSeeder(object):
     def create_common_scenario(self):
         import datetime
 
-        from project.dateutils import get_today
+        from project.dateutils import create_berlin_date, get_today
         from project.models import NewsFeed, NewsFeedType, Place
 
         today = get_today()
         yesterday = today + datetime.timedelta(days=-1)
-        tomorrow = today + datetime.timedelta(days=1)
 
         # User
         user_id = self.create_user()
@@ -214,6 +213,9 @@ class ModelSeeder(object):
                 publisher="Polizei",
                 feed_type=NewsFeedType.police,
                 url="http://www.presseportal.de/rss/dienststelle_56518.rss2",
+                title_filter=".*(Goslar|Vienenburg).*",
+                title_sub_pattern="POL-GS:",
+                title_sub_repl="",
             )
             self.create_news_feed(
                 place_id=place.id,
@@ -254,7 +256,8 @@ class ModelSeeder(object):
                 published=yesterday,
             )
 
-        # Recycling Streets
+        # Recycling
+        begin_of_year = create_berlin_date(today.year, 1, 1)
         street_names = [
             "Ortsteil - Hahndorf",
             "Ortsteil - Hahnenklee-Bockswiese",
@@ -276,8 +279,35 @@ class ModelSeeder(object):
             )
 
             categories = ["Biotonne", "Blaue Tonne", "Gelber Sack", "Restmülltonne"]
-            for category in categories:
-                self.create_recycling_event(street_id, category=category, date=tomorrow)
+            len_categories = len(categories)
+            offset = 0
+            index = 0
+
+            while offset < 365:
+                date = begin_of_year + datetime.timedelta(days=offset)
+                category = categories[index % len_categories]
+                self.create_recycling_event(street_id, category=category, date=date)
+                index = index + 1
+                offset = offset + 2
+
+        # Weather
+        for place in places:
+            self.create_weather_warning(
+                place_id=place.id,
+                headline="Amtliche WARNUNG vor FROST",
+                content="Es tritt mäßiger Frost zwischen -3 °C und -6 °C auf.",
+                start=create_berlin_date(today.year, today.month, today.day, 14),
+                end=create_berlin_date(today.year, today.month, today.day, 20),
+                published=today,
+            )
+            self.create_weather_warning(
+                place_id=place.id,
+                headline="Amtliche WARNUNG vor NEBEL",
+                content="Es tritt gebietsweise Nebel mit Sichtweiten unter 150 Metern auf.",
+                start=create_berlin_date(today.year, today.month, today.day, 18),
+                end=create_berlin_date(today.year, today.month, today.day, 22),
+                published=today,
+            )
 
         # User
         self.add_user_place(user_id, goslar_id)

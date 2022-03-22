@@ -8,25 +8,43 @@
             <b-button
               @click="toggleFavorite()"
               class="favorite-btn"
-              variant="secondary"
+              variant="light"
               ><b-icon :icon="place.is_favored ? 'star-fill' : 'star'"></b-icon
             ></b-button>
           </b-button-group>
         </h3>
       </div>
-      <NewsList />
+
+      <b-nav tabs class="tabs">
+        <b-nav-item
+          :to="`/places/${this.placeId}`"
+          exact
+          exact-active-class="active"
+          >{{ $t("app.places.read.news.title") }}</b-nav-item
+        >
+        <b-nav-item
+          :to="`/places/${this.placeId}/weather`"
+          exact
+          exact-active-class="active"
+          >{{ $t("app.places.read.weather.title") }}</b-nav-item
+        >
+        <b-nav-item
+          :to="`/places/${this.placeId}/recycling`"
+          exact
+          exact-active-class="active"
+          >{{ $t("app.places.read.recycling.title") }}</b-nav-item
+        >
+      </b-nav>
+
+      <router-view></router-view>
     </b-overlay>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import NewsList from "../components/NewsList.vue";
 
 export default {
-  components: {
-    NewsList,
-  },
   data() {
     return {
       isLoading: false,
@@ -34,6 +52,9 @@ export default {
     };
   },
   computed: {
+    placeId() {
+      return this.$route.params.id;
+    },
     currentUser() {
       return this.$store.state.auth.user;
     },
@@ -46,7 +67,7 @@ export default {
   methods: {
     loadData() {
       axios
-        .get(`/api/places/${this.$route.params.id}`, {
+        .get(`/api/places/${this.placeId}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
         .then((response) => {

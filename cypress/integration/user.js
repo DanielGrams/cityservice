@@ -71,6 +71,13 @@ describe("User", () => {
       cy.login("test@test.de");
       cy.visit("/user/profile");
       cy.screenshot("Profile");
+
+      cy.visit("/user/profile");
+      cy.wait(2000);
+      cy.get("#user-recycling-street-table td:first").click();
+      cy.url().should("include", "/recycling-streets/");
+
+      cy.visit("/user/profile");
       cy.get(".remove-place-btn:first").click();
       cy.get(".remove-recycling-street-btn:first").click();
 
