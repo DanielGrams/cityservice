@@ -18,4 +18,17 @@ module.exports = {
       enableBridge: false,
     },
   },
+
+  pwa: {
+    name: 'City service',
+    themeColor: '#009688',
+    appleMobileWebAppCapable: 'yes',
+    iconPaths: {
+      maskIcon: null,
+    },
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: 'src/service-worker.js',
+    }
+  }
 };

@@ -43,6 +43,18 @@
       </b-collapse>
     </b-navbar>
 
+    <b-alert
+      v-model="isRefresh"
+      class="position-fixed fixed-bottom m-0 rounded-0"
+      style="z-index: 2000"
+      variant="info"
+    >
+      <div class="mb-2">{{ $t("app.updateAlert.message") }}</div>
+      <b-button variant="info" @click="update">{{
+        $t("app.updateAlert.button")
+      }}</b-button>
+    </b-alert>
+
     <div class="body-content">
       <router-view />
       <footer>
@@ -68,6 +80,11 @@
 
 <script>
 export default {
+  data: () => ({
+    registration: null,
+    isRefresh: false,
+    refreshing: false,
+  }),
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
@@ -76,11 +93,28 @@ export default {
       return this.$store.getters["auth/isAdmin"];
     },
   },
+  created() {
+    document.addEventListener("serviceWorkerUpdateEvent", this.appUpdateUI, {
+      once: true,
+    });
+  },
   methods: {
     logOut() {
       this.$store.dispatch("auth/logout").then(() => {
         this.$router.replace("/");
       });
+    },
+    /* istanbul ignore next */
+    appUpdateUI(e) {
+      this.registration = e.detail;
+      this.isRefresh = true;
+    },
+    /* istanbul ignore next */
+    update() {
+      this.isRefresh = false;
+      if (this.registration || this.registration.waiting) {
+        this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
     },
   },
 };

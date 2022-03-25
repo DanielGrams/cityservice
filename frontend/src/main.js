@@ -15,6 +15,7 @@ import { messages } from "vee-validate/dist/locale/de.json";
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
+import './registerServiceWorker'
 
 Vue.config.productionTip = false;
 
