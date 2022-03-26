@@ -1,3 +1,7 @@
+Cypress.on('window:before:load', (win) => {
+  delete win.navigator.__proto__.ServiceWorker
+})
+
 Cypress.Commands.add("logexec", (command) => {
   return cy.exec(command, { failOnNonZeroExit: false }).then(function (result) {
     if (result.code) {
