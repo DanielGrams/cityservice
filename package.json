@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.12",
-    "cypress": "^9.3.1",
+    "cypress": "^9.5.2",
     "cypress-fail-on-console-error": "^2.1.3"
   }
 }
