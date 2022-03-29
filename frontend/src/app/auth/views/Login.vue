@@ -48,7 +48,7 @@ export default {
         .dispatch("auth/login", { email: this.email, password: this.password })
         .then(
           () => {
-            setTimeout(() => this.redirect(), 500);
+            this.redirect();
           },
           () => {
             this.isSubmitting = false;

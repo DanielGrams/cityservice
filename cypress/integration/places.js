@@ -2,7 +2,7 @@ describe("Places", () => {
   it("default", () => {
     cy.createCommonScenario().then(function () {
       cy.login("test@test.de");
-      cy.cvisit("/places");
+      cy.visit("/places");
       cy.screenshot("Places");
       cy.wait(2000);
       cy.get("#main-table td:contains(Goslar)").click();

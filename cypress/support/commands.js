@@ -11,19 +11,8 @@ Cypress.Commands.add("logexec", (command) => {
   });
 });
 
-Cypress.Commands.add("cvisit", (url) => {
-  cy.visit(url, {
-    onBeforeLoad (win) {
-      delete win.navigator.__proto__.ServiceWorker
-    }
-  })
-});
-
 Cypress.Commands.add("setup", () => {
   cy.logexec("flask test reset --seed && flask users create test@test.de --password password --active && flask users create admin@test.de --password password --active && flask roles add admin@test.de admin");
-  cy.clearCookies();
-  cy.getCookies().should('be.empty');
-  cy.cvisit("/news");
 });
 
 Cypress.Commands.add("createCommonScenario", () => {
@@ -73,14 +62,12 @@ Cypress.Commands.add(
       loginUrl += "?redirectTo=" + redirectTo
     }
 
-    cy.cvisit(loginUrl);
-    cy.screenshot("Login")
+    cy.visit(loginUrl);
     cy.get("#email").type(email);
     cy.get("#password").type(password);
     cy.get("#submit").click();
 
     cy.url().should("include", redirectTo);
-    cy.screenshot("Redirect");
     cy.getCookie("session").should("exist");
   }
 );

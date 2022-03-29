@@ -1,13 +1,8 @@
 describe("NewsFeeds", () => {
   it("default", () => {
-    cy.intercept('*', (req) => {
-      Cypress.log(req);
-      return req;
-    });
-
     cy.createPlace().then(function (placeId) {
       cy.login("admin@test.de");
-      cy.cvisit("/admin/news-feeds");
+      cy.visit("/admin/news-feeds");
       cy.screenshot("list-empty");
 
       cy.get(".add-btn").click();

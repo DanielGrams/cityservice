@@ -1,11 +1,11 @@
 describe("User", () => {
   it("login", () => {
     // /profile without Login should redirect to Login
-    cy.cvisit("/user/profile");
+    cy.visit("/user/profile");
     cy.url().should("include", "/login");
 
     // Login
-    cy.cvisit("/login");
+    cy.visit("/login");
     cy.screenshot("login");
 
     // Blank
@@ -38,7 +38,7 @@ describe("User", () => {
     cy.screenshot("profile");
 
     // Redirect to profile if logged in
-    cy.cvisit("/login");
+    cy.visit("/login");
     cy.url().should("include", "/user/profile");
   });
 
@@ -46,7 +46,7 @@ describe("User", () => {
     cy.login("test@test.de", "password", "/news");
 
     // /admin without role should redirect to Profile
-    cy.cvisit("/admin");
+    cy.visit("/admin");
     cy.url().should("include", "/profile");
 
     // Logout
@@ -61,7 +61,7 @@ describe("User", () => {
 
     // Admin
     cy.login("admin@test.de");
-    cy.cvisit("/admin");
+    cy.visit("/admin");
     cy.url().should("include", "/admin");
     cy.screenshot("admin");
   });
@@ -69,15 +69,15 @@ describe("User", () => {
   it("profile", () => {
     cy.createCommonScenario().then(function () {
       cy.login("test@test.de");
-      cy.cvisit("/user/profile");
+      cy.visit("/user/profile");
       cy.screenshot("Profile");
 
-      cy.cvisit("/user/profile");
+      cy.visit("/user/profile");
       cy.wait(2000);
       cy.get("#user-recycling-street-table td:first").click();
       cy.url().should("include", "/recycling-streets/");
 
-      cy.cvisit("/user/profile");
+      cy.visit("/user/profile");
       cy.get(".remove-place-btn:first").click();
       cy.get(".remove-recycling-street-btn:first").click();
 
@@ -88,7 +88,7 @@ describe("User", () => {
       cy.wait(2000);
       cy.get(".favorite-btn:first").click();
 
-      cy.cvisit("/user/profile");
+      cy.visit("/user/profile");
       cy.get("#add-recycling-street-btn").click();
       cy.screenshot("Recycling streets places");
 
@@ -100,7 +100,7 @@ describe("User", () => {
       cy.get("#filter-input").type("berg");
       cy.wait(2000);
 
-      cy.cvisit("/user/profile");
+      cy.visit("/user/profile");
       cy.wait(2000);
       cy.get("#user-place-table td:first").click();
       cy.url().should("include", "/places/");
