@@ -98,6 +98,10 @@
         }
       }
     },
+    "updateAlert": {
+      "button": "Aktualisieren",
+      "message": "Es gibt eine neue Version der App."
+    },
     "user": {
       "places": {
         "title": "Meine Orte wählen"

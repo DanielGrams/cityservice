@@ -1,6 +1,13 @@
 import '@cypress/code-coverage/support'
 import "./commands";
 import failOnConsoleError from "cypress-fail-on-console-error";
+require('cypress-failed-log')
+require('cypress-terminal-report/src/installLogsCollector')({
+  xhr: {
+    printHeaderData: true,
+    printRequestData: true,
+  }
+});
 
 failOnConsoleError();
 

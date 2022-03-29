@@ -12,6 +12,7 @@ app.yaml
 deployment.yaml
 node_modules
 cypress/videos
+cypress/logs
 cypress/screenshots
 .nyc_output/
 coverage/

@@ -12,12 +12,21 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 const fs = require("fs");
+const path = require('path');
 /**
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
   require("@cypress/code-coverage/task")(on, config);
+  require('cypress-terminal-report/src/installLogsPrinter')(on, {
+    logToFilesOnAfterRun: true,
+    outputRoot: config.projectRoot + '/cypress/logs/',
+    specRoot: path.relative(config.fileServerFolder, config.integrationFolder),
+    outputTarget: {
+      'cypress-logs|json': 'json',
+    }
+  });
   on("after:screenshot", (details) => {
     const newPath = details.path
       .replace(/ \(\d*\)/i, "")
@@ -29,6 +38,9 @@ module.exports = (on, config) => {
         resolve({ path: newPath });
       });
     });
+  });
+  on('task', {
+    failed: require('cypress-failed-log/src/failed')(),
   });
 
   return config;

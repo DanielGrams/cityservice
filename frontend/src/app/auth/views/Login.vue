@@ -48,17 +48,20 @@ export default {
         .dispatch("auth/login", { email: this.email, password: this.password })
         .then(
           () => {
-            if (this.$route.query.redirectTo) {
-              this.$router.replace(this.$route.query.redirectTo);
-            } else {
-              this.$router.replace("/user/profile");
-            }
+            this.redirect();
           },
           () => {
             this.isSubmitting = false;
             this.$root.makeErrorToast(this.$t("app.auth.login.errorMessage"));
           }
         );
+    },
+    redirect() {
+      if (this.$route.query.redirectTo) {
+        this.$router.replace(this.$route.query.redirectTo);
+      } else {
+        this.$router.replace("/user/profile");
+      }
     },
   },
 };
