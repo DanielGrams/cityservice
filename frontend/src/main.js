@@ -176,6 +176,7 @@ var vue = new Vue({
   },
 }).$mount("#app");
 
+axios.defaults.withCredentials = true;
 axios.interceptors.request.use(
   function (config) {
     if (config) {

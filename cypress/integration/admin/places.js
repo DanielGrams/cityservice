@@ -1,7 +1,7 @@
 describe("Places", () => {
   it("default", () => {
     cy.login("admin@test.de");
-    cy.visit("/admin/places");
+    cy.cvisit("/admin/places");
     cy.screenshot("list-empty");
 
     cy.get(".add-btn").click();
