@@ -2,6 +2,7 @@
 
 import { register } from 'register-service-worker'
 
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'production' && process.env.VUE_APP_SERVICE_WORKER_DISABLED !== '1') {
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready () {
