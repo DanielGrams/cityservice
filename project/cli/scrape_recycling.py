@@ -98,7 +98,6 @@ def scrape_streets(place: Place, town: ScrapeTown):
 
             item = RecyclingStreet.query.filter(
                 and_(
-                    RecyclingStreet.place_id == place.id,
                     RecyclingStreet.source_id == street_id,
                     RecyclingStreet.town_id == town.identifier,
                 )
@@ -109,6 +108,7 @@ def scrape_streets(place: Place, town: ScrapeTown):
             else:
                 item_did_exist = True
 
+            item.place_id == place.id
             item.name = street_name.replace(replace_from, replace_to)
             item.town_id = town.identifier
 
@@ -179,6 +179,26 @@ def scrape_events_for_street(street, event_ids):
 
 
 def delete_old_events(min_date):
+    streets_with_places = RecyclingStreet.query.filter(
+        RecyclingStreet.place_id.isnot(None)
+    ).all()
+
+    street_ids_to_delete = list()
+    for street_with_place in streets_with_places:
+        matching_street = RecyclingStreet.query.filter(
+            RecyclingStreet.id != street_with_place.id,
+            RecyclingStreet.source_id == street_with_place.source_id,
+            RecyclingStreet.town_id == street_with_place.town_id,
+            RecyclingStreet.name == street_with_place.name,
+        ).first()
+
+        if matching_street:
+            street_ids_to_delete.append(matching_street.id)
+
+    RecyclingEvent.query.filter(
+        RecyclingEvent.street_id.in_(street_ids_to_delete)
+    ).delete(synchronize_session=False)
+
     RecyclingEvent.query.filter(RecyclingEvent.date <= min_date).delete()
     RecyclingStreet.query.filter(not_(RecyclingStreet.events.any())).delete(
         synchronize_session=False
