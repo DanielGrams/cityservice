@@ -42,6 +42,16 @@ def test_scrape(
     result = runner.invoke(args=["scrape", "recycling"])
     assert "Done." in result.output
 
+    # Create street without place (legacy)
+    with app.app_context():
+        street = RecyclingStreet.query.first()
+        legacy_street_id = seeder.create_recycling_street(
+            source_id=street.source_id,
+            town_id=street.town_id,
+            name=street.name,
+        )
+        seeder.create_recycling_event(legacy_street_id)
+
     # Invoke again (to test existing items)
     runner = app.test_cli_runner()
     result = runner.invoke(args=["scrape", "recycling"])
