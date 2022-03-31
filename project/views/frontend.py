@@ -7,14 +7,8 @@ frontend = Blueprint(
 )
 
 
-@frontend.route("/admin")
-@frontend.route("/admin/<path:path>")
-@frontend.route("/login")
-@frontend.route("/news")
-@frontend.route("/news/<path:path>")
-@frontend.route("/places")
-@frontend.route("/places/<path:path>")
-@frontend.route("/user/<path:path>")
+@frontend.errorhandler(404)
+@frontend.route("/")
 def index(path=None):  # pragma: no cover
     return frontend.send_static_file("index.html")
 

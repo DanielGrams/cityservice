@@ -17,7 +17,7 @@ from project.models import OAuth2AuthorizationCode, OAuth2Client, OAuth2Token, U
 
 
 def get_issuer():
-    return url_for("index", _external=True).rstrip("/")
+    return url_for("frontend.index", _external=True).rstrip("/")
 
 
 def generate_user_info(user, scope):
