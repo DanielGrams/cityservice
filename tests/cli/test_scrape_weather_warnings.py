@@ -51,6 +51,21 @@ def test_scrape(
         items = WeatherWarning.query.all()
         assert len(items) == 0
 
+    # March warnings
+    utils.mock_get_request_with_file(mock_url, datadir, "dwd_march.html")
+
+    # Invoke
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=["scrape", "weather_warnings"])
+    assert "Done." in result.output
+
+    # Test
+    with app.app_context():
+        from project.models import WeatherWarning
+
+        items = WeatherWarning.query.all()
+        assert len(items) == 1
+
 
 def test_parse_date_time(client, seeder: Seeder, utils: UtilActions, app):
     from project.cli.scrape_weather_warnings import _parse_date_time
@@ -59,3 +74,7 @@ def test_parse_date_time(client, seeder: Seeder, utils: UtilActions, app):
     now = utils.mock_now(2022, 12, 31)
     result = _parse_date_time(now, "So, 01. Jan, 10:00 Uhr")
     assert result == create_berlin_date(2023, 1, 1, 10, 0)
+
+    now = utils.mock_now(2022, 3, 31)
+    result = _parse_date_time(now, "Do., 31. März, 07:49 Uhr")
+    assert result == create_berlin_date(2022, 3, 31, 7, 49)

@@ -107,26 +107,50 @@ def scrape_place(
 
 
 def _parse_date_time(now: datetime, input: str) -> datetime:
-    # Fr, 04. Mär, 07:33 Uhr
-    regex = r"\w{2}, (\d{2})\. (.{3}), (\d{2}):(\d{2})"
+    # Do., 31. März, 07:49 Uhr
+    regex = r"\w{2}\., (\d{2})\. ([^,]{3,}), (\d{2}):(\d{2})"
     match = re.search(regex, input)
-    day_str, month_str, hour_str, minute_str = match.groups()
 
-    months = {
-        "Jan": 1,
-        "Feb": 2,
-        "Mär": 3,
-        "Apr": 4,
-        "Mai": 5,
-        "Jun": 6,
-        "Jul": 7,
-        "Aug": 8,
-        "Sep": 9,
-        "Okt": 10,
-        "Nov": 11,
-        "Dez": 12,
-    }
-    month = months[month_str]
+    if match:
+        day_str, month_str, hour_str, minute_str = match.groups()
+
+        months = {
+            "Januar": 1,
+            "Februar": 2,
+            "März": 3,
+            "April": 4,
+            "Mai": 5,
+            "Juni": 6,
+            "Juli": 7,
+            "August": 8,
+            "September": 9,
+            "Oktober": 10,
+            "November": 11,
+            "Dezember": 12,
+        }
+        month = months[month_str]
+
+    else:
+        # Fr, 04. Mär, 07:33 Uhr
+        regex = r"\w{2}, (\d{2})\. (.{3}), (\d{2}):(\d{2})"
+        match = re.search(regex, input)
+        day_str, month_str, hour_str, minute_str = match.groups()
+
+        months = {
+            "Jan": 1,
+            "Feb": 2,
+            "Mär": 3,
+            "Apr": 4,
+            "Mai": 5,
+            "Jun": 6,
+            "Jul": 7,
+            "Aug": 8,
+            "Sep": 9,
+            "Okt": 10,
+            "Nov": 11,
+            "Dez": 12,
+        }
+        month = months[month_str]
 
     result = create_berlin_date(
         now.year, month, int(day_str), int(hour_str), int(minute_str)
