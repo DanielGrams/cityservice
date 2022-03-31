@@ -1,25 +1,26 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "../store";
-import newsRoutes from "./news/router";
 import placesRoutes from "./places/router";
 import recyclingStreetsRoutes from "./recycling-streets/router";
 import adminRoutes from "./admin/router";
 import userRoutes from "./user/router";
 import authRoutes from "./auth/router";
+import rootRoutes from "./root/router";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
+    component: () => import("./root/views/Home.vue"),
   },
   ...authRoutes,
-  ...newsRoutes,
   ...placesRoutes,
   ...recyclingStreetsRoutes,
   ...userRoutes,
   ...adminRoutes,
+  ...rootRoutes,
 ];
 
 const router = new VueRouter({

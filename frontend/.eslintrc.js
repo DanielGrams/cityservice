@@ -11,6 +11,7 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint'
   },
+  ignorePatterns: ["src/app/root/views/*.vue"],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',

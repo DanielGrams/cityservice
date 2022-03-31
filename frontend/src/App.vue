@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="light" variant="light">
-      <b-navbar-brand href="/">
+      <b-navbar-brand to="/">
         <img
           src="@/assets/apple-touch-icon.png"
           width="30"
@@ -13,9 +13,6 @@
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/news">{{ $t("app.menu.news") }}</b-nav-item>
-        </b-navbar-nav>
         <b-navbar-nav>
           <b-nav-item to="/places">{{ $t("app.menu.places") }}</b-nav-item>
         </b-navbar-nav>
@@ -69,9 +66,9 @@
           </i18n>
         </p>
         <p class="text-center small">
-          <a href="/impressum">{{ $t("app.footer.imprint") }}</a> &vert;
-          <a href="/impressum">{{ $t("app.footer.contact") }}</a> &vert;
-          <a href="/datenschutz">{{ $t("app.footer.privacy") }}</a>
+          <b-link to="/impressum">{{ $t("app.footer.imprint") }}</b-link> &vert;
+          <b-link to="/impressum">{{ $t("app.footer.contact") }}</b-link> &vert;
+          <b-link to="/datenschutz">{{ $t("app.footer.privacy") }}</b-link>
         </p>
       </footer>
     </div>
@@ -80,6 +77,9 @@
 
 <script>
 export default {
+  metaInfo: {
+    title: "City Service App",
+  },
   data: () => ({
     registration: null,
     isRefresh: false,
@@ -97,6 +97,18 @@ export default {
     document.addEventListener("serviceWorkerUpdateEvent", this.appUpdateUI, {
       once: true,
     });
+
+    // Prevent multiple refreshes
+    /* istanbul ignore next */
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (this.refreshing) {
+        return;
+      }
+
+      this.refreshing = true;
+      // Here the actual reload of the page occurs
+      window.location.reload();
+    });
   },
   methods: {
     logOut() {
@@ -112,9 +124,14 @@ export default {
     /* istanbul ignore next */
     update() {
       this.isRefresh = false;
-      if (this.registration || this.registration.waiting) {
-        this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
+
+      // Make sure we only send a 'skip waiting' message if the SW is waiting
+      if (!this.registration || !this.registration.waiting) {
+        return;
       }
+
+      // Send message to SW to skip the waiting and activate the new SW
+      this.registration.waiting.postMessage({ type: "SKIP_WAITING" });
     },
   },
 };

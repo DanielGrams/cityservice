@@ -1,13 +1,12 @@
-from flask import url_for
 from flask_babelex import lazy_gettext
 from markupsafe import Markup
 
 
 def get_accept_tos_markup():
-    tos_open = '<a href="%s">' % url_for("impressum")
+    tos_open = '<a href="/impressum">'
     tos_close = "</a>"
 
-    privacy_open = '<a href="%s">' % url_for("datenschutz")
+    privacy_open = '<a href="/datenschutz">'
     privacy_close = "</a>"
 
     return Markup(

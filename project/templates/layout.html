@@ -28,7 +28,7 @@
   <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{{ url_for('index') }}">
+      <a class="navbar-brand" href="{{ url_for('frontend.index') }}">
         <img src="{{ url_for('static', filename='apple-touch-icon.png')}}" width="30" height="30" class="d-inline-block align-top rounded" alt="Logo">
         Goslar Service App
       </a>
@@ -59,7 +59,7 @@
         {% endblock %}
         <footer>
             <p class="text-center">Mit <i class="fa fa-heart" style="color: red"></i> in <strong>Goslar</strong> entwickelt.</p>
-            <p class="text-center small"><a href="{{ url_for('impressum') }}">Impressum</a> | <a href="{{ url_for('impressum') }}">Kontakt</a> | <a href="{{ url_for('datenschutz') }}">Datenschutz</a></p>
+            <p class="text-center small"><a href="/impressum">Impressum</a> | <a href="/impressum">Kontakt</a> | <a href="/datenschutz">Datenschutz</a></p>
         </footer>
     </div>
 
