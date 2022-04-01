@@ -36,6 +36,7 @@ class AuthService {
             {
               email: email,
               password: password,
+              remember: true,
             },
             {
               headers: { "X-CSRF-Token": csrf_token },
