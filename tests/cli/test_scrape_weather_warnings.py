@@ -67,6 +67,40 @@ def test_scrape(
         assert len(items) == 1
 
 
+def test_april_data(client, seeder: Seeder, utils: UtilActions, app, datadir):
+    from project.cli.scrape_weather_warnings import scrape
+
+    utils.mock_now(2022, 3, 4)
+    place_id = seeder.create_place(
+        name="Goslar",
+        weather_warning_name="Stadt Goslar",
+    )
+
+    # Warnings
+    mock_url = "https://www.dwd.de/DWD/warnungen/warnapp_gemeinden/json/warnings_gemeinde_nib.html"
+    utils.mock_get_request_with_file(mock_url, datadir, "dwd_april.html")
+
+    scrape()
+
+    # Test
+    with app.app_context():
+        from project.dateutils import create_berlin_date
+        from project.models import WeatherWarning
+
+        items = WeatherWarning.query.filter(WeatherWarning.place_id == place_id).all()
+        assert len(items) == 3
+
+        item = items[0]
+        assert item.headline == "Amtliche WARNUNG vor LEICHTEM SCHNEEFALL"
+        assert (
+            item.content
+            == "Es tritt im Warnzeitraum leichter Schneefall mit Mengen zwischen 5 cm und 10 cm auf. In Staulagen werden Mengen bis 15 cm erreicht. Verbreitet wird es glatt."
+        )
+        assert item.start == create_berlin_date(2022, 3, 31, 20)
+        assert item.end == create_berlin_date(2022, 4, 1, 10)
+        assert item.published == create_berlin_date(2022, 4, 1, 7, 17)
+
+
 def test_parse_date_time(client, seeder: Seeder, utils: UtilActions, app):
     from project.cli.scrape_weather_warnings import _parse_date_time
     from project.dateutils import create_berlin_date
