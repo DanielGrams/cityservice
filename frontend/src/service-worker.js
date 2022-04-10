@@ -46,6 +46,7 @@ self.addEventListener('notificationclick', (event) => {
   notification.close();
 
   if (notification.data != null && notification.data.url) {
+    // eslint-disable-next-line no-undef
     clients.openWindow(notification.data.url);
   }
 });
