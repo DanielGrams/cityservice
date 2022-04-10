@@ -141,3 +141,11 @@ class Seeder(object):
     def create_common_scenario(self):
         with self._app.app_context():
             self._model_seeder.create_common_scenario()
+
+    def upsert_push_registration(self, user_id: int, **kwargs) -> int:
+        with self._app.app_context():
+            registration_id = self._model_seeder.upsert_push_registration(
+                user_id, **kwargs
+            )
+
+        return registration_id

@@ -8,6 +8,12 @@ from project.api.place.schemas import (
     UserPlaceListRequestSchema,
     UserPlaceListResponseSchema,
 )
+from project.api.push_registration.schemas import (
+    PushRegistrationIdSchema,
+    PushRegistrationListRequestSchema,
+    PushRegistrationListResponseSchema,
+    PushRegistrationPostRequestSchema,
+)
 from project.api.recycling_street.schemas import (
     UserRecyclingStreetListRequestSchema,
     UserRecyclingStreetListResponseSchema,
@@ -18,7 +24,7 @@ from project.api.resources import (
     require_api_access,
 )
 from project.api.user.schemas import UserSchema
-from project.models import Place, RecyclingStreet
+from project.models import Place, PushRegistration, RecyclingStreet
 
 
 class UserResource(BaseResource):
@@ -33,6 +39,9 @@ class UserResource(BaseResource):
         login_api_user_or_401()
 
         return current_user.get_security_payload()
+
+
+add_api_resource(UserResource, "/user", "api_user")
 
 
 class UserRecyclingStreetListResource(BaseResource):
@@ -51,6 +60,13 @@ class UserRecyclingStreetListResource(BaseResource):
 
         pagination = get_user_recycling_streets_query(current_user.id).paginate()
         return pagination
+
+
+add_api_resource(
+    UserRecyclingStreetListResource,
+    "/user/recycling-streets",
+    "api_v1_user_recycling_street_list",
+)
 
 
 class UserRecyclingStreetListWriteResource(BaseResource):
@@ -91,6 +107,13 @@ class UserRecyclingStreetListWriteResource(BaseResource):
         return make_response("", 204)
 
 
+add_api_resource(
+    UserRecyclingStreetListWriteResource,
+    "/user/recycling-streets/<int:recycling_street_id>",
+    "api_v1_user_recycling_street_list_write",
+)
+
+
 class UserPlaceListResource(BaseResource):
     @doc(
         summary="List places of user",
@@ -107,6 +130,13 @@ class UserPlaceListResource(BaseResource):
 
         pagination = get_user_places_query(current_user.id).paginate()
         return pagination
+
+
+add_api_resource(
+    UserPlaceListResource,
+    "/user/places",
+    "api_v1_user_place_list",
+)
 
 
 class UserPlaceListWriteResource(BaseResource):
@@ -147,24 +177,107 @@ class UserPlaceListWriteResource(BaseResource):
         return make_response("", 204)
 
 
-add_api_resource(UserResource, "/user", "api_user")
-add_api_resource(
-    UserRecyclingStreetListResource,
-    "/user/recycling-streets",
-    "api_v1_user_recycling_street_list",
-)
-add_api_resource(
-    UserRecyclingStreetListWriteResource,
-    "/user/recycling-streets/<int:recycling_street_id>",
-    "api_v1_user_recycling_street_list_write",
-)
-add_api_resource(
-    UserPlaceListResource,
-    "/user/places",
-    "api_v1_user_place_list",
-)
 add_api_resource(
     UserPlaceListWriteResource,
     "/user/places/<int:place_id>",
     "api_v1_user_place_list_write",
+)
+
+
+class UserPushRegistrationListResource(BaseResource):
+    @doc(
+        summary="List push registrations of user",
+        tags=["Users", "Push"],
+        security=[{"oauth2": ["user:read"]}],
+    )
+    @use_kwargs(PushRegistrationListRequestSchema, location=("query"))
+    @marshal_with(PushRegistrationListResponseSchema)
+    @require_api_access("user:read")
+    def get(self, **kwargs):
+        from project.services.user import get_user_push_registrations_query
+
+        login_api_user_or_401()
+        token = kwargs["token"] if "token" in kwargs else None
+        pagination = get_user_push_registrations_query(
+            current_user.id, token
+        ).paginate()
+        return pagination
+
+    @doc(
+        summary="Add push registration to user",
+        tags=["Users", "Push"],
+        security=[{"oauth2": ["user:write"]}],
+    )
+    @use_kwargs(PushRegistrationPostRequestSchema, location="json", apply=False)
+    @marshal_with(PushRegistrationIdSchema, 201)
+    @marshal_with(None, 204)
+    @require_api_access("user:write")
+    def post(self):
+        login_api_user_or_401()
+        from project.services.user import upsert_user_push_registration
+
+        push_registration = self.create_instance(PushRegistrationPostRequestSchema)
+        created = upsert_user_push_registration(current_user.id, push_registration)
+        db.session.commit()
+
+        if created:
+            return push_registration, 201
+
+        return make_response("", 204)
+
+
+add_api_resource(
+    UserPushRegistrationListResource,
+    "/user/push-registrations",
+    "api_v1_user_push_registration_list",
+)
+
+
+class UserPushRegistrationListWriteResource(BaseResource):
+    @doc(
+        summary="Remove push registration from user",
+        tags=["Users", "Push"],
+        security=[{"oauth2": ["user:write"]}],
+    )
+    @marshal_with(None, 204)
+    @require_api_access("user:write")
+    def delete(self, id):
+        login_api_user_or_401()
+        push_registration = PushRegistration.query.get_or_404(id)
+
+        db.session.delete(push_registration)
+        db.session.commit()
+
+        return make_response("", 204)
+
+
+add_api_resource(
+    UserPushRegistrationListWriteResource,
+    "/user/push-registrations/<int:id>",
+    "api_v1_user_push_registration_list_write",
+)
+
+
+class UserPushRegistrationSendResource(BaseResource):
+    @doc(
+        summary="Send test notification to registration",
+        tags=["Users", "Push"],
+        security=[{"oauth2": ["user:read"]}],
+    )
+    @marshal_with(None, 204)
+    @require_api_access("user:read")
+    def post(self, id):
+        login_api_user_or_401()
+        from project.services.notification import send_notification
+
+        push_registration = PushRegistration.query.get_or_404(id)
+        send_notification(push_registration, "Test message")
+
+        return make_response("", 204)
+
+
+add_api_resource(
+    UserPushRegistrationSendResource,
+    "/user/push-registrations/<int:id>/send",
+    "api_v1_user_push_registration_send",
 )

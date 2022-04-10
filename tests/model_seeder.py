@@ -113,6 +113,32 @@ class ModelSeeder(object):
         self._db.session.commit()
         return recycling_event.id
 
+    def upsert_push_registration(self, user_id: int, **kwargs) -> int:
+        import json
+
+        from project.models import PushPlatform, PushRegistration
+        from project.services.user import upsert_user_push_registration
+
+        registration = PushRegistration(
+            token=json.dumps(
+                {
+                    "endpoint": "https://fcm.googleapis.com/fcm/send/55555",
+                    "expirationTime": None,
+                    "keys": {
+                        "p256dh": "qo35jtlwkert",
+                        "auth": "lkjashkfhgksjdhfg",
+                    },
+                }
+            ),
+            device="Chrome Browser",
+            platform=PushPlatform.web,
+        )
+        registration.__dict__.update(kwargs)
+
+        upsert_user_push_registration(user_id, registration)
+        self._db.session.commit()
+        return registration.id
+
     def add_user_recycling_street(self, user_id, recyclingstreet_id):
         from project.services.user import add_user_recycling_street
 

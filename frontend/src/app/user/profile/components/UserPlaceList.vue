@@ -28,7 +28,6 @@
         thead-class="d-none"
         show-empty
         :empty-text="$t('shared.emptyData')"
-        style="min-height: 120px"
         selectable
         @row-selected="onRowSelected"
       >
