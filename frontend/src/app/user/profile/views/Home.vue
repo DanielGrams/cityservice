@@ -7,14 +7,21 @@
 
     <UserPlaceList />
     <UserRecyclingStreetList />
+    <UserPushRegistrationList />
   </div>
 </template>
 
 <script>
 import UserPlaceList from "../components/UserPlaceList.vue";
 import UserRecyclingStreetList from "../components/UserRecyclingStreetList.vue";
+import UserPushRegistrationList from "../components/UserPushRegistrationList.vue";
+
 export default {
-  components: { UserPlaceList, UserRecyclingStreetList },
+  components: {
+    UserPlaceList,
+    UserRecyclingStreetList,
+    UserPushRegistrationList,
+  },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;

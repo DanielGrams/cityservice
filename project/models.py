@@ -254,6 +254,27 @@ class RecyclingEvent(db.Model):
     )
 
 
+# Push
+
+
+class PushPlatform(IntEnum):
+    web = 1
+    android = 2
+    ios = 3
+
+
+class PushRegistration(db.Model, TrackableMixin):
+    __tablename__ = "pushregistration"
+    id = Column(Integer(), primary_key=True)
+    token = Column(UnicodeText(), nullable=True)
+    device = Column(Unicode(255), nullable=False)
+    platform = Column(
+        IntegerEnum(PushPlatform),
+        nullable=False,
+    )
+    user_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
+
+
 # User
 
 
@@ -318,6 +339,12 @@ class User(db.Model, UserMixin):
         "RecyclingStreet",
         secondary="recyclingstreets_users",
         backref=backref("users", lazy="dynamic"),
+    )
+    push_registrations = relationship(
+        "PushRegistration",
+        primaryjoin="User.id == PushRegistration.user_id",
+        backref=backref("user", lazy=True),
+        cascade="all, delete-orphan",
     )
 
     def get_user_id(self):

@@ -39,11 +39,11 @@ pybabel compile -d project/translations
 ### Build image
 
 ```sh
-docker build -t gsevpt:latest .
+docker build -t cityservice:latest .
 ```
 
 ### Run container with existing postgres server
 
 ```sh
-docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/gsevpt" "gsevpt:latest"
+docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/cityservice" "cityservice:latest"
 ```

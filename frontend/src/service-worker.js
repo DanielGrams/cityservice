@@ -10,3 +10,43 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+self.addEventListener('push', (event) => {
+  if (!(self.Notification && self.Notification.permission === 'granted')) {
+    return;
+  }
+
+  if (event.data == null) {
+    return;
+  }
+
+  var text = event.data.text();
+  var payload;
+  try {
+    payload = JSON.parse(text);
+  } catch (e) {
+    payload = {
+      options: {
+        body: text,
+      }
+    }
+  }
+
+  if (payload.title == null) {
+    payload.title = 'City service';
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, payload.options)
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  var notification = event.notification;
+  notification.close();
+
+  if (notification.data != null && notification.data.url) {
+    // eslint-disable-next-line no-undef
+    clients.openWindow(notification.data.url);
+  }
+});

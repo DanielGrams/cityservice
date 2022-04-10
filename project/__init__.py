@@ -25,6 +25,10 @@ app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 app.config["LANGUAGES"] = ["en", "de"]
 app.config["SERVER_NAME"] = os.getenv("SERVER_NAME")
 app.config["SECURITY_REGISTERABLE"] = os.environ.get("SECURITY_REGISTERABLE", False)
+app.config["VAPID_PRIVATE_KEY"] = os.environ.get("VAPID_PRIVATE_KEY", "").replace(
+    r"\n", "\n"
+)
+app.config["VAPID_CLAIM_EMAIL"] = os.environ.get("VAPID_CLAIM_EMAIL", "")
 
 # Proxy handling
 if os.getenv("PREFERRED_URL_SCHEME"):  # pragma: no cover

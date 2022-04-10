@@ -107,10 +107,25 @@
         "title": "Meine Orte wählen"
       },
       "profile": {
+        "notifications": {
+          "notRegistered": "Mitteilungen sind nicht aktiv.",
+          "notSupported": "Mitteilungen werden nicht unterstützt.",
+          "permissionDenied": "Berechtigung für Mitteilungen wurde abgelehnt.",
+          "registerPush": "Mitteilungen aktivieren",
+          "registered": "Mitteilungen sind aktiv.",
+          "title": "Mitteilungen",
+          "unregisterPush": "Mitteilungen deaktivieren"
+        },
         "places": {
           "deleteConfirmation": "Möchten Sie den Ort wirklich entfernen?",
           "deletedMessage": "Ort erfolgreich entfernt",
           "title": "Meine Orte"
+        },
+        "pushRegistrations": {
+          "addedMessage": "Mitteilungen erfolgreich aktiviert",
+          "deleteConfirmation": "Möchten Sie die Mitteilungen wirklich entfernen?",
+          "deletedMessage": "Mitteilungen erfolgreich entfernt",
+          "sendTestNotification": "Test-Mitteilung senden"
         },
         "recyclingStreets": {
           "deleteConfirmation": "Möchten Sie den Eintrag wirklich entfernen?",

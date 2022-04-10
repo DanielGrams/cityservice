@@ -7,7 +7,13 @@ from sqlalchemy.sql import and_
 
 from project import user_datastore
 from project.dateutils import get_now
-from project.models import Place, PlacesUsers, RecyclingStreet, RecyclingStreetsUsers
+from project.models import (
+    Place,
+    PlacesUsers,
+    PushRegistration,
+    RecyclingStreet,
+    RecyclingStreetsUsers,
+)
 
 
 def create_user(email, password):
@@ -154,3 +160,30 @@ def remove_user_place(user_id: int, place_id: int):
 
     db.session.delete(user_place)
     return True
+
+
+def get_user_push_registrations_query(user_id: int, token=None):
+    query = PushRegistration.query.filter(PushRegistration.user_id == user_id)
+
+    if token:
+        query = query.filter(PushRegistration.token == token)
+
+    return query
+
+
+def upsert_user_push_registration(user_id: int, registration: PushRegistration) -> bool:
+    from project import db
+
+    existing = (
+        get_user_push_registrations_query(user_id)
+        .filter(PushRegistration.token == registration.token)
+        .first()
+    )
+
+    if existing:
+        existing.device = registration.device
+    else:
+        registration.user_id = user_id
+        db.session.add(registration)
+
+    return not existing
