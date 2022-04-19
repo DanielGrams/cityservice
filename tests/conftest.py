@@ -22,6 +22,9 @@ def pytest_generate_tests(metafunc):
         "JWT_PUBLIC_JWKS"
     ] = '{"keys":[{"kid":"default","kty":"RSA","use":"sig","alg":"RS256","n":"vy41pD9VTDVmGVxkeSPUDGuzULf0rfVFypnVnBO12l0V_fXU0Rdqf9qlSCklwSWFT7XcGRS9gDw_HGkbQ2qycmQ0-S2FbU65D3VKR1amqtMgonDFwNinoCEBfh6H52RpvduKmdMZ3PfhqTZP5rStxs7uHuAa-BBzqCl4fTBcwB-sDM-lE5tPuGkoXCZAEllw7G5lHKETZJt2dsvf0aBlPSb-pITQkLLSC1OjbAHmo3h7PP1yQU0qnHsCJv7BhGIFTy3cfvbsa1QdNxI3VHg7ZP2vs-JFm4cDxdk-nft8dDnP8z42kha0iqiLAWDLOyyk-kP7EHvn0jgpZM6N6tzJxw","e":"AQAB"}]}'
     os.environ["SECURITY_REGISTERABLE"] = "1"
+    os.environ[
+        "VAPID_PRIVATE_KEY"
+    ] = "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgcHTvZuwlCXqpS3hb\nbY6+oHtMQ4SDPyc0awZ3maCjKEGhRANCAAQGGJxWKIeTeA89Vjp3SH3I8TGjOEdU\ntR+QZiX2qKZJ5WisDZNUpkxV9uYFxid+Ugzt7U+eeaexDN6a8o7AgYmK\n-----END PRIVATE KEY-----\n"
 
 
 @pytest.fixture

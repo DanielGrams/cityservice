@@ -399,3 +399,15 @@ class UtilActions(object):
         now = create_berlin_date(year, month, day)
         self._mocker.patch("project.dateutils.get_now", return_value=now)
         return now
+
+    def mock_webpush(self):
+        return self._mocker.patch("project.services.notification.send_web_push")
+
+    def mock_webpush_410(self):
+        from pywebpush import WebPushException
+
+        response = self._mocker.Mock(status_code=410)
+        push_exception = WebPushException("Push failed", response=response)
+        return self._mocker.patch(
+            "project.services.notification.send_web_push", side_effect=push_exception
+        )

@@ -67,6 +67,10 @@
         "password": "Passwort"
       }
     },
+    "notifications": {
+      "notSupported": "Mitteilungen werden nicht unterstützt.",
+      "permissionDenied": "Berechtigung für Mitteilungen wurde abgelehnt."
+    },
     "footer": {
       "contact": "Kontakt",
       "imprint": "Impressum",
@@ -109,8 +113,6 @@
       "profile": {
         "notifications": {
           "notRegistered": "Mitteilungen sind nicht aktiv.",
-          "notSupported": "Mitteilungen werden nicht unterstützt.",
-          "permissionDenied": "Berechtigung für Mitteilungen wurde abgelehnt.",
           "registerPush": "Mitteilungen aktivieren",
           "registered": "Mitteilungen sind aktiv.",
           "title": "Mitteilungen",

@@ -1,18 +1,95 @@
+importScripts("localforage.min.js");
+
 // eslint-disable-next-line no-undef
-workbox.core.setCacheNameDetails({prefix: "frontend"});
+workbox.core.setCacheNameDetails({ prefix: "frontend" });
 
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 // eslint-disable-next-line no-undef
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+var store = localforage.createInstance({
+  name: "sw",
+});
+
+function handlePushUpdate() {
+  return store.getItem("pushInfo").then((pushInfo) => {
+    if (!pushInfo) {
+      return;
+    }
+
+    return self.registration.pushManager
+      .getSubscription()
+      .then((newSubscription) => {
+        const oldSubscription = pushInfo.subscription;
+        if (JSON.stringify(oldSubscription) == JSON.stringify(newSubscription)) {
+          return;
+        }
+
+        pushInfo.subscription = JSON.parse(JSON.stringify(newSubscription));
+        return store.setItem("pushInfo", pushInfo).then(() => {
+          return fetch(
+            `/api/user/push-registrations/${pushInfo.pushRegistrationId}`,
+            {
+              method: "patch",
+              credentials: "same-origin",
+              headers: {
+                "Content-type": "application/json",
+              },
+              body: JSON.stringify({
+                token: JSON.stringify(newSubscription),
+              }),
+            }
+          );
+        });
+      });
+  });
+}
+
+function savePushRegistration(pushRegistrationId, subscription) {
+  const pushInfo = {
+    pushRegistrationId: pushRegistrationId,
+    subscription: subscription,
+  };
+  return store.setItem("pushInfo", pushInfo);
+}
+
+function deletePushRegistration() {
+  return store.removeItem("pushInfo");
+}
+
+function handlePushLoaded(pushRegistrationId, subscription) {
+  return store.getItem("pushInfo").then((pushInfo) => {
+    if (!pushInfo) {
+      return savePushRegistration(pushRegistrationId, subscription);
+    }
+
+    return handlePushUpdate();
+  });
+}
+
+self.addEventListener("message", (event) => {
+  if (event.data) {
+    if (event.data.type === "SKIP_WAITING") {
+      self.skipWaiting();
+    } else if (event.data.action === "PUSH_LOADED") {
+      event.waitUntil(
+        handlePushLoaded(event.data.pushRegistrationId, event.data.subscription)
+      );
+    } else if (event.data.action === "PUSH_REGISTERED") {
+      event.waitUntil(
+        savePushRegistration(
+          event.data.pushRegistrationId,
+          event.data.subscription
+        )
+      );
+    } else if (event.data.action === "PUSH_UNREGISTERED") {
+      event.waitUntil(deletePushRegistration());
+    }
   }
 });
 
-self.addEventListener('push', (event) => {
-  if (!(self.Notification && self.Notification.permission === 'granted')) {
+self.addEventListener("push", (event) => {
+  if (!(self.Notification && self.Notification.permission === "granted")) {
     return;
   }
 
@@ -28,12 +105,12 @@ self.addEventListener('push', (event) => {
     payload = {
       options: {
         body: text,
-      }
-    }
+      },
+    };
   }
 
   if (payload.title == null) {
-    payload.title = 'City service';
+    payload.title = "City service";
   }
 
   event.waitUntil(
@@ -41,7 +118,7 @@ self.addEventListener('push', (event) => {
   );
 });
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener("notificationclick", (event) => {
   var notification = event.notification;
   notification.close();
 
@@ -49,4 +126,8 @@ self.addEventListener('notificationclick', (event) => {
     // eslint-disable-next-line no-undef
     clients.openWindow(notification.data.url);
   }
+});
+
+self.addEventListener("pushsubscriptionchange", (event) => {
+  event.waitUntil(handlePushUpdate());
 });

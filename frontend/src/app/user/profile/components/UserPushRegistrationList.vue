@@ -2,20 +2,20 @@
   <div>
     <h4>{{ $t("app.user.profile.notifications.title") }}</h4>
     <div v-if="!notificationsSupported">
-      {{ $t("app.user.profile.notifications.notSupported") }}
+      {{ $t("app.notifications.notSupported") }}
     </div>
     <div v-if="notificationsSupported">
       <div v-if="notificationPermission == 'denied'">
-        {{ $t("app.user.profile.notifications.permissionDenied") }}
+        {{ $t("app.notifications.permissionDenied") }}
       </div>
       <div v-if="notificationPermission != 'denied'">
-        <div v-if="!pushToken">
+        <div v-if="!pushRegistrationId">
           <div>{{ $t("app.user.profile.notifications.notRegistered") }}</div>
           <b-button @click="registerPush" class="my-2">{{
             $t("app.user.profile.notifications.registerPush")
           }}</b-button>
         </div>
-        <div v-if="pushToken">
+        <div v-if="pushRegistrationId">
           <div>{{ $t("app.user.profile.notifications.registered") }}</div>
           <b-button @click="unregisterPush" class="my-2 mr-2">{{
             $t("app.user.profile.notifications.unregisterPush")
@@ -69,10 +69,6 @@ import axios from "axios";
 export default {
   data() {
     return {
-      notificationsSupported: false,
-      notificationPermission: null, // "default" | "denied" | "granted"
-      pushToken: null,
-      pushRegistrationId: null,
       errorMessage: null,
       fields: [
         {
@@ -92,136 +88,54 @@ export default {
       },
     };
   },
-  created() {
-    this.initializePush();
+  computed: {
+    notificationsSupported() {
+      return this.$store.state.notifications.notificationsSupported;
+    },
+    notificationPermission() {
+      return this.$store.state.notifications.notificationPermission;
+    },
+    /* istanbul ignore next */
+    pushRegistrationId() {
+      return this.$store.state.notifications.pushRegistrationId;
+    },
   },
   methods: {
-    initializePush() {
-      this.notificationsSupported =
-        "Notification" in window &&
-        "PushManager" in window &&
-        navigator.serviceWorker != null;
-      this.notificationPermission = Notification.permission;
-
-      /* istanbul ignore next */
-      if (
-        this.notificationsSupported &&
-        this.notificationPermission == "granted"
-      ) {
-        this.loadPushRegistration();
-      }
-    },
-    /* istanbul ignore next */
-    loadPushRegistration() {
-      navigator.serviceWorker.ready.then((reg) => {
-        if (reg.pushManager == null) {
-          return;
-        }
-
-        reg.pushManager
-          .getSubscription()
-          .then((subscription) => {
-            if (subscription == null) {
-              this.pushToken = null;
-              this.pushRegistrationId = null;
-            }
-
-            const token = JSON.stringify(subscription);
-            axios
-              .get(
-                `/api/user/push-registrations?token=${encodeURIComponent(
-                  token
-                )}`
-              )
-              .then((response) => {
-                if (response.data.items.length > 0) {
-                  this.pushToken = token;
-                  this.pushRegistrationId = response.data.items[0].id;
-                } else {
-                  this.pushToken = null;
-                  this.pushRegistrationId = null;
-                }
-              })
-              .catch(() => {
-                this.pushToken = null;
-                this.pushRegistrationId = null;
-              });
-          })
-          .catch((e) => {
-            this.$root.makeErrorToast(e.message);
-          });
-      });
-    },
     /* istanbul ignore next */
     registerPush() {
-      Notification.requestPermission(() => {
-        this.notificationPermission = Notification.permission;
-
-        if (this.notificationPermission != "granted") {
-          return;
+      this.$store.dispatch("notifications/registerPush").then(
+        () => {
+          this.$root.makeSuccessToast(
+            this.$t("app.user.profile.pushRegistrations.addedMessage")
+          );
+          this.refreshTableData();
+        },
+        (error) => {
+          this.$root.makeErrorToast(error.message);
         }
-
-        navigator.serviceWorker.ready.then((reg) => {
-          if (reg.pushManager == null) {
-            this.$root.makeErrorToast(
-              this.$t("app.user.profile.notifications.notSupported")
-            );
-            return;
-          }
-
-          reg.pushManager
-            .subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: process.env.VUE_APP_VAPID_SERVER_KEY,
-            })
-            .then((subscription) => {
-              const token = JSON.stringify(subscription);
-              const post = {
-                device: window.navigator.userAgent,
-                platform: "web",
-                token: token,
-              };
-              axios
-                .post("/api/user/push-registrations", post)
-                .then((response) => {
-                  this.pushToken = token;
-                  this.$root.makeSuccessToast(
-                    this.$t("app.user.profile.pushRegistrations.addedMessage")
-                  );
-                  this.refreshTableData();
-
-                  if (response.status == 201) {
-                    this.pushRegistrationId = response.data.id;
-                  }
-                });
-            })
-            .catch((e) => {
-              this.$root.makeErrorToast(e.message);
-            });
-        });
-      });
+      );
     },
     /* istanbul ignore next */
     unregisterPush() {
-      this.deletePushRegistration(this.pushRegistrationId);
-
-      navigator.serviceWorker.ready.then((reg) => {
-        reg.pushManager
-          .getSubscription()
-          .then((subscription) => {
-            if (subscription != null) {
-              subscription.unsubscribe();
-            }
-          })
-          .catch((e) => {
-            this.$root.makeErrorToast(e.message);
-          });
-      });
+      this.$store.dispatch("notifications/unregisterPush").then(
+        () => {
+          this.$root.makeSuccessToast(
+            this.$t("app.user.profile.pushRegistrations.deletedMessage")
+          );
+          this.refreshTableData();
+        },
+        (error) => {
+          this.$root.makeErrorToast(error.message);
+        }
+      );
     },
     /* istanbul ignore next */
     sendTestNotification() {
-      axios.post(
-        `/api/user/push-registrations/${this.pushRegistrationId}/send`
+      this.$store.dispatch("notifications/sendTestNotification").then(
+        () => {},
+        (error) => {
+          this.$root.makeErrorToast(error.message);
+        }
       );
     },
     loadTableData(ctx, callback) {
@@ -263,19 +177,21 @@ export default {
     },
     /* istanbul ignore next */
     deletePushRegistration(pushRegistrationId) {
-      axios
-        .delete(`/api/user/push-registrations/${pushRegistrationId}`)
-        .then(() => {
-          this.$root.makeSuccessToast(
-            this.$t("app.user.profile.pushRegistrations.deletedMessage")
-          );
-          this.refreshTableData();
-
-          if (pushRegistrationId == this.pushRegistrationId) {
-            this.pushRegistrationId = null;
-            this.pushToken = null;
+      this.$store
+        .dispatch("notifications/deletePushRegistration", {
+          pushRegistrationId: pushRegistrationId,
+        })
+        .then(
+          () => {
+            this.$root.makeSuccessToast(
+              this.$t("app.user.profile.pushRegistrations.deletedMessage")
+            );
+            this.refreshTableData();
+          },
+          (error) => {
+            this.$root.makeErrorToast(error.message);
           }
-        });
+        );
     },
   },
 };

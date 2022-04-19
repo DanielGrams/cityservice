@@ -12,6 +12,7 @@ from project.api.push_registration.schemas import (
     PushRegistrationIdSchema,
     PushRegistrationListRequestSchema,
     PushRegistrationListResponseSchema,
+    PushRegistrationPatchRequestSchema,
     PushRegistrationPostRequestSchema,
 )
 from project.api.recycling_street.schemas import (
@@ -246,6 +247,25 @@ class UserPushRegistrationListWriteResource(BaseResource):
         push_registration = PushRegistration.query.get_or_404(id)
 
         db.session.delete(push_registration)
+        db.session.commit()
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Update push registration",
+        tags=["Users", "Push"],
+        security=[{"oauth2": ["user:write"]}],
+    )
+    @use_kwargs(PushRegistrationPatchRequestSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_api_access("user:write")
+    def patch(self, id):
+        login_api_user_or_401()
+        push_registration = PushRegistration.query.get_or_404(id)
+
+        push_registration = self.update_instance(
+            PushRegistrationPatchRequestSchema, instance=push_registration
+        )
         db.session.commit()
 
         return make_response("", 204)

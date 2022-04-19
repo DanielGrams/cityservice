@@ -188,7 +188,28 @@ def test_push_registration_list_post(client, seeder: Seeder, utils: UtilActions,
     utils.assert_response_no_content(response)
 
 
-def test_push_registration_list_delete(client, seeder: Seeder, utils: UtilActions, app):
+def test_push_registration_patch(client, seeder: Seeder, utils: UtilActions, app):
+    user_id = seeder.setup_api_access()
+    push_registration_id = seeder.upsert_push_registration(user_id)
+
+    url = utils.get_url(
+        "api_v1_user_push_registration_list_write",
+        id=push_registration_id,
+    )
+    response = utils.patch_json(url, {"token": "patched"})
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.models import PushPlatform, PushRegistration
+
+        registration = PushRegistration.query.get(push_registration_id)
+        assert registration.token == "patched"
+        assert registration.device == "Chrome Browser"
+        assert registration.platform == PushPlatform.web
+        assert registration.user_id == user_id
+
+
+def test_push_registration_delete(client, seeder: Seeder, utils: UtilActions, app):
     user_id = seeder.setup_api_access()
     push_registration_id = seeder.upsert_push_registration(user_id)
 
@@ -206,13 +227,11 @@ def test_push_registration_list_delete(client, seeder: Seeder, utils: UtilAction
         assert registration is None
 
 
-def test_push_registration_send(
-    client, seeder: Seeder, utils: UtilActions, app, mocker
-):
+def test_push_registration_send(client, seeder: Seeder, utils: UtilActions, app):
     user_id = seeder.setup_api_access()
     push_registration_id = seeder.upsert_push_registration(user_id)
 
-    mock = mocker.patch("project.services.notification.send_notification")
+    mock = utils.mock_webpush()
 
     url = utils.get_url(
         "api_v1_user_push_registration_send",
@@ -222,3 +241,33 @@ def test_push_registration_send(
     utils.assert_response_no_content(response)
 
     mock.assert_called_once()
+
+    with app.app_context():
+        from project.models import PushRegistration
+
+        registration = PushRegistration.query.get(push_registration_id)
+        assert registration is not None
+
+
+def test_push_registration_send_410(
+    client, seeder: Seeder, utils: UtilActions, app, mocker
+):
+    user_id = seeder.setup_api_access()
+    push_registration_id = seeder.upsert_push_registration(user_id)
+
+    mock = utils.mock_webpush_410()
+
+    url = utils.get_url(
+        "api_v1_user_push_registration_send",
+        id=push_registration_id,
+    )
+    response = utils.post_json(url, None)
+    utils.assert_response_no_content(response)
+
+    mock.assert_called_once()
+
+    with app.app_context():
+        from project.models import PushRegistration
+
+        registration = PushRegistration.query.get(push_registration_id)
+        assert registration is None

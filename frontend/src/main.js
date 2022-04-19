@@ -8,6 +8,8 @@ import VueMeta from "vue-meta";
 import * as VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
 import axios from "axios";
+import Vlf from 'vlf'
+import localforage from 'localforage'
 import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/de.json";
@@ -23,6 +25,7 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VeeValidate);
 Vue.use(VueCookies);
+Vue.use(Vlf, localforage);
 
 require("moment/locale/de");
 moment.locale("de");
