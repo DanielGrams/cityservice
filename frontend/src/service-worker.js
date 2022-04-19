@@ -1,10 +1,8 @@
+/* eslint-disable no-undef */
 importScripts("localforage.min.js");
 
-// eslint-disable-next-line no-undef
 workbox.core.setCacheNameDetails({ prefix: "frontend" });
-
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
-// eslint-disable-next-line no-undef
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
 var store = localforage.createInstance({
