@@ -393,10 +393,12 @@ class UtilActions(object):
 
         self._mocker.patch("feedparser.http.get", side_effect=get_patch)
 
-    def mock_now(self, year: int, month: int, day: int) -> datetime:
+    def mock_now(
+        self, year: int, month: int, day: int, hour=0, minute=0, second=0
+    ) -> datetime:
         from project.dateutils import create_berlin_date
 
-        now = create_berlin_date(year, month, day)
+        now = create_berlin_date(year, month, day, hour, minute, second)
         self._mocker.patch("project.dateutils.get_now", return_value=now)
         return now
 

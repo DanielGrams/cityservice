@@ -10,6 +10,7 @@ flask scrape news
 flask scrape weather_warnings
 flask scrape recycling
 flask user delete-old-anonymous
+flask notifications send-recycling-events
 
 ## VAPID keys for web push notifications
 
