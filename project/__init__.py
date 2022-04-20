@@ -109,6 +109,7 @@ config_oauth(app)
 
 # API Resources
 import project.api
+import project.cli.notifications
 
 # Command line
 import project.cli.scrape
