@@ -3,25 +3,26 @@ from tests.utils import UtilActions
 
 
 def test_send_recycling_events(app, db, seeder: Seeder, utils: UtilActions):
-    from project.dateutils import create_berlin_date
-    from project.services.notification import send_recycling_events
+    with app.app_context():
+        from project.dateutils import create_berlin_date
+        from project.services.notification import send_recycling_events
 
-    utils.mock_now(2022, 4, 20, 18)
-    tomorrow = create_berlin_date(2022, 4, 21)
+        utils.mock_now(2022, 4, 20, 18)
+        tomorrow = create_berlin_date(2022, 4, 21)
 
-    user_id = seeder.create_user()
-    recycling_street_id = seeder.create_recycling_street()
-    seeder.add_user_recycling_street(user_id, recycling_street_id)
-    seeder.create_recycling_event(recycling_street_id, date=tomorrow)
-    push_registration_id = seeder.upsert_push_registration(user_id)
+        user_id = seeder.create_user()
+        recycling_street_id = seeder.create_recycling_street()
+        seeder.add_user_recycling_street(user_id, recycling_street_id)
+        seeder.create_recycling_event(recycling_street_id, date=tomorrow)
+        push_registration_id = seeder.upsert_push_registration(user_id)
 
-    mock = utils.mock_webpush()
-    success_count, error_count = send_recycling_events()
-    assert success_count == 1
-    assert error_count == 0
+        mock = utils.mock_webpush()
+        success_count, error_count = send_recycling_events()
+        assert success_count == 1
+        assert error_count == 0
 
-    mock.assert_called_once()
-    args, _ = mock.call_args
-    registration, message = args
-    assert registration.id == push_registration_id
-    assert message == "Schreiberstraße, Goslar: Biotonne"
+        mock.assert_called_once()
+        args, _ = mock.call_args
+        registration, message = args
+        assert registration.id == push_registration_id
+        assert message == "Schreiberstraße, Goslar: Biotonne"
