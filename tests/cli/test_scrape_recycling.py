@@ -73,4 +73,4 @@ def test_scrape(
         event = street.events[0]
         assert event.category == "Restmülltonne"
         assert event.source_id == "1652da14b6bddda86fc27f4235fca191@www.kwb-goslar.de"
-        assert event.date == create_berlin_date(2022, 9, 8, 2)
+        assert event.date == create_berlin_date(2022, 9, 8, 0)
