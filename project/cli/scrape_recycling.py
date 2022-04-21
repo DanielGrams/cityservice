@@ -7,7 +7,7 @@ from sqlalchemy.sql import and_, not_
 from sqlalchemy.sql.expression import func
 
 from project import app, db
-from project.dateutils import get_now
+from project.dateutils import berlin_tz, get_now
 from project.models import Place, RecyclingEvent, RecyclingStreet
 from project.utils import get_content_from_response
 
@@ -150,9 +150,7 @@ def scrape_events_for_street(street, event_ids):
             category = event.name.split(":")[0]
 
             # Legacy
-            date = event.begin.datetime.replace(
-                hour=0
-            ) + event.begin.datetime.tzinfo.utcoffset(event.begin.datetime)
+            date = event.begin.datetime.replace(hour=0).astimezone(berlin_tz)
 
             item = RecyclingEvent.query.filter_by(
                 street_id=street.id, source_id=event_id

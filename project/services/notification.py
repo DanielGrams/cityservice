@@ -61,7 +61,7 @@ def send_recycling_events() -> tuple:
                     message = f"{recycling_street.name}: {next_event.category}"
                     if send_notification(push_registration, message):
                         success_count = success_count + 1
-                    else:
+                    else:  # pragma: no cover
                         error_count = error_count + 1
 
     return success_count, error_count
