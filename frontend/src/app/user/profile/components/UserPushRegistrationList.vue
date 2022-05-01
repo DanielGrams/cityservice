@@ -110,12 +110,12 @@ export default {
       return this.$store.state.notifications.pushRegistrationId;
     },
   },
+  /* istanbul ignore next */
   watch: {
     /* istanbul ignore next */
-    "$store.state.notifications.pushRegistrationId":
-      function () /* istanbul ignore next */ {
-        this.refreshTableData();
-      },
+    "$store.state.notifications.pushRegistrationId"() {
+      this.refreshTableData();
+    },
   },
   methods: {
     /* istanbul ignore next */
