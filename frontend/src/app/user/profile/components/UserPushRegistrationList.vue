@@ -111,6 +111,7 @@ export default {
     },
   },
   watch: {
+    /* istanbul ignore next */
     "$store.state.notifications.pushRegistrationId":
       function () /* istanbul ignore next */ {
         this.refreshTableData();
