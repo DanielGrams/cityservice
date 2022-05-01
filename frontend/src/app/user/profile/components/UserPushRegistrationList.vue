@@ -111,10 +111,10 @@ export default {
     },
   },
   watch: {
-    /* istanbul ignore next */
-    "$store.state.notifications.pushRegistrationId": function () {
-      this.refreshTableData();
-    },
+    "$store.state.notifications.pushRegistrationId":
+      function () /* istanbul ignore next */ {
+        this.refreshTableData();
+      },
   },
   methods: {
     /* istanbul ignore next */
