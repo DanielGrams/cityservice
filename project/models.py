@@ -19,6 +19,7 @@ from sqlalchemy import (
     Unicode,
     UnicodeText,
 )
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, deferred, object_session, relationship
 
@@ -298,8 +299,15 @@ class RecyclingStreetsUsers(db.Model):
     __tablename__ = "recyclingstreets_users"
     id = Column(Integer(), primary_key=True)
     user_id = Column("user_id", Integer(), ForeignKey("user.id"))
+    user = relationship("User", backref="user_recyclingstreets")
     recyclingstreet_id = Column(
         "recyclingstreet_id", Integer(), ForeignKey("recyclingstreets.id")
+    )
+    recyclingstreet = relationship("RecyclingStreet")
+    notifications_active = Column(
+        Boolean(),
+        server_default="0",
+        nullable=False,
     )
 
 
@@ -335,11 +343,8 @@ class User(db.Model, UserMixin):
     places = relationship(
         "Place", secondary="places_users", backref=backref("users", lazy="dynamic")
     )
-    recyclingstreets = relationship(
-        "RecyclingStreet",
-        secondary="recyclingstreets_users",
-        backref=backref("users", lazy="dynamic"),
-    )
+    recyclingstreets = association_proxy("user_recyclingstreets", "recyclingstreet")
+    # user_recyclingstreets = relationship("RecyclingStreetsUsers")
     push_registrations = relationship(
         "PushRegistration",
         primaryjoin="User.id == PushRegistration.user_id",

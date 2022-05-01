@@ -48,9 +48,13 @@ class PushRegistrationListRequestSchema(PaginationRequestSchema):
     token = fields.Str()
 
 
+class PushRegistrationListItemSchema(PushRegistrationRefSchema):
+    token = marshmallow.auto_field()
+
+
 class PushRegistrationListResponseSchema(PaginationResponseSchema):
     items = fields.List(
-        fields.Nested(PushRegistrationRefSchema),
+        fields.Nested(PushRegistrationListItemSchema),
         metadata={"description": "Push registrations"},
     )
 

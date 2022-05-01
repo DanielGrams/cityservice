@@ -26,11 +26,12 @@ export const auth = {
     },
   },
   actions: {
-    init({ commit }) {
+    init({ commit, dispatch }) {
       commit("initStart");
       return AuthService.init().then(
         (user) => {
           commit("initSuccess", user);
+          dispatch("notifications/init", null, { root: true });
           return Promise.resolve(user);
         },
         (error) => {
@@ -39,11 +40,12 @@ export const auth = {
         }
       );
     },
-    login({ commit }, { email, password }) {
+    login({ commit, dispatch }, { email, password }) {
       commit("loginStart");
       return AuthService.login(email, password).then(
         (user) => {
           commit("loginSuccess", user);
+          dispatch("notifications/init", null, { root: true });
           return Promise.resolve(user);
         },
         (error) => {
@@ -52,11 +54,12 @@ export const auth = {
         }
       );
     },
-    logout({ commit }) {
+    logout({ commit, dispatch }) {
       commit("logoutStart");
       return AuthService.logout().then(
         () => {
           commit("logoutSuccess");
+          dispatch("notifications/init", null, { root: true });
           return Promise.resolve();
         },
         /* istanbul ignore next */

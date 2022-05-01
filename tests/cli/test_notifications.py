@@ -5,6 +5,7 @@ from tests.utils import UtilActions
 def test_send_recycling_events(app, db, seeder: Seeder, utils: UtilActions):
     from project.dateutils import create_berlin_date
 
+    app.config["SERVER_NAME"] = "127.0.0.1"
     utils.mock_now(2022, 4, 20, 18)
     tomorrow = create_berlin_date(2022, 4, 21)
     mock = utils.mock_webpush()
@@ -12,6 +13,9 @@ def test_send_recycling_events(app, db, seeder: Seeder, utils: UtilActions):
     user_id = seeder.create_user()
     recycling_street_id = seeder.create_recycling_street()
     seeder.add_user_recycling_street(user_id, recycling_street_id)
+    seeder.set_user_recycling_street_notifications_active(
+        user_id, recycling_street_id, True
+    )
     seeder.create_recycling_event(recycling_street_id, date=tomorrow)
     seeder.upsert_push_registration(user_id)
 

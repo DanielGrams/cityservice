@@ -36,7 +36,6 @@ router.beforeEach((to, from, next) => {
 
   store.dispatch("auth/init").then(
     () => {
-      store.dispatch("notifications/init");
       next();
     },
     () => {

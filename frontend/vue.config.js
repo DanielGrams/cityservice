@@ -38,6 +38,7 @@ module.exports = {
     iconPaths: {
       maskIcon: null,
     },
+    start_url: "/profile",
     workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "src/service-worker.js",

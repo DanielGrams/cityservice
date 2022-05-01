@@ -31,61 +31,83 @@ export const notifications = {
       commit("initStart", { supported: supported, permission: permission });
 
       if (!supported || !getters.permissionGranted) {
-          commit("initFinish",  { subscription: null, pushRegistrationId: null });
-          return;
+        commit("initFinish", { subscription: null, pushRegistrationId: null });
+        return;
       }
 
       return navigator.serviceWorker.ready.then((reg) => {
         if (reg.pushManager == null) {
-          commit("initFinish",  { subscription: null, pushRegistrationId: null });
+          commit("initFinish", {
+            subscription: null,
+            pushRegistrationId: null,
+          });
           return;
         }
 
-        reg.pushManager
-          .getSubscription()
-          .then((subscription) => {
-            if (subscription == null) {
-              commit("initFinish",  { subscription: null, pushRegistrationId: null });
-              return;
-            }
+        return reg.pushManager.getSubscription().then((subscription) => {
+          if (subscription == null) {
+            commit("initFinish", {
+              subscription: null,
+              pushRegistrationId: null,
+            });
+            return;
+          }
 
-            NotificationService.loadPushRegistration(subscription).then(
-              (pushRegistrationId) => {
-                commit("initFinish",  { subscription: subscription, pushRegistrationId: pushRegistrationId });
-                reg.active.postMessage({
-                  action: 'PUSH_LOADED',
-                  pushRegistrationId: pushRegistrationId,
-                  subscription: JSON.parse(JSON.stringify(subscription)),
-                });
-              },
-              () => {
-                commit("initFinish",  { subscription: subscription, pushRegistrationId: null });
-                reg.active.postMessage({
-                  action: 'PUSH_UNREGISTERED',
-                });
-              }
-            );
+          return NotificationService.loadPushRegistration(subscription).then(
+            (pushRegistrationId) => {
+              commit("initFinish", {
+                subscription: subscription,
+                pushRegistrationId: pushRegistrationId,
+              });
+              reg.active.postMessage({
+                action: "PUSH_LOADED",
+                pushRegistrationId: pushRegistrationId,
+                subscription: JSON.parse(JSON.stringify(subscription)),
+              });
+            },
+            () => {
+              commit("initFinish", {
+                subscription: subscription,
+                pushRegistrationId: null,
+              });
+              reg.active.postMessage({
+                action: "PUSH_UNREGISTERED",
+              });
+            }
+          );
         });
       });
     },
     registerPush({ commit }) {
       commit("registerStart");
 
-      Notification.requestPermission(() => {
+      return Notification.requestPermission(() => {
         const permission = Notification.permission;
 
         if (permission != "granted") {
-          commit("registerFinish", { permission: permission, subscription: null, pushRegistrationId: null });
-          return Promise.reject(new Error(i18n.t("app.notifications.permissionDenied")))
+          commit("registerFinish", {
+            permission: permission,
+            subscription: null,
+            pushRegistrationId: null,
+          });
+          return Promise.reject(
+            new Error(i18n.t("app.notifications.permissionDenied"))
+          );
         }
 
-        navigator.serviceWorker.ready.then((reg) => {
+        return navigator.serviceWorker.ready.then((reg) => {
           if (reg.pushManager == null) {
-            commit("registerFinish", { permission: permission, subscription: null, pushRegistrationId: null });
-            return Promise.reject(new Error(i18n.t("app.notifications.notSupported")))
+            commit("registerFinish", {
+              permission: permission,
+              subscription: null,
+              pushRegistrationId: null,
+            });
+            return Promise.reject(
+              new Error(i18n.t("app.notifications.notSupported"))
+            );
           }
 
-          reg.pushManager
+          return reg.pushManager
             .subscribe({
               userVisibleOnly: true,
               applicationServerKey: process.env.VUE_APP_VAPID_SERVER_KEY,
@@ -97,18 +119,28 @@ export const notifications = {
                 token: JSON.stringify(subscription),
               };
 
-              NotificationService.addPushRegistration(pushRegistration).then(
+              return NotificationService.addPushRegistration(
+                pushRegistration
+              ).then(
                 (pushRegistrationId) => {
-                  commit("registerFinish", { permission: permission, subscription: subscription, pushRegistrationId: pushRegistrationId });
+                  commit("registerFinish", {
+                    permission: permission,
+                    subscription: subscription,
+                    pushRegistrationId: pushRegistrationId,
+                  });
                   reg.active.postMessage({
-                    action: 'PUSH_REGISTERED',
+                    action: "PUSH_REGISTERED",
                     pushRegistrationId: pushRegistrationId,
                     subscription: JSON.parse(JSON.stringify(subscription)),
                   });
                   return Promise.resolve();
                 },
                 (error) => {
-                  commit("registerFinish", { permission: permission, subscription: subscription, pushRegistrationId: null });
+                  commit("registerFinish", {
+                    permission: permission,
+                    subscription: subscription,
+                    pushRegistrationId: null,
+                  });
                   return Promise.resolve(error);
                 }
               );
@@ -120,30 +152,32 @@ export const notifications = {
       commit("unregisterStart");
       navigator.serviceWorker.ready.then((registration) => {
         registration.active.postMessage({
-          action: 'PUSH_UNREGISTERED',
+          action: "PUSH_UNREGISTERED",
         });
       });
-      dispatch("deletePushRegistration", { pushRegistrationId: state.pushRegistrationId });
+      dispatch("deletePushRegistration", {
+        pushRegistrationId: state.pushRegistrationId,
+      });
 
       return navigator.serviceWorker.ready.then((reg) => {
-        reg.pushManager
-          .getSubscription()
-          .then((subscription) => {
-            if (subscription != null) {
-              subscription.unsubscribe();
-            }
-          });
+        reg.pushManager.getSubscription().then((subscription) => {
+          if (subscription != null) {
+            subscription.unsubscribe();
+          }
+        });
       });
     },
     deletePushRegistration({ commit, state }, { pushRegistrationId }) {
-      return NotificationService.deletePushRegistration(pushRegistrationId).then(
+      return NotificationService.deletePushRegistration(
+        pushRegistrationId
+      ).then(
         () => {
           commit("deletePushRegistration", { pushRegistrationId });
 
           if (state.pushRegistrationId == pushRegistrationId) {
             navigator.serviceWorker.ready.then((registration) => {
               registration.active.postMessage({
-                action: 'PUSH_UNREGISTERED',
+                action: "PUSH_UNREGISTERED",
               });
             });
           }
@@ -157,7 +191,7 @@ export const notifications = {
     },
     sendTestNotification({ state }) {
       return NotificationService.sendTestNotification(state.pushRegistrationId);
-    }
+    },
   },
   mutations: {
     initStart(state, { supported, permission }) {
@@ -184,6 +218,6 @@ export const notifications = {
       if (state.pushRegistrationId == pushRegistrationId) {
         state.pushRegistrationId = null;
       }
-    }
+    },
   },
 };

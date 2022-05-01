@@ -5,11 +5,9 @@ class NotificationService {
   loadPushRegistration(subscription) {
     const token = JSON.stringify(subscription);
     return axios
-      .get(
-        `/api/user/push-registrations?token=${encodeURIComponent(
-          token
-        )}`
-      )
+      .get(`/api/user/push-registrations?token=${encodeURIComponent(token)}`, {
+        suppressErrorToast: true,
+      })
       .then((response) => {
         if (response.data.items.length > 0) {
           return response.data.items[0].id;

@@ -21,6 +21,17 @@ def test_recycling_street_list(client, seeder: Seeder, utils: UtilActions):
     response = utils.get_json(url)
     assert len(response.json["items"]) == 1
     assert response.json["items"][0]["id"] == recycling_street_id
+    assert response.json["items"][0]["notifications_active"] is False
+
+    seeder.set_user_recycling_street_notifications_active(
+        user_id, recycling_street_id, True
+    )
+
+    url = utils.get_url("api_v1_user_recycling_street_list")
+    response = utils.get_json(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == recycling_street_id
+    assert response.json["items"][0]["notifications_active"]
 
     seeder.remove_user_recycling_street(user_id, recycling_street_id)
 
@@ -64,6 +75,30 @@ def test_recycling_street_list_delete(client, seeder: Seeder, utils: UtilActions
 
         user_recycling_street = get_user_recycling_street(user_id, recycling_street_id)
         assert user_recycling_street is None
+
+
+def test_recycling_street_list_patch(client, seeder: Seeder, utils: UtilActions, app):
+    user_id = seeder.setup_api_access()
+    recycling_street_id = seeder.create_recycling_street()
+    seeder.add_user_recycling_street(user_id, recycling_street_id)
+
+    url = utils.get_url(
+        "api_v1_user_recycling_street_list_write",
+        recycling_street_id=recycling_street_id,
+    )
+    response = utils.patch_json(
+        url,
+        {
+            "notifications_active": True,
+        },
+    )
+    utils.assert_response_no_content(response)
+
+    with app.app_context():
+        from project.services.user import get_user_recycling_street
+
+        user_recycling_street = get_user_recycling_street(user_id, recycling_street_id)
+        assert user_recycling_street.notifications_active
 
 
 def test_place_list(client, seeder: Seeder, utils: UtilActions):
