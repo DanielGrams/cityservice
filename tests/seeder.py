@@ -130,6 +130,14 @@ class Seeder(object):
         with self._app.app_context():
             self._model_seeder.remove_user_recycling_street(user_id, recyclingstreet_id)
 
+    def set_user_recycling_street_notifications_active(
+        self, user_id, recyclingstreet_id, notifications_active
+    ):
+        with self._app.app_context():
+            self._model_seeder.set_user_recycling_street_notifications_active(
+                user_id, recyclingstreet_id, notifications_active
+            )
+
     def add_user_place(self, user_id, place_id):
         with self._app.app_context():
             self._model_seeder.add_user_place(user_id, place_id)

@@ -36,6 +36,14 @@
       >
         <template #cell(actions)="data">
           <b-button
+            @click="toggleNotifications(data.item)"
+            class="toggle-notifications-btn mr-2"
+            variant="light"
+            ><b-icon
+              :icon="data.item.notifications_active ? 'bell-fill' : 'bell'"
+            ></b-icon
+          ></b-button>
+          <b-button
             @click="deleteRecyclingStreet(data.item)"
             class="remove-recycling-street-btn"
             variant="light"
@@ -119,6 +127,44 @@ export default {
             this.refreshTableData();
           });
       }
+    },
+    /* istanbul ignore next */
+    toggleNotifications(recyclingStreet) {
+      if (recyclingStreet.notifications_active) {
+        this.patchNotifications(recyclingStreet, false);
+      } else {
+        this.activateNotifications(recyclingStreet);
+      }
+    },
+    /* istanbul ignore next */
+    activateNotifications(recyclingStreet) {
+      if (this.$store.state.notifications.pushRegistrationId) {
+        this.patchNotifications(recyclingStreet, true);
+        return;
+      }
+
+      this.$store.dispatch("notifications/registerPush").then(
+        () => {
+          this.patchNotifications(recyclingStreet, true);
+        },
+        (error) => {
+          this.$root.makeErrorToast(error.message);
+        }
+      );
+    },
+    /* istanbul ignore next */
+    patchNotifications(recyclingStreet, active) {
+      axios
+        .patch(`/api/user/recycling-streets/${recyclingStreet.id}`, {
+          notifications_active: active,
+        })
+        .then(() => {
+          const msg = active
+            ? this.$t("app.recyclingStreets.notificationsActivated")
+            : this.$t("app.recyclingStreets.notificationsDeactivated");
+          this.$root.makeSuccessToast(msg);
+          recyclingStreet.notifications_active = active;
+        });
     },
     onRowSelected(items) {
       /* istanbul ignore next */

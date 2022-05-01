@@ -79,7 +79,9 @@ def get_user_recycling_streets_query(user_id: int):
     ).filter(RecyclingStreetsUsers.user_id == user_id)
 
 
-def get_user_recycling_street(user_id: int, recyclingstreet_id: int) -> RecyclingStreet:
+def get_user_recycling_street(
+    user_id: int, recyclingstreet_id: int
+) -> RecyclingStreetsUsers:
     return RecyclingStreetsUsers.query.filter(
         RecyclingStreetsUsers.recyclingstreet_id == recyclingstreet_id,
         RecyclingStreetsUsers.user_id == user_id,
@@ -115,6 +117,34 @@ def remove_user_recycling_street(user_id: int, recyclingstreet_id: int):
         return False
 
     db.session.delete(user_recycling_street)
+    return True
+
+
+def get_user_recycling_street_notifications_active(
+    user_id: int, recyclingstreet_id: int
+):
+    user_recycling_street = get_user_recycling_street(user_id, recyclingstreet_id)
+
+    if not user_recycling_street:  # pragma: no cover
+        return False
+
+    return user_recycling_street.notifications_active
+
+
+def set_user_recycling_street_notifications_active(
+    user_id: int, recyclingstreet_id: int, notifications_active: bool
+):
+    user_recycling_street = get_user_recycling_street(user_id, recyclingstreet_id)
+
+    if not user_recycling_street:  # pragma: no cover
+        return False
+
+    if (
+        user_recycling_street.notifications_active == notifications_active
+    ):  # pragma: no cover
+        return False
+
+    user_recycling_street.notifications_active = notifications_active
     return True
 
 

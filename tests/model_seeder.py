@@ -151,6 +151,16 @@ class ModelSeeder(object):
         if remove_user_recycling_street(user_id, recyclingstreet_id):
             self._db.session.commit()
 
+    def set_user_recycling_street_notifications_active(
+        self, user_id: int, recyclingstreet_id: int, notifications_active: bool
+    ):
+        from project.services.user import set_user_recycling_street_notifications_active
+
+        if set_user_recycling_street_notifications_active(
+            user_id, recyclingstreet_id, notifications_active
+        ):
+            self._db.session.commit()
+
     def add_user_place(self, user_id, place_id):
         from project.services.user import add_user_place
 

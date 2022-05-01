@@ -45,6 +45,12 @@
       show-empty
       :empty-text="$t('shared.emptyData')"
     >
+      <template #cell(device)="data">
+        <span
+          :class="{ 'font-weight-bold': data.item.id == pushRegistrationId }"
+          >{{ data.item.device }}</span
+        >
+      </template>
       <template #cell(actions)="data">
         <b-button
           @click="confirmDeletePushRegistration(data.item.id)"
@@ -76,6 +82,10 @@ export default {
           tdClass: "align-middle",
         },
         {
+          key: "platform",
+          tdClass: "align-middle text-capitalize",
+        },
+        {
           key: "actions",
           tdClass: "text-right align-middle",
         },
@@ -100,6 +110,12 @@ export default {
       return this.$store.state.notifications.pushRegistrationId;
     },
   },
+  watch: {
+    /* istanbul ignore next */
+    "$store.state.notifications.pushRegistrationId": function () {
+      this.refreshTableData();
+    },
+  },
   methods: {
     /* istanbul ignore next */
     registerPush() {
@@ -108,7 +124,6 @@ export default {
           this.$root.makeSuccessToast(
             this.$t("app.user.profile.pushRegistrations.addedMessage")
           );
-          this.refreshTableData();
         },
         (error) => {
           this.$root.makeErrorToast(error.message);
@@ -131,12 +146,7 @@ export default {
     },
     /* istanbul ignore next */
     sendTestNotification() {
-      this.$store.dispatch("notifications/sendTestNotification").then(
-        () => {},
-        (error) => {
-          this.$root.makeErrorToast(error.message);
-        }
-      );
+      this.$store.dispatch("notifications/sendTestNotification");
     },
     loadTableData(ctx, callback) {
       const vm = this;

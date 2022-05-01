@@ -1,3 +1,4 @@
+from flask import url_for
 from flask.helpers import make_response
 from flask_apispec import doc, marshal_with, use_kwargs
 from flask_security import current_user
@@ -18,6 +19,7 @@ from project.api.push_registration.schemas import (
 from project.api.recycling_street.schemas import (
     UserRecyclingStreetListRequestSchema,
     UserRecyclingStreetListResponseSchema,
+    UserRecyclingStreetPatchRequestSchema,
 )
 from project.api.resources import (
     BaseResource,
@@ -25,7 +27,12 @@ from project.api.resources import (
     require_api_access,
 )
 from project.api.user.schemas import UserSchema
-from project.models import Place, PushRegistration, RecyclingStreet
+from project.models import (
+    Place,
+    PushRegistration,
+    RecyclingStreet,
+    RecyclingStreetsUsers,
+)
 
 
 class UserResource(BaseResource):
@@ -86,6 +93,28 @@ class UserRecyclingStreetListWriteResource(BaseResource):
 
         if add_user_recycling_street(current_user.id, recycling_street.id):
             db.session.commit()
+
+        return make_response("", 204)
+
+    @doc(
+        summary="Update recycling street",
+        tags=["Users", "Recycling"],
+        security=[{"oauth2": ["user:write"]}],
+    )
+    @use_kwargs(UserRecyclingStreetPatchRequestSchema, location="json", apply=False)
+    @marshal_with(None, 204)
+    @require_api_access("user:write")
+    def patch(self, recycling_street_id):
+        login_api_user_or_401()
+        user_recycling_street = RecyclingStreetsUsers.query.filter(
+            RecyclingStreetsUsers.recyclingstreet_id == recycling_street_id,
+            RecyclingStreetsUsers.user_id == current_user.id,
+        ).first_or_404()
+
+        user_recycling_street = self.update_instance(
+            UserRecyclingStreetPatchRequestSchema, instance=user_recycling_street
+        )
+        db.session.commit()
 
         return make_response("", 204)
 
@@ -291,7 +320,8 @@ class UserPushRegistrationSendResource(BaseResource):
         from project.services.notification import send_notification
 
         push_registration = PushRegistration.query.get_or_404(id)
-        send_notification(push_registration, "Test message")
+        base_url = url_for("frontend.index", _external=True)
+        send_notification(push_registration, "Test message", base_url)
 
         return make_response("", 204)
 

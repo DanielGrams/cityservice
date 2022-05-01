@@ -67,10 +67,6 @@
         "password": "Passwort"
       }
     },
-    "notifications": {
-      "notSupported": "Mitteilungen werden nicht unterstützt.",
-      "permissionDenied": "Berechtigung für Mitteilungen wurde abgelehnt."
-    },
     "footer": {
       "contact": "Kontakt",
       "imprint": "Impressum",
@@ -85,6 +81,10 @@
       "places": "Entdecken",
       "profile": "Profil",
       "title": "Goslar Service App"
+    },
+    "notifications": {
+      "notSupported": "Mitteilungen werden nicht unterstützt.",
+      "permissionDenied": "Berechtigung für Mitteilungen wurde abgelehnt."
     },
     "places": {
       "list": {
@@ -101,6 +101,10 @@
           "title": "Wetter"
         }
       }
+    },
+    "recyclingStreets": {
+      "notificationsActivated": "Mitteilungen aktiviert",
+      "notificationsDeactivated": "Mitteilungen deaktiviert"
     },
     "updateAlert": {
       "button": "Aktualisieren",

@@ -148,8 +148,6 @@ def scrape_events_for_street(street, event_ids):
         for event in calendar.events:
             event_id = event.uid
             category = event.name.split(":")[0]
-
-            # Legacy
             date = event.begin.datetime.replace(hour=0).astimezone(berlin_tz)
 
             item = RecyclingEvent.query.filter_by(
