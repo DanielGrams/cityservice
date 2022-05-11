@@ -1,21 +1,34 @@
 import datetime
 import json
 
+from apns2.client import APNsClient
+from apns2.payload import Payload
 from flask import url_for
 from py_vapid import Vapid
 from pywebpush import WebPushException, webpush
 from sqlalchemy.sql import and_
 
-from project import app, db
+from project import apns_cert_path, app, db
 from project.dateutils import get_today
-from project.models import PushRegistration, RecyclingEvent, RecyclingStreetsUsers, User
+from project.models import (
+    PushPlatform,
+    PushRegistration,
+    RecyclingEvent,
+    RecyclingStreetsUsers,
+    User,
+)
 
 
 def send_notification(
     registration: PushRegistration, message: str, url: str = None
 ) -> bool:
     try:
-        send_web_push(registration, message, url)
+        if registration.platform == PushPlatform.web:
+            send_web_push(registration, message, url)
+        elif registration.platform == PushPlatform.ios:
+            send_ios_push(registration, message, url)
+        else:
+            raise NotImplementedError()
         return True
     except WebPushException as ex:
         if ex.response and ex.response.status_code and ex.response.status_code == 410:
@@ -27,6 +40,19 @@ def send_notification(
     except Exception as ex:  # pragma: no cover
         app.logger.exception(ex)
         return False
+
+
+def send_ios_push(
+    registration: PushRegistration, message: str, url: str = None
+):  # pragma: no cover
+    custom = {"url": url} if url else None
+    payload = Payload(alert=message, sound="default", badge=1, custom=custom)
+    app_id = app.config["APNS_APP_ID"]
+    use_sandbox = app.config["APNS_USE_SANDBOX"]
+    client = APNsClient(
+        apns_cert_path, use_sandbox=use_sandbox, use_alternative_port=False
+    )
+    client.send_notification(registration.token, payload, app_id)
 
 
 def send_web_push(

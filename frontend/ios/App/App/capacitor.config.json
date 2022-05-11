@@ -1,0 +1,19 @@
+{
+	"appId": "de.danielgrams.cityservice",
+	"appName": "CityService",
+	"webDir": "../project/static/frontend",
+	"bundledWebRuntime": false,
+	"backgroundColor": "#009688",
+	"ios": {
+		"contentInset": "always"
+	},
+	"plugins": {
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		}
+	}
+}

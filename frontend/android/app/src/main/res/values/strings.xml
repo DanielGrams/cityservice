@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CityService</string>
+    <string name="title_activity_main">CityService</string>
+    <string name="package_name">de.danielgrams.cityservice</string>
+    <string name="custom_url_scheme">de.danielgrams.cityservice</string>
+</resources>

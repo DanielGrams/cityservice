@@ -1,9 +1,32 @@
 import axios from "axios";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
 
 /* istanbul ignore next */
 class NotificationService {
-  loadPushRegistration(subscription) {
-    const token = JSON.stringify(subscription);
+  areNotificationsSupported() {
+    if (Capacitor.isNativePlatform()) {
+      return Capacitor.isPluginAvailable("PushNotifications");
+    }
+
+    return (
+      "Notification" in window &&
+      "PushManager" in window &&
+      navigator.serviceWorker != null
+    );
+  }
+
+  getPermission() {
+    if (Capacitor.isNativePlatform()) {
+      return PushNotifications.checkPermissions().then((result => {
+        return Promise.resolve(result.receive);
+      }));
+    }
+
+    return Promise.resolve(Notification.permission);
+  }
+
+  loadPushRegistration(token) {
     return axios
       .get(`/api/user/push-registrations?token=${encodeURIComponent(token)}`, {
         suppressErrorToast: true,

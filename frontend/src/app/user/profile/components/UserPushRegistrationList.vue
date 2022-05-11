@@ -113,7 +113,8 @@ export default {
   /* istanbul ignore next */
   watch: {
     /* istanbul ignore next */
-    "$store.state.notifications.pushRegistrationId"() {
+    "$store.state.notifications.pushRegistrationId"() /* istanbul ignore next */ {
+      /* istanbul ignore next */
       this.refreshTableData();
     },
   },
@@ -121,10 +122,12 @@ export default {
     /* istanbul ignore next */
     registerPush() {
       this.$store.dispatch("notifications/registerPush").then(
-        () => {
-          this.$root.makeSuccessToast(
-            this.$t("app.user.profile.pushRegistrations.addedMessage")
-          );
+        (pending) => {
+          if (!pending) {
+            this.$root.makeSuccessToast(
+              this.$t("app.user.profile.pushRegistrations.addedMessage")
+            );
+          }
         },
         (error) => {
           this.$root.makeErrorToast(error.message);

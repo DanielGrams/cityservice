@@ -33,8 +33,8 @@
             <p class="mb-1">{{ data.item.content }}</p>
           </div>
           <a
-            :href="data.item.link_url"
-            target="_blank"
+            href="#"
+            @click.prevent="newsItemClicked(data.item)"
             class="stretched-link"
           ></a>
         </div>
@@ -52,6 +52,7 @@
 
 <script>
 import axios from "axios";
+import { Browser } from "@capacitor/browser";
 export default {
   data() {
     return {
@@ -86,6 +87,9 @@ export default {
           callback(response.data.items);
         });
       return null;
+    },
+    newsItemClicked(item) {
+      Browser.open({ url: item.link_url });
     },
   },
 };

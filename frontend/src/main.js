@@ -8,16 +8,17 @@ import VueMeta from "vue-meta";
 import * as VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
 import axios from "axios";
-import Vlf from 'vlf'
-import localforage from 'localforage'
+import Vlf from "vlf";
+import localforage from "localforage";
 import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/de.json";
-
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
-import './registerServiceWorker'
+import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
 
@@ -179,7 +180,11 @@ var vue = new Vue({
   },
 }).$mount("#app");
 
-axios.defaults.withCredentials = true;
+if ('VUE_APP_BASE_URL' in process.env) {
+  axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
+}
+
+//axios.defaults.withCredentials = true;
 axios.interceptors.request.use(
   function (config) {
     if (config) {
@@ -201,7 +206,31 @@ axios.interceptors.response.use(
     return response;
   },
   function (error) {
+    console.error(error);
     vue.handleAxiosError(error);
     return Promise.reject(error);
   }
 );
+
+if (Capacitor.isPluginAvailable("PushNotifications")) {
+  PushNotifications.addListener("registration", (token) => {
+    store.dispatch("notifications/handleRegistration", { token: token.value });
+  });
+
+  PushNotifications.addListener("registrationError", (error) => {
+    console.error(JSON.stringify(error));
+    store.dispatch("notifications/handleRegistrationError");
+  });
+
+  PushNotifications.addListener("pushNotificationReceived", (notification) => {
+    alert("Push received: " + JSON.stringify(notification));
+  });
+
+  PushNotifications.addListener(
+    "pushNotificationActionPerformed",
+    (action) => {
+      const notification = action.notification;
+      alert("Push action performed: " + JSON.stringify(notification));
+    }
+  );
+}

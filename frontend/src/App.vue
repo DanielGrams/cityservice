@@ -98,6 +98,11 @@ export default {
       once: true,
     });
 
+    /* istanbul ignore next */
+    if (navigator.serviceWorker == null) {
+      return;
+    }
+
     // Prevent multiple refreshes
     /* istanbul ignore next */
     navigator.serviceWorker.addEventListener("controllerchange", () => {

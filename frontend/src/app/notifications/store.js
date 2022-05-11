@@ -1,5 +1,8 @@
 import i18n from "@/i18n";
 import NotificationService from "../../services/notification.service";
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
+import { Device } from "@capacitor/device";
 
 /* istanbul ignore next */
 export const notifications = {
@@ -7,11 +10,12 @@ export const notifications = {
   state: {
     notificationsSupported: false,
     notificationPermission: null,
-    subscription: null,
+    token: null,
     pushRegistrationId: null,
     initialized: false,
     initializing: false,
     registering: false,
+    registerAction: null,
   },
   getters: {
     notificationsSupported: (state) => {
@@ -22,64 +26,108 @@ export const notifications = {
     },
   },
   actions: {
-    init({ commit, getters }) {
-      const supported =
-        "Notification" in window &&
-        "PushManager" in window &&
-        navigator.serviceWorker != null;
-      const permission = Notification.permission;
-      commit("initStart", { supported: supported, permission: permission });
+    init({ commit }) {
+      const supported = NotificationService.areNotificationsSupported();
+      commit("initStart", { supported: supported });
 
-      if (!supported || !getters.permissionGranted) {
-        commit("initFinish", { subscription: null, pushRegistrationId: null });
+      if (!supported) {
+        commit("initFinish", {
+          permission: null,
+          token: null,
+          pushRegistrationId: null,
+        });
         return;
       }
 
-      return navigator.serviceWorker.ready.then((reg) => {
-        if (reg.pushManager == null) {
+      return NotificationService.getPermission().then((permission) => {
+        if (permission !== "granted") {
           commit("initFinish", {
-            subscription: null,
+            permission: permission,
+            token: null,
             pushRegistrationId: null,
           });
           return;
         }
 
-        return reg.pushManager.getSubscription().then((subscription) => {
-          if (subscription == null) {
+        if (Capacitor.isNativePlatform()) {
+          commit("setRegisterAction", { action: "init" });
+          PushNotifications.register();
+          // Continues in PushNotifications.addListener("registration"|"registrationError")
+          console.log("setRegisterAction:init");
+          return;
+        }
+
+        return navigator.serviceWorker.ready.then((reg) => {
+          if (reg.pushManager == null) {
             commit("initFinish", {
-              subscription: null,
+              permission: permission,
+              token: null,
               pushRegistrationId: null,
             });
             return;
           }
 
-          return NotificationService.loadPushRegistration(subscription).then(
-            (pushRegistrationId) => {
+          return reg.pushManager.getSubscription().then((subscription) => {
+            if (subscription == null) {
               commit("initFinish", {
-                subscription: subscription,
-                pushRegistrationId: pushRegistrationId,
-              });
-              reg.active.postMessage({
-                action: "PUSH_LOADED",
-                pushRegistrationId: pushRegistrationId,
-                subscription: JSON.parse(JSON.stringify(subscription)),
-              });
-            },
-            () => {
-              commit("initFinish", {
-                subscription: subscription,
+                permission: permission,
+                token: null,
                 pushRegistrationId: null,
               });
-              reg.active.postMessage({
-                action: "PUSH_UNREGISTERED",
-              });
+              return;
             }
-          );
+
+            const token = JSON.stringify(subscription);
+            return NotificationService.loadPushRegistration(token).then(
+              (pushRegistrationId) => {
+                commit("initFinish", {
+                  permission: permission,
+                  token: token,
+                  pushRegistrationId: pushRegistrationId,
+                });
+                reg.active.postMessage({
+                  action: "PUSH_LOADED",
+                  pushRegistrationId: pushRegistrationId,
+                  subscription: JSON.parse(JSON.stringify(subscription)),
+                });
+              },
+              () => {
+                commit("initFinish", {
+                  permission: permission,
+                  token: token,
+                  pushRegistrationId: null,
+                });
+                reg.active.postMessage({
+                  action: "PUSH_UNREGISTERED",
+                });
+              }
+            );
+          });
         });
       });
     },
     registerPush({ commit }) {
       commit("registerStart");
+
+      if (Capacitor.isNativePlatform()) {
+        return PushNotifications.requestPermissions().then((result) => {
+          if (result.receive != "granted") {
+            commit("registerFinish", {
+              permission: result.receive,
+              token: null,
+              pushRegistrationId: null,
+            });
+            return Promise.reject(
+              new Error(i18n.t("app.notifications.permissionDenied"))
+            );
+          }
+
+          // Continues in PushNotifications.addListener("registration"|"registrationError")
+          commit("setRegisterAction", { action: "registerPush" });
+          PushNotifications.register();
+          return Promise.resolve(true);
+        });
+      }
 
       return Notification.requestPermission(() => {
         const permission = Notification.permission;
@@ -87,7 +135,7 @@ export const notifications = {
         if (permission != "granted") {
           commit("registerFinish", {
             permission: permission,
-            subscription: null,
+            token: null,
             pushRegistrationId: null,
           });
           return Promise.reject(
@@ -99,7 +147,7 @@ export const notifications = {
           if (reg.pushManager == null) {
             commit("registerFinish", {
               permission: permission,
-              subscription: null,
+              token: null,
               pushRegistrationId: null,
             });
             return Promise.reject(
@@ -113,10 +161,11 @@ export const notifications = {
               applicationServerKey: process.env.VUE_APP_VAPID_SERVER_KEY,
             })
             .then((subscription) => {
+              const token = JSON.stringify(subscription);
               const pushRegistration = {
                 device: window.navigator.userAgent,
                 platform: "web",
-                token: JSON.stringify(subscription),
+                token: token,
               };
 
               return NotificationService.addPushRegistration(
@@ -125,7 +174,7 @@ export const notifications = {
                 (pushRegistrationId) => {
                   commit("registerFinish", {
                     permission: permission,
-                    subscription: subscription,
+                    token: token,
                     pushRegistrationId: pushRegistrationId,
                   });
                   reg.active.postMessage({
@@ -133,20 +182,90 @@ export const notifications = {
                     pushRegistrationId: pushRegistrationId,
                     subscription: JSON.parse(JSON.stringify(subscription)),
                   });
-                  return Promise.resolve();
+                  return Promise.resolve(false);
                 },
                 (error) => {
                   commit("registerFinish", {
                     permission: permission,
-                    subscription: subscription,
+                    token: token,
                     pushRegistrationId: null,
                   });
-                  return Promise.resolve(error);
+                  return Promise.reject(error);
                 }
               );
             });
         });
       });
+    },
+    handleRegistration({ commit, state }, { token }) {
+      const permission = "granted";
+      if (state.registerAction == "init") {
+        return NotificationService.loadPushRegistration(token).then(
+          (pushRegistrationId) => {
+            commit("initFinish", {
+              permission: permission,
+              token: token,
+              pushRegistrationId: pushRegistrationId,
+            });
+          },
+          () => {
+            commit("initFinish", {
+              permission: permission,
+              token: token,
+              pushRegistrationId: null,
+            });
+          }
+        );
+      } else if (state.registerAction == "registerPush") {
+        return Device.getInfo().then((deviceInfo) => {
+          const pushRegistration = {
+            device: (
+              deviceInfo.name +
+              " " +
+              deviceInfo.manufacturer +
+              " " +
+              deviceInfo.model
+            ).trim(),
+            platform: deviceInfo.platform,
+            token: token,
+          };
+
+          return NotificationService.addPushRegistration(pushRegistration).then(
+            (pushRegistrationId) => {
+              commit("registerFinish", {
+                permission: permission,
+                token: token,
+                pushRegistrationId: pushRegistrationId,
+              });
+              return Promise.resolve();
+            },
+            (error) => {
+              commit("registerFinish", {
+                permission: permission,
+                token: token,
+                pushRegistrationId: null,
+              });
+              return Promise.resolve(error);
+            }
+          );
+        });
+      }
+    },
+    handleRegistrationError({ commit, state }) {
+      const permission = "granted";
+      if (state.registerAction == "init") {
+        commit("initFinish", {
+          permission: permission,
+          token: null,
+          pushRegistrationId: null,
+        });
+      } else if (state.registerAction == "registerPush") {
+        commit("registerFinish", {
+          permission: permission,
+          token: null,
+          pushRegistrationId: null,
+        });
+      }
     },
     unregisterPush({ commit, dispatch, state }) {
       commit("unregisterStart");
@@ -194,30 +313,33 @@ export const notifications = {
     },
   },
   mutations: {
-    initStart(state, { supported, permission }) {
+    initStart(state, { supported }) {
       state.initializing = true;
       state.notificationsSupported = supported;
-      state.notificationPermission = permission;
     },
-    initFinish(state, { subscription, pushRegistrationId }) {
+    initFinish(state, { permission, token, pushRegistrationId }) {
+      state.notificationPermission = permission;
       state.initializing = false;
       state.initialized = true;
-      state.subscription = subscription;
+      state.token = token;
       state.pushRegistrationId = pushRegistrationId;
     },
     registerStart(state) {
       state.registering = true;
     },
-    registerFinish(state, { permission, subscription, pushRegistrationId }) {
+    registerFinish(state, { permission, token, pushRegistrationId }) {
       state.registering = false;
       state.notificationPermission = permission;
-      state.subscription = subscription;
+      state.token = token;
       state.pushRegistrationId = pushRegistrationId;
     },
     deletePushRegistration(state, { pushRegistrationId }) {
       if (state.pushRegistrationId == pushRegistrationId) {
         state.pushRegistrationId = null;
       }
+    },
+    setRegisterAction(state, { action }) {
+      state.registerAction = action;
     },
   },
 };
