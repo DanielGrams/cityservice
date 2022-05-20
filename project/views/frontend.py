@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 from project import app
 
@@ -10,6 +10,9 @@ frontend = Blueprint(
 @frontend.errorhandler(404)
 @frontend.route("/")
 def index(path=None):  # pragma: no cover
+    if request.path.startswith("/api"):
+        return "", 404
+
     return frontend.send_static_file("index.html")
 
 

@@ -48,7 +48,29 @@ docker build -t cityservice:latest .
 docker run -p 5000:5000 -e "DATABASE_URL=postgresql://postgres@localhost/cityservice" "cityservice:latest"
 ```
 
-### Run capacitor with dev server
+## Capacitor
+
+### Build for native platforms
+
+```sh
+cd frontend
+npm run build
+npx cap sync
+```
+
+### Update with plugin changes
+
+```sh
+npx cap sync
+```
+
+### Update without plugin changes
+
+```sh
+npx cap copy
+```
+
+### Run with dev server
 
 ```sh
 cd frontend
@@ -62,4 +84,8 @@ server: {
     url: "<Network URL of vue app>",
     cleartext: true,
 },
+```
+
+```sh
+npx cap copy
 ```

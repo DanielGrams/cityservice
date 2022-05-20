@@ -3,7 +3,11 @@
     <b-overlay :show="isLoading">
       <div v-if="place">
         <h3 class="d-flex justify-content-between align-items-center">
-          <span>{{ place.name }}</span>
+          <div>
+            <BackButton path="/places" />
+            <span>{{ place.name }}</span>
+          </div>
+
           <b-button-group v-if="currentUser" class="pr-2">
             <b-button
               @click="toggleFavorite()"
@@ -20,18 +24,21 @@
           :to="`/places/${this.placeId}`"
           exact
           exact-active-class="active"
+          replace
           >{{ $t("app.places.read.news.title") }}</b-nav-item
         >
         <b-nav-item
           :to="`/places/${this.placeId}/weather`"
           exact
           exact-active-class="active"
+          replace
           >{{ $t("app.places.read.weather.title") }}</b-nav-item
         >
         <b-nav-item
           :to="`/places/${this.placeId}/recycling`"
           exact
           exact-active-class="active"
+          replace
           >{{ $t("app.places.read.recycling.title") }}</b-nav-item
         >
       </b-nav>
@@ -42,9 +49,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
+import BackButton from "@/components/BackButton.vue";
 
 export default {
+  components: { BackButton },
   data() {
     return {
       isLoading: false,
@@ -66,7 +75,7 @@ export default {
   },
   methods: {
     loadData() {
-      axios
+      httpService
         .get(`/api/places/${this.placeId}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
@@ -76,11 +85,11 @@ export default {
     },
     toggleFavorite() {
       if (this.place.is_favored) {
-        axios.delete(`/api/user/places/${this.place.id}`).then(() => {
+        httpService.delete(`/api/user/places/${this.place.id}`).then(() => {
           this.place.is_favored = false;
         });
       } else {
-        axios.put(`/api/user/places/${this.place.id}`).then(() => {
+        httpService.put(`/api/user/places/${this.place.id}`).then(() => {
           this.place.is_favored = true;
         });
       }

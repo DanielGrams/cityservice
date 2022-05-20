@@ -90,11 +90,43 @@ babel = Babel(app)
 cors = CORS(
     app,
     resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"},
+    # resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/", r"/auth/*"},
+    # origins=["capacitor://localhost", "http://localhost"],
+    # supports_credentials=True,
+    # allow_headers=["*", "Cookie", "Set-Cookie"],
+    # expose_headers=["*", "Cookie", "Set-Cookie"],
 )
 
 # CRSF protection
 csrf = CSRFProtect(app)
 app.config["WTF_CSRF_CHECK_DEFAULT"] = False
+
+
+@app.before_request
+def log_request():
+    from flask import request
+
+    print("=REQUEST=")
+    print(request.headers)
+    print(request.data)
+    print(request.args)
+    print(request.form)
+    print(request.endpoint)
+    print(request.method)
+    print(request.remote_addr)
+
+
+@app.after_request
+def after(response):
+    # response.headers["Access-Control-Allow-Credentials"] = "true"
+    # response.headers["Access-Control-Allow-Origin"] = "capacitor://localhost"
+    print("=RESPONSE=")
+    print(response.status)
+    print(response.headers)
+    if not response.direct_passthrough:
+        print(response.get_data())
+    return response
+
 
 # Create db
 convention = {

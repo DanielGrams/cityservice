@@ -35,7 +35,7 @@
 
 <script>
 import Vue from "vue";
-import axios from "axios";
+import httpService from "@/services/http.service";
 
 export default {
   props: {
@@ -67,7 +67,7 @@ export default {
       });
     },
     submitForm() {
-      axios
+      httpService
         .post(this.url, this.internalFormData, {
           handleLoading: (isLoading) => (this.isSubmitting = isLoading),
         })

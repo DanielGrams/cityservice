@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import { Browser } from "@capacitor/browser";
 export default {
   data() {
@@ -67,7 +67,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.id}/news-items`, {
           params: {
             page: ctx.currentPage,
@@ -88,6 +88,7 @@ export default {
         });
       return null;
     },
+    /* istanbul ignore next */
     newsItemClicked(item) {
       Browser.open({ url: item.link_url });
     },

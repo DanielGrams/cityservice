@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -57,7 +57,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.id}/weather-warnings`, {
           params: {
             page: ctx.currentPage,

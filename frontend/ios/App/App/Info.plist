@@ -50,5 +50,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Local server test</string>
 </dict>
 </plist>

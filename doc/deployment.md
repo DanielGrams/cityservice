@@ -39,3 +39,9 @@ awk '{printf "%s\\n", $0}' private_key.pem
 openssl pkcs12 -in cert.p12 -out cert.pem -nodes -clcerts
 awk '{printf "%s\\n", $0}' cert.pem
 ```
+
+## Users
+
+```sh
+flask roles add test@test.de admin
+```

@@ -7,7 +7,6 @@ import VueMoment from "vue-moment";
 import VueMeta from "vue-meta";
 import * as VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
-import axios from "axios";
 import Vlf from "vlf";
 import localforage from "localforage";
 import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
@@ -18,6 +17,7 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
+import httpService from "./services/http.service";
 import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
@@ -61,13 +61,17 @@ VeeValidate.extend("url", {
   },
 });
 
+if ("VUE_APP_BASE_URL" in process.env) {
+  httpService.baseURL = process.env.VUE_APP_BASE_URL;
+}
+
 var vue = new Vue({
   router,
   i18n,
   store,
   render: (h) => h(App),
   methods: {
-    handleAxiosStart(config) {
+    handleHttpStart(config) {
       /* istanbul ignore next */
       if (
         config &&
@@ -84,7 +88,7 @@ var vue = new Vue({
         config.handleLoading(true);
       }
     },
-    handleAxiosFinish(config) {
+    handleHttpFinish(config) {
       /* istanbul ignore next */
       if (
         config &&
@@ -101,9 +105,9 @@ var vue = new Vue({
         config.handleLoading(false);
       }
     },
-    handleAxiosError(error) {
+    handleHttpError(error) {
       if (error && error.config) {
-        this.handleAxiosFinish(error.config);
+        this.handleHttpFinish(error.config);
       }
 
       const hasHandler =
@@ -180,38 +184,9 @@ var vue = new Vue({
   },
 }).$mount("#app");
 
-if ('VUE_APP_BASE_URL' in process.env) {
-  axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
-}
+httpService.handler = vue;
 
-//axios.defaults.withCredentials = true;
-axios.interceptors.request.use(
-  function (config) {
-    if (config) {
-      vue.handleAxiosStart(config);
-    }
-    return config;
-  },
-  /* istanbul ignore next */
-  function (error) {
-    vue.handleAxiosError(error);
-    return Promise.reject(error);
-  }
-);
-axios.interceptors.response.use(
-  function (response) {
-    if (response && response.config) {
-      vue.handleAxiosFinish(response.config);
-    }
-    return response;
-  },
-  function (error) {
-    console.error(error);
-    vue.handleAxiosError(error);
-    return Promise.reject(error);
-  }
-);
-
+/* istanbul ignore next */
 if (Capacitor.isPluginAvailable("PushNotifications")) {
   PushNotifications.addListener("registration", (token) => {
     store.dispatch("notifications/handleRegistration", { token: token.value });
@@ -226,11 +201,8 @@ if (Capacitor.isPluginAvailable("PushNotifications")) {
     alert("Push received: " + JSON.stringify(notification));
   });
 
-  PushNotifications.addListener(
-    "pushNotificationActionPerformed",
-    (action) => {
-      const notification = action.notification;
-      alert("Push action performed: " + JSON.stringify(notification));
-    }
-  );
+  PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+    const notification = action.notification;
+    alert("Push action performed: " + JSON.stringify(notification));
+  });
 }

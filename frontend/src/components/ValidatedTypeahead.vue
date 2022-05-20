@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import _debounce from "lodash/debounce";
 import VueTypeaheadBootstrap from "vue-typeahead-bootstrap";
 
@@ -105,9 +105,11 @@ export default {
     },
     fetchData(query) {
       const vm = this;
-      axios.get(this.fetchURL.replace("{query}", query)).then((response) => {
-        vm.suggestions = response.data.items;
-      });
+      httpService
+        .get(this.fetchURL.replace("{query}", query))
+        .then((response) => {
+          vm.suggestions = response.data.items;
+        });
     },
     fetchDataDebounced: _debounce(function (query) {
       this.fetchData(query);

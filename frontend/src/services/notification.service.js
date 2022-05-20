@@ -1,4 +1,4 @@
-import axios from "axios";
+import httpService from "@/services/http.service";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 
@@ -27,7 +27,7 @@ class NotificationService {
   }
 
   loadPushRegistration(token) {
-    return axios
+    return httpService
       .get(`/api/user/push-registrations?token=${encodeURIComponent(token)}`, {
         suppressErrorToast: true,
       })
@@ -41,7 +41,7 @@ class NotificationService {
   }
 
   addPushRegistration(pushRegistration) {
-    return axios
+    return httpService
       .post("/api/user/push-registrations", pushRegistration)
       .then((response) => {
         if (response.status == 201) {
@@ -53,11 +53,11 @@ class NotificationService {
   }
 
   deletePushRegistration(pushRegistrationId) {
-    return axios.delete(`/api/user/push-registrations/${pushRegistrationId}`);
+    return httpService.delete(`/api/user/push-registrations/${pushRegistrationId}`);
   }
 
   sendTestNotification(pushRegistrationId) {
-    return axios.post(
+    return httpService.post(
       `/api/user/push-registrations/${pushRegistrationId}/send`
     );
   }

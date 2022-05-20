@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -90,7 +90,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/user/recycling-streets`, {
           params: {
             page: ctx.currentPage,
@@ -118,7 +118,7 @@ export default {
       if (
         confirm(this.$t("app.user.profile.recyclingStreets.deleteConfirmation"))
       ) {
-        axios
+        httpService
           .delete(`/api/user/recycling-streets/${recyclingStreet.id}`)
           .then(() => {
             this.$root.makeSuccessToast(
@@ -154,7 +154,7 @@ export default {
     },
     /* istanbul ignore next */
     patchNotifications(recyclingStreet, active) {
-      axios
+      httpService
         .patch(`/api/user/recycling-streets/${recyclingStreet.id}`, {
           notifications_active: active,
         })

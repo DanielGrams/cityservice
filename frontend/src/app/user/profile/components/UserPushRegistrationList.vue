@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -154,7 +154,7 @@ export default {
     },
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/user/push-registrations`, {
           params: {
             page: ctx.currentPage,

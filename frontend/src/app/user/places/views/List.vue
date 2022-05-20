@@ -1,6 +1,11 @@
 <template>
   <div class="container">
-    <h3>{{ $t("app.user.places.title") }}</h3>
+    <h3 class="d-flex justify-content-between align-items-center">
+      <div>
+        <BackButton path="/places" />
+        <span>{{ $t("app.user.places.title") }}</span>
+      </div>
+    </h3>
     <div class="alert alert-danger" role="alert" v-if="errorMessage">
       {{ errorMessage }}
     </div>
@@ -39,8 +44,12 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
+import BackButton from "@/components/BackButton.vue";
 export default {
+  components: {
+    BackButton,
+  },
   data() {
     return {
       errorMessage: null,
@@ -65,7 +74,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/places`, {
           params: {
             page: ctx.currentPage,
@@ -88,11 +97,11 @@ export default {
     },
     togglePlace(place) {
       if (place.is_favored) {
-        axios.delete(`/api/user/places/${place.id}`).then(() => {
+        httpService.delete(`/api/user/places/${place.id}`).then(() => {
           place.is_favored = false;
         });
       } else {
-        axios.put(`/api/user/places/${place.id}`).then(() => {
+        httpService.put(`/api/user/places/${place.id}`).then(() => {
           place.is_favored = true;
         });
       }

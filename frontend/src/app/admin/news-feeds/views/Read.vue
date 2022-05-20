@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import Update from "../components/Update.vue";
 import { localizeFeedType } from "../common.js";
 
@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     loadData() {
-      axios
+      httpService
         .get(`/api/news-feeds/${this.$route.params.id}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
@@ -89,12 +89,14 @@ export default {
     },
     deleteItem() {
       if (confirm(this.$t("app.admin.newsFeeds.deleteConfirmation"))) {
-        axios.delete(`/api/news-feeds/${this.$route.params.id}`).then(() => {
-          this.$root.makeSuccessToast(
-            this.$t("app.admin.newsFeeds.deletedMessage")
-          );
-          this.$root.goBack(`/admin/news-feeds`);
-        });
+        httpService
+          .delete(`/api/news-feeds/${this.$route.params.id}`)
+          .then(() => {
+            this.$root.makeSuccessToast(
+              this.$t("app.admin.newsFeeds.deletedMessage")
+            );
+            this.$root.goBack(`/admin/news-feeds`);
+          });
       }
     },
   },

@@ -7,9 +7,12 @@
     "build": "vue-cli-service build",
     "build:cypress": "vue-cli-service build --mode cypress",
     "lint": "vue-cli-service lint",
-    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
+    "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\"",
+    "ionic:build": "npm run build",
+    "ionic:serve": "npm run serve"
   },
   "dependencies": {
+    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "^3.5.0",
     "@capacitor/browser": "^1.0.7",
     "@capacitor/cli": "^3.5.0",

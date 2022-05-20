@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import Update from "../components/Update.vue";
 
 export default {
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     loadData() {
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.id}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
@@ -69,7 +69,7 @@ export default {
     },
     deleteItem() {
       if (confirm(this.$t("app.admin.places.deleteConfirmation"))) {
-        axios.delete(`/api/places/${this.$route.params.id}`).then(() => {
+        httpService.delete(`/api/places/${this.$route.params.id}`).then(() => {
           this.$root.makeSuccessToast(
             this.$t("app.admin.places.deletedMessage")
           );
