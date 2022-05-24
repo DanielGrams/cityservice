@@ -12,6 +12,7 @@ from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import MetaData
 
 from project.custom_session_interface import CustomSessionInterface
+from project.utils import make_dir
 
 # Create app
 app = Flask(__name__)
@@ -52,6 +53,10 @@ app.config["JWT_PUBLIC_JWKS"] = os.environ.get("JWT_PUBLIC_JWKS", "")
 app.config["JWT_PRIVATE_KEY"] = os.environ.get("JWT_PRIVATE_KEY", "").replace(
     r"\n", "\n"
 )
+app.config["APNS_CERT"] = os.environ.get("APNS_CERT", "").replace(r"\n", "\n")
+app.config["APNS_APP_ID"] = os.environ.get("APNS_APP_ID", "")
+app.config["APNS_USE_SANDBOX"] = os.getenv("APNS_USE_SANDBOX", False)
+app.config["FCM_API_KEY"] = os.environ.get("FCM_API_KEY", "")
 
 # Gunicorn logging
 if __name__ != "__main__":
@@ -62,6 +67,20 @@ if __name__ != "__main__":
 
 # Gzip
 gzip = Gzip(app)
+
+# Cache pathes
+cache_env = os.environ.get("CACHE_PATH", "tmp")
+cache_path = (
+    cache_env if os.path.isabs(cache_env) else os.path.join(app.root_path, cache_env)
+)
+
+# APNS
+try:
+    make_dir(cache_path)
+    apns_cert_path = os.path.join(cache_path, "apns_cert.pem")
+    print(app.config["APNS_CERT"], file=open(apns_cert_path, "w"))
+except Exception as ex:  # pragma: no cover
+    app.logger.exception(ex)
 
 # i18n
 app.config["BABEL_DEFAULT_LOCALE"] = "de"
