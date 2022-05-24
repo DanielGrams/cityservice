@@ -14,6 +14,9 @@ import * as rules from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/de.json";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
+import { Browser } from "@capacitor/browser";
+import { Dialog } from "@capacitor/dialog";
+import { App as NativeApp } from '@capacitor/app';
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
@@ -181,6 +184,22 @@ var vue = new Vue({
         ? this.$router.go(-1)
         : this.$router.push({ path: fallbackPath });
     },
+    openURL(originalURL) {
+      let url = originalURL;
+
+      if (url.startsWith(httpService.baseURL)) {
+        url = url.replace(httpService.baseURL, "");
+      }
+
+      console.log("openURL", url);
+      const resolved = router.resolve(url);
+      console.log("resolved", resolved);
+      if (resolved.route.name != "NotFound") {
+        router.push(resolved.route);
+      } else {
+        Browser.open({ url: originalURL });
+      }
+    },
   },
 }).$mount("#app");
 
@@ -189,20 +208,72 @@ httpService.handler = vue;
 /* istanbul ignore next */
 if (Capacitor.isPluginAvailable("PushNotifications")) {
   PushNotifications.addListener("registration", (token) => {
-    store.dispatch("notifications/handleRegistration", { token: token.value });
+    PushNotifications.removeAllDeliveredNotifications();
+    store
+      .dispatch("notifications/handleRegistration", { token: token.value })
+      .then(
+        () => {
+          if (store.state.notifications.registerAction == "registerPush") {
+            vue.makeSuccessToast(
+              i18n.t("app.user.profile.pushRegistrations.addedMessage")
+            );
+          }
+        },
+        (error) => {
+          if (store.state.notifications.registerAction == "registerPush") {
+            vue.makeErrorToast(error.message);
+          }
+        }
+      );
   });
 
   PushNotifications.addListener("registrationError", (error) => {
-    console.error(JSON.stringify(error));
+    console.error("registrationError", JSON.stringify(error));
     store.dispatch("notifications/handleRegistrationError");
+    vue.makeErrorToast(error.message);
   });
 
   PushNotifications.addListener("pushNotificationReceived", (notification) => {
-    alert("Push received: " + JSON.stringify(notification));
+    PushNotifications.removeAllDeliveredNotifications();
+
+    const title = notification.title || "City service";
+    const url = notification.data && notification.data.url;
+
+    if (url == null) {
+      Dialog.alert({
+        title: title,
+        message: notification.body,
+      });
+      return;
+    }
+
+    Dialog.confirm({
+      title: title,
+      message: notification.body,
+    }).then((result) => {
+      if (result.value) {
+        vue.openURL(url);
+      }
+    });
   });
 
   PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
     const notification = action.notification;
-    alert("Push action performed: " + JSON.stringify(notification));
+    const url = notification.data && notification.data.url;
+
+    if (url != null) {
+      vue.openURL(url);
+    }
+  });
+}
+
+/* istanbul ignore next */
+if (Capacitor.isPluginAvailable("App")) {
+  NativeApp.addListener("appStateChange", (state) => {
+    if (state.isActive) {
+      if (Capacitor.isPluginAvailable("PushNotifications")) {
+        PushNotifications.removeAllDeliveredNotifications();
+      }
+    }
   });
 }

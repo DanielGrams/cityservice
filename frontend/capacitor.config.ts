@@ -9,6 +9,9 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: "always",
   },
+  server: {
+    cleartext: true,
+  },
   plugins: {
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],

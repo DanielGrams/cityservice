@@ -21,6 +21,11 @@ const routes = [
   ...userRoutes,
   ...adminRoutes,
   ...rootRoutes,
+  {
+    path: "/",
+    name: "NotFound",
+    component: () => import("./root/views/Home.vue"),
+  },
 ];
 
 const router = new VueRouter({

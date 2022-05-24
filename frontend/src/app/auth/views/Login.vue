@@ -5,6 +5,7 @@
         <ValidatedInput
           :label="$t('app.auth.login.email')"
           name="email"
+          type="email"
           v-model="email"
           rules="required|email"
         />

@@ -1,6 +1,7 @@
 import httpService from "@/services/http.service";
 import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
+import { Storage } from "@capacitor/storage";
 
 /* istanbul ignore next */
 class NotificationService {
@@ -18,12 +19,54 @@ class NotificationService {
 
   getPermission() {
     if (Capacitor.isNativePlatform()) {
-      return PushNotifications.checkPermissions().then((result => {
+      return PushNotifications.checkPermissions().then((result) => {
         return Promise.resolve(result.receive);
-      }));
+      });
     }
 
     return Promise.resolve(Notification.permission);
+  }
+
+  savePushRegistrationToStorage(pushRegistrationId, token) {
+    const pushInfo = {
+      pushRegistrationId: pushRegistrationId,
+      token: token,
+    };
+
+    return Storage.set({
+      key: "pushInfo",
+      value: JSON.stringify(pushInfo),
+    });
+  }
+
+  deletePushRegistrationFromStorage() {
+    return Storage.remove({ key: "pushInfo" });
+  }
+
+  handlePushLoaded(pushRegistrationId, token) {
+    return Storage.get({ key: "pushInfo" }).then(({ pushInfo }) => {
+      if (!pushInfo) {
+        return this.savePushRegistrationToStorage(pushRegistrationId, token);
+      }
+
+      return this.handlePushUpdate(pushInfo);
+    });
+  }
+
+  handlePushUpdate(pushInfo, newToken) {
+    if (pushInfo.token == newToken) {
+      return Promise.resolve();
+    }
+
+    return this.updatePushRegistration(
+      pushInfo.pushRegistrationId,
+      newToken
+    ).then(() => {
+      return this.savePushRegistrationToStorage(
+        pushInfo.pushRegistrationId,
+        newToken
+      );
+    });
   }
 
   loadPushRegistration(token) {
@@ -52,8 +95,19 @@ class NotificationService {
       });
   }
 
+  updatePushRegistration(pushRegistrationId, token) {
+    return httpService.patch(
+      `/api/user/push-registrations/${pushRegistrationId}`,
+      {
+        token: token,
+      }
+    );
+  }
+
   deletePushRegistration(pushRegistrationId) {
-    return httpService.delete(`/api/user/push-registrations/${pushRegistrationId}`);
+    return httpService.delete(
+      `/api/user/push-registrations/${pushRegistrationId}`
+    );
   }
 
   sendTestNotification(pushRegistrationId) {

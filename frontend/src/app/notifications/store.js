@@ -207,6 +207,8 @@ export const notifications = {
               token: token,
               pushRegistrationId: pushRegistrationId,
             });
+
+            NotificationService.handlePushLoaded(pushRegistrationId, token);
           },
           () => {
             commit("initFinish", {
@@ -214,6 +216,8 @@ export const notifications = {
               token: token,
               pushRegistrationId: null,
             });
+
+            NotificationService.deletePushRegistrationFromStorage();
           }
         );
       } else if (state.registerAction == "registerPush") {
@@ -237,7 +241,11 @@ export const notifications = {
                 token: token,
                 pushRegistrationId: pushRegistrationId,
               });
-              return Promise.resolve();
+
+              return NotificationService.savePushRegistrationToStorage(
+                pushRegistrationId,
+                token
+              );
             },
             (error) => {
               commit("registerFinish", {
@@ -267,8 +275,14 @@ export const notifications = {
         });
       }
     },
-    unregisterPush({ commit, dispatch, state }) {
-      commit("unregisterStart");
+    unregisterPush({ dispatch, state }) {
+      if (Capacitor.isNativePlatform()) {
+        dispatch("deletePushRegistration", {
+          pushRegistrationId: state.pushRegistrationId,
+        });
+        return;
+      }
+
       navigator.serviceWorker.ready.then((registration) => {
         registration.active.postMessage({
           action: "PUSH_UNREGISTERED",

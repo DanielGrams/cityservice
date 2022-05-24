@@ -56,6 +56,7 @@ app.config["JWT_PRIVATE_KEY"] = os.environ.get("JWT_PRIVATE_KEY", "").replace(
 app.config["APNS_CERT"] = os.environ.get("APNS_CERT", "").replace(r"\n", "\n")
 app.config["APNS_APP_ID"] = os.environ.get("APNS_APP_ID", "")
 app.config["APNS_USE_SANDBOX"] = os.getenv("APNS_USE_SANDBOX", False)
+app.config["FCM_API_KEY"] = os.environ.get("FCM_API_KEY", "")
 
 # Gunicorn logging
 if __name__ != "__main__":
@@ -90,11 +91,6 @@ babel = Babel(app)
 cors = CORS(
     app,
     resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/"},
-    # resources={r"/.well-known/*", r"/api/*", r"/oauth/*", "/swagger/", r"/auth/*"},
-    # origins=["capacitor://localhost", "http://localhost"],
-    # supports_credentials=True,
-    # allow_headers=["*", "Cookie", "Set-Cookie"],
-    # expose_headers=["*", "Cookie", "Set-Cookie"],
 )
 
 # CRSF protection

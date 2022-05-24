@@ -7,6 +7,9 @@
 	"ios": {
 		"contentInset": "always"
 	},
+	"server": {
+		"cleartext": true
+	},
 	"plugins": {
 		"PushNotifications": {
 			"presentationOptions": [
