@@ -272,6 +272,7 @@ if (Capacitor.isPluginAvailable("App")) {
   NativeApp.addListener("appStateChange", (state) => {
     if (state.isActive) {
       if (Capacitor.isPluginAvailable("PushNotifications")) {
+        // TODO dgr: Nur machen, wenn Push registriert ist
         PushNotifications.removeAllDeliveredNotifications();
       }
     }

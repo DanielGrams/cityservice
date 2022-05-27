@@ -45,3 +45,16 @@ awk '{printf "%s\\n", $0}' cert.pem
 ```sh
 flask roles add test@test.de admin
 ```
+
+## iOS
+
+### Deploy to Testflight
+
+- [https://litoarias.medium.com/continuous-delivery-for-ios-using-fastlane-and-github-actions-edf62ee68ecc]
+- Setup frontend/ios/App/fastlane/.env
+
+```sh
+cd frontend/ios/App
+bundle install
+bundle exec fastlane closed_beta
+```

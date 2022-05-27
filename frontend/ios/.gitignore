@@ -4,6 +4,11 @@ App/Podfile.lock
 App/App/public
 DerivedData
 xcuserdata
+App/vendor
+App/fastlane/.env
+App/fastlane/report.xml
+App/App.ipa
+App/App.app.dSYM.zip
 
 # Cordova plugins for Capacitor
 capacitor-cordova-ios-plugins
