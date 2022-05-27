@@ -97,4 +97,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-frontend/android/app/google-services.json
