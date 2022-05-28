@@ -24,7 +24,7 @@ jobs:
           cd frontend
           npx cap sync ios
 
-      - name: Deploy iOS Beta to TestFlight via Fastlane
+      - name: Build iOS AppStore ipa
         uses: maierj/fastlane-action@v1.4.0
         with:
           lane: build

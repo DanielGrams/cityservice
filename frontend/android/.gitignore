@@ -1,5 +1,9 @@
 # Using Android gitignore template: https://github.com/github/gitignore/blob/HEAD/Android.gitignore
 
+play_config.json
+vendor
+keystore.properties
+
 # Built application files
 *.apk
 *.aar

@@ -48,13 +48,41 @@ flask roles add test@test.de admin
 
 ## iOS
 
+### Install fastlane for iOS
+
+```sh
+cd frontend/ios/App
+bundle install
+```
+
 ### Deploy to Testflight
 
 - [https://litoarias.medium.com/continuous-delivery-for-ios-using-fastlane-and-github-actions-edf62ee68ecc]
 - Setup frontend/ios/App/fastlane/.env
 
 ```sh
-cd frontend/ios/App
-bundle install
 bundle exec fastlane closed_beta
+```
+
+## Android
+
+### Install fastlane for Android
+
+```sh
+cd frontend/android
+bundle install
+```
+
+### Deploy to Playstore
+
+- [https://medium.com/scalereal/automate-publishing-app-to-the-google-play-store-with-github-actions-fastlane-ac9104712486]
+- [https://www.runway.team/blog/how-to-build-the-perfect-fastlane-pipeline-for-android]
+- Setup frontend/android/fastlane/.env
+- Setup frontend/android/keystore.properties
+- Put frontend/android/app/google-services.json
+- Put frontend/android/play_config.json
+- Put frontend/android/app/keystore.jks
+
+```sh
+bundle exec fastlane deploy
 ```
