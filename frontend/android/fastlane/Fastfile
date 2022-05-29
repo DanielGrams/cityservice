@@ -8,7 +8,7 @@ platform :android do
   lane :increment_vc do
     android_set_version_code(
       version_code: GITHUB_RUN_NUMBER,
-      gradle_file_path: "app/build.gradle",
+      gradle_file: "app/build.gradle",
     )
   end
 
