@@ -97,33 +97,6 @@ cors = CORS(
 csrf = CSRFProtect(app)
 app.config["WTF_CSRF_CHECK_DEFAULT"] = False
 
-
-@app.before_request
-def log_request():
-    from flask import request
-
-    print("=REQUEST=")
-    print(request.headers)
-    print(request.data)
-    print(request.args)
-    print(request.form)
-    print(request.endpoint)
-    print(request.method)
-    print(request.remote_addr)
-
-
-@app.after_request
-def after(response):
-    # response.headers["Access-Control-Allow-Credentials"] = "true"
-    # response.headers["Access-Control-Allow-Origin"] = "capacitor://localhost"
-    print("=RESPONSE=")
-    print(response.status)
-    print(response.headers)
-    if not response.direct_passthrough:
-        print(response.get_data())
-    return response
-
-
 # Create db
 convention = {
     "ix": "ix_%(column_0_label)s",

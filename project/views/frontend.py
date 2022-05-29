@@ -7,9 +7,13 @@ frontend = Blueprint(
 )
 
 
-@frontend.errorhandler(404)
 @frontend.route("/")
 def index(path=None):  # pragma: no cover
+    return frontend.send_static_file("index.html")
+
+
+@frontend.errorhandler(404)
+def not_found(e):  # pragma: no cover
     if request.path.startswith("/api"):
         return "", 404
 

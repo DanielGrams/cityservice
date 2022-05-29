@@ -6,25 +6,16 @@ class HttpService {
   handler = null;
 
   get(url, config = null) {
-    let httpOptions = {
-      method: "GET",
-      url: this.buildAbsoluteUrl(url),
-    };
-
-    if (config && config.headers) {
-      httpOptions.headers = config.headers;
-    }
-
-    if (config && config.params) {
-      httpOptions.params = config.params;
-    }
-
-    return this.request(httpOptions, config);
+    return this.getdelete("GET", url, config);
   }
 
   delete(url, config = null) {
+    return this.getdelete("DELETE", url, config);
+  }
+
+  getdelete(method, url, config = null) {
     let httpOptions = {
-      method: "DELETE",
+      method: method,
       url: this.buildAbsoluteUrl(url),
     };
 
@@ -43,6 +34,7 @@ class HttpService {
     return this.patchPutPost("POST", url, data, config);
   }
 
+  /* istanbul ignore next */
   patch(url, data, config = null) {
     return this.patchPutPost("PATCH", url, data, config);
   }
@@ -83,13 +75,14 @@ class HttpService {
       });
     }
 
-    console.log("Request", httpOptions, config);
+    // console.log("Request", httpOptions, config);
     this.handler?.handleHttpStart(config);
 
     return Http.request(httpOptions)
       .then((response) => {
-        console.log("Response", response);
+        // console.log("Response", response);
 
+        /* istanbul ignore next */
         if (response.error) {
           const error = new Error(response.error);
           error.response = response;
@@ -109,7 +102,7 @@ class HttpService {
         return response;
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         error.config = config;
         this.handler?.handleHttpError(error);
         return Promise.reject(error);

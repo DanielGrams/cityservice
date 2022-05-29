@@ -53,7 +53,6 @@ export const notifications = {
           commit("setRegisterAction", { action: "init" });
           PushNotifications.register();
           // Continues in PushNotifications.addListener("registration"|"registrationError")
-          console.log("setRegisterAction:init");
           return;
         }
 

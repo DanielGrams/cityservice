@@ -8,12 +8,14 @@ import userRoutes from "./user/router";
 import authRoutes from "./auth/router";
 import rootRoutes from "./root/router";
 
+const Home = () => import("./root/views/Home.vue");
+
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    component: () => import("./root/views/Home.vue"),
+    component: Home,
   },
   ...authRoutes,
   ...placesRoutes,
@@ -24,7 +26,7 @@ const routes = [
   {
     path: "/",
     name: "NotFound",
-    component: () => import("./root/views/Home.vue"),
+    component: Home,
   },
 ];
 

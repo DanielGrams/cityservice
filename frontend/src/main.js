@@ -16,7 +16,7 @@ import { Capacitor } from "@capacitor/core";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { Browser } from "@capacitor/browser";
 import { Dialog } from "@capacitor/dialog";
-import { App as NativeApp } from '@capacitor/app';
+import { App as NativeApp } from "@capacitor/app";
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
@@ -184,6 +184,7 @@ var vue = new Vue({
         ? this.$router.go(-1)
         : this.$router.push({ path: fallbackPath });
     },
+    /* istanbul ignore next */
     openURL(originalURL) {
       let url = originalURL;
 
@@ -191,9 +192,8 @@ var vue = new Vue({
         url = url.replace(httpService.baseURL, "");
       }
 
-      console.log("openURL", url);
       const resolved = router.resolve(url);
-      console.log("resolved", resolved);
+
       if (resolved.route.name != "NotFound") {
         router.push(resolved.route);
       } else {
@@ -228,6 +228,7 @@ if (Capacitor.isPluginAvailable("PushNotifications")) {
   });
 
   PushNotifications.addListener("registrationError", (error) => {
+    // eslint-disable-next-line no-console
     console.error("registrationError", JSON.stringify(error));
     store.dispatch("notifications/handleRegistrationError");
     vue.makeErrorToast(error.message);
@@ -270,11 +271,12 @@ if (Capacitor.isPluginAvailable("PushNotifications")) {
 /* istanbul ignore next */
 if (Capacitor.isPluginAvailable("App")) {
   NativeApp.addListener("appStateChange", (state) => {
-    if (state.isActive) {
-      if (Capacitor.isPluginAvailable("PushNotifications")) {
-        // TODO dgr: Nur machen, wenn Push registriert ist
-        PushNotifications.removeAllDeliveredNotifications();
-      }
+    if (
+      state.isActive &&
+      Capacitor.isPluginAvailable("PushNotifications") &&
+      store.state.notifications.notificationPermission == "granted"
+    ) {
+      PushNotifications.removeAllDeliveredNotifications();
     }
   });
 }
