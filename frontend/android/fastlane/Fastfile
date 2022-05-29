@@ -1,6 +1,6 @@
 default_platform(:android)
 
-VERSION_CODE = ENV["GITHUB_RUN_ATTEMPT"]
+VERSION_CODE = 3 + ENV["GITHUB_RUN_NUMBER"].to_i
 
 platform :android do
 
