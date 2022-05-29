@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import Create from "../components/Create.vue";
 export default {
   components: { Create },
@@ -70,7 +70,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/places`, {
           params: {
             page: ctx.currentPage,

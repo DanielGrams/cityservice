@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -74,7 +74,7 @@ export default {
       }
 
       const vm = this;
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.id}/recycling-streets`, {
           params: params,
           handleRequestStart: () => (this.errorMessage = null),

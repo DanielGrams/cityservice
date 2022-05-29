@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -79,7 +79,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/user/places`, {
           params: {
             page: ctx.currentPage,
@@ -105,7 +105,7 @@ export default {
     },
     deletePlace(place) {
       if (confirm(this.$t("app.user.profile.places.deleteConfirmation"))) {
-        axios.delete(`/api/user/places/${place.id}`).then(() => {
+        httpService.delete(`/api/user/places/${place.id}`).then(() => {
           this.$root.makeSuccessToast(
             this.$t("app.user.profile.places.deletedMessage")
           );

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import Create from "../components/Create.vue";
 import { localizeFeedType } from "../common.js";
 export default {
@@ -78,7 +78,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/news-feeds`, {
           params: {
             page: ctx.currentPage,

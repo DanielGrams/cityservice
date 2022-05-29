@@ -1,0 +1,29 @@
+default_platform(:android)
+
+VERSION_CODE = 3 + ENV["GITHUB_RUN_NUMBER"].to_i
+
+platform :android do
+
+  desc "Increment version code"
+  lane :increment_vc do
+    android_set_version_code(
+      version_code: VERSION_CODE,
+      gradle_file: "app/build.gradle",
+    )
+  end
+
+  desc "Build release bundle"
+  lane :build do
+    gradle(task: "clean bundleRelease")
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    increment_vc
+    build
+    upload_to_play_store(
+      track: "internal",
+      release_status: "draft"
+    )
+  end
+end

@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 export default {
   data() {
     return {
@@ -59,7 +59,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/recycling-streets/${this.$route.params.id}/events`, {
           params: {
             page: ctx.currentPage,

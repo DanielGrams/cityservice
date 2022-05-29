@@ -33,8 +33,8 @@
             <p class="mb-1">{{ data.item.content }}</p>
           </div>
           <a
-            :href="data.item.link_url"
-            target="_blank"
+            href="#"
+            @click.prevent="newsItemClicked(data.item)"
             class="stretched-link"
           ></a>
         </div>
@@ -51,7 +51,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
+import { Browser } from "@capacitor/browser";
 export default {
   data() {
     return {
@@ -66,7 +67,7 @@ export default {
   methods: {
     loadTableData(ctx, callback) {
       const vm = this;
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.id}/news-items`, {
           params: {
             page: ctx.currentPage,
@@ -86,6 +87,10 @@ export default {
           callback(response.data.items);
         });
       return null;
+    },
+    /* istanbul ignore next */
+    newsItemClicked(item) {
+      Browser.open({ url: item.link_url });
     },
   },
 };

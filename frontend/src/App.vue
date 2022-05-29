@@ -1,43 +1,28 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" type="light" variant="light">
-      <b-navbar-brand to="/">
-        <img
-          src="@/assets/apple-touch-icon.png"
-          width="30"
-          height="30"
-          class="d-inline-block align-top rounded"
-          alt="Logo"
-        />
-        {{ $t("app.menu.title") }}
-      </b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
-          <b-nav-item to="/places">{{ $t("app.menu.places") }}</b-nav-item>
-        </b-navbar-nav>
-        <b-navbar-nav v-if="currentUser">
-          <b-nav-item to="/user/profile">{{
-            $t("app.menu.profile")
-          }}</b-nav-item>
-        </b-navbar-nav>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item v-if="!currentUser" to="/login">{{
-            $t("app.menu.login")
-          }}</b-nav-item>
-          <b-nav-item-dropdown v-if="currentUser" right class="user-dropdown">
-            <template #button-content>
-              {{ currentUser.email }}
-            </template>
-            <b-dropdown-item v-if="isAdmin" to="/admin">{{
-              $t("app.menu.admin")
-            }}</b-dropdown-item>
-            <b-dropdown-item class="logout" href @click.prevent="logOut">{{
-              $t("app.menu.logout")
-            }}</b-dropdown-item>
-          </b-nav-item-dropdown>
-        </b-navbar-nav>
-      </b-collapse>
+    <b-navbar type="light" variant="light">
+      <b-navbar-nav>
+        <b-nav-item to="/places">{{ $t("app.menu.places") }}</b-nav-item>
+      </b-navbar-nav>
+      <b-navbar-nav v-if="currentUser">
+        <b-nav-item to="/user/profile">{{ $t("app.menu.profile") }}</b-nav-item>
+      </b-navbar-nav>
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item v-if="!currentUser" to="/login">{{
+          $t("app.menu.login")
+        }}</b-nav-item>
+        <b-nav-item-dropdown v-if="currentUser" right class="user-dropdown">
+          <template #button-content>
+            {{ currentUser.email }}
+          </template>
+          <b-dropdown-item v-if="isAdmin" to="/admin">{{
+            $t("app.menu.admin")
+          }}</b-dropdown-item>
+          <b-dropdown-item class="logout" href @click.prevent="logOut">{{
+            $t("app.menu.logout")
+          }}</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
     </b-navbar>
 
     <b-alert
@@ -97,6 +82,11 @@ export default {
     document.addEventListener("serviceWorkerUpdateEvent", this.appUpdateUI, {
       once: true,
     });
+
+    /* istanbul ignore next */
+    if (navigator.serviceWorker == null) {
+      return;
+    }
 
     // Prevent multiple refreshes
     /* istanbul ignore next */

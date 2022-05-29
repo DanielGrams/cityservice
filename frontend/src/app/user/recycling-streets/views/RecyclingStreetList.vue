@@ -1,6 +1,13 @@
 <template>
   <div class="container">
-    <h3>{{ $t("app.user.recyclingStreets.recyclingStreets.title") }}</h3>
+    <h3 class="d-flex justify-content-between align-items-center">
+      <div>
+        <BackButton path="/places" />
+        <span>{{
+          $t("app.user.recyclingStreets.recyclingStreets.title")
+        }}</span>
+      </div>
+    </h3>
     <b-form-input
       id="filter-input"
       v-model="filter"
@@ -48,8 +55,12 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
+import BackButton from "@/components/BackButton.vue";
 export default {
+  components: {
+    BackButton,
+  },
   data() {
     return {
       filter: "",
@@ -84,7 +95,7 @@ export default {
       }
 
       const vm = this;
-      axios
+      httpService
         .get(`/api/places/${this.$route.params.placeId}/recycling-streets`, {
           params: params,
           handleRequestStart: () => (this.errorMessage = null),
@@ -104,11 +115,13 @@ export default {
     },
     toggleStreet(street) {
       if (street.is_favored) {
-        axios.delete(`/api/user/recycling-streets/${street.id}`).then(() => {
-          street.is_favored = false;
-        });
+        httpService
+          .delete(`/api/user/recycling-streets/${street.id}`)
+          .then(() => {
+            street.is_favored = false;
+          });
       } else {
-        axios.put(`/api/user/recycling-streets/${street.id}`).then(() => {
+        httpService.put(`/api/user/recycling-streets/${street.id}`).then(() => {
           street.is_favored = true;
         });
       }

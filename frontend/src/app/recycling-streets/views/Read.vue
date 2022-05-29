@@ -3,7 +3,10 @@
     <b-overlay :show="isLoading">
       <div v-if="recyclingStreet">
         <h3 class="d-flex justify-content-between align-items-center">
-          <span>{{ recyclingStreet.name }}</span>
+          <div>
+            <BackButton path="/places" />
+            <span>{{ recyclingStreet.name }}</span>
+          </div>
           <b-button-group v-if="currentUser" class="pr-2">
             <b-button
               @click="toggleFavorite()"
@@ -22,12 +25,14 @@
 </template>
 
 <script>
-import axios from "axios";
+import httpService from "@/services/http.service";
 import RecyclingEventList from "../components/RecyclingEventList.vue";
+import BackButton from "@/components/BackButton.vue";
 
 export default {
   components: {
     RecyclingEventList,
+    BackButton,
   },
   data() {
     return {
@@ -47,7 +52,7 @@ export default {
   },
   methods: {
     loadData() {
-      axios
+      httpService
         .get(`/api/recycling-streets/${this.$route.params.id}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
@@ -57,13 +62,13 @@ export default {
     },
     toggleFavorite() {
       if (this.recyclingStreet.is_favored) {
-        axios
+        httpService
           .delete(`/api/user/recycling-streets/${this.recyclingStreet.id}`)
           .then(() => {
             this.recyclingStreet.is_favored = false;
           });
       } else {
-        axios
+        httpService
           .put(`/api/user/recycling-streets/${this.recyclingStreet.id}`)
           .then(() => {
             this.recyclingStreet.is_favored = true;

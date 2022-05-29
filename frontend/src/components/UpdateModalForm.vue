@@ -37,7 +37,7 @@
 
 <script>
 import Vue from "vue";
-import axios from "axios";
+import httpService from "@/services/http.service";
 import _omit from "lodash/omit";
 
 export default {
@@ -78,7 +78,7 @@ export default {
         return;
       }
 
-      axios
+      httpService
         .get(`${this.url}/${this.id}`, {
           handleLoading: (isLoading) => (this.isLoading = isLoading),
         })
@@ -99,7 +99,7 @@ export default {
         putData = _omit(this.formData, this.removeFromSendData);
       }
 
-      axios
+      httpService
         .put(`${this.url}/${this.id}`, putData, {
           handleLoading: (isLoading) => (this.isSubmitting = isLoading),
         })

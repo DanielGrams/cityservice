@@ -7,17 +7,21 @@ import VueMoment from "vue-moment";
 import VueMeta from "vue-meta";
 import * as VeeValidate from "vee-validate";
 import VueCookies from "vue-cookies";
-import axios from "axios";
-import Vlf from 'vlf'
-import localforage from 'localforage'
+import Vlf from "vlf";
+import localforage from "localforage";
 import { ValidationProvider, ValidationObserver, extend } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/de.json";
-
+import { Capacitor } from "@capacitor/core";
+import { PushNotifications } from "@capacitor/push-notifications";
+import { Browser } from "@capacitor/browser";
+import { Dialog } from "@capacitor/dialog";
+import { App as NativeApp } from "@capacitor/app";
 import "./custom.scss";
 import i18n from "./i18n";
 import store from "./store";
-import './registerServiceWorker'
+import httpService from "./services/http.service";
+import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
 
@@ -60,13 +64,17 @@ VeeValidate.extend("url", {
   },
 });
 
+if ("VUE_APP_BASE_URL" in process.env) {
+  httpService.baseURL = process.env.VUE_APP_BASE_URL;
+}
+
 var vue = new Vue({
   router,
   i18n,
   store,
   render: (h) => h(App),
   methods: {
-    handleAxiosStart(config) {
+    handleHttpStart(config) {
       /* istanbul ignore next */
       if (
         config &&
@@ -83,7 +91,7 @@ var vue = new Vue({
         config.handleLoading(true);
       }
     },
-    handleAxiosFinish(config) {
+    handleHttpFinish(config) {
       /* istanbul ignore next */
       if (
         config &&
@@ -100,9 +108,9 @@ var vue = new Vue({
         config.handleLoading(false);
       }
     },
-    handleAxiosError(error) {
+    handleHttpError(error) {
       if (error && error.config) {
-        this.handleAxiosFinish(error.config);
+        this.handleHttpFinish(error.config);
       }
 
       const hasHandler =
@@ -176,32 +184,99 @@ var vue = new Vue({
         ? this.$router.go(-1)
         : this.$router.push({ path: fallbackPath });
     },
+    /* istanbul ignore next */
+    openURL(originalURL) {
+      let url = originalURL;
+
+      if (url.startsWith(httpService.baseURL)) {
+        url = url.replace(httpService.baseURL, "");
+      }
+
+      const resolved = router.resolve(url);
+
+      if (resolved.route.name != "NotFound") {
+        router.push(resolved.route);
+      } else {
+        Browser.open({ url: originalURL });
+      }
+    },
   },
 }).$mount("#app");
 
-axios.defaults.withCredentials = true;
-axios.interceptors.request.use(
-  function (config) {
-    if (config) {
-      vue.handleAxiosStart(config);
+httpService.handler = vue;
+
+/* istanbul ignore next */
+if (Capacitor.isPluginAvailable("PushNotifications")) {
+  PushNotifications.addListener("registration", (token) => {
+    PushNotifications.removeAllDeliveredNotifications();
+    store
+      .dispatch("notifications/handleRegistration", { token: token.value })
+      .then(
+        () => {
+          if (store.state.notifications.registerAction == "registerPush") {
+            vue.makeSuccessToast(
+              i18n.t("app.user.profile.pushRegistrations.addedMessage")
+            );
+          }
+        },
+        (error) => {
+          if (store.state.notifications.registerAction == "registerPush") {
+            vue.makeErrorToast(error.message);
+          }
+        }
+      );
+  });
+
+  PushNotifications.addListener("registrationError", (error) => {
+    // eslint-disable-next-line no-console
+    console.error("registrationError", JSON.stringify(error));
+    store.dispatch("notifications/handleRegistrationError");
+    vue.makeErrorToast(error.message);
+  });
+
+  PushNotifications.addListener("pushNotificationReceived", (notification) => {
+    PushNotifications.removeAllDeliveredNotifications();
+
+    const title = notification.title || "City service";
+    const url = notification.data && notification.data.url;
+
+    if (url == null) {
+      Dialog.alert({
+        title: title,
+        message: notification.body,
+      });
+      return;
     }
-    return config;
-  },
-  /* istanbul ignore next */
-  function (error) {
-    vue.handleAxiosError(error);
-    return Promise.reject(error);
-  }
-);
-axios.interceptors.response.use(
-  function (response) {
-    if (response && response.config) {
-      vue.handleAxiosFinish(response.config);
+
+    Dialog.confirm({
+      title: title,
+      message: notification.body,
+    }).then((result) => {
+      if (result.value) {
+        vue.openURL(url);
+      }
+    });
+  });
+
+  PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
+    const notification = action.notification;
+    const url = notification.data && notification.data.url;
+
+    if (url != null) {
+      vue.openURL(url);
     }
-    return response;
-  },
-  function (error) {
-    vue.handleAxiosError(error);
-    return Promise.reject(error);
-  }
-);
+  });
+}
+
+/* istanbul ignore next */
+if (Capacitor.isPluginAvailable("App")) {
+  NativeApp.addListener("appStateChange", (state) => {
+    if (
+      state.isActive &&
+      Capacitor.isPluginAvailable("PushNotifications") &&
+      store.state.notifications.notificationPermission == "granted"
+    ) {
+      PushNotifications.removeAllDeliveredNotifications();
+    }
+  });
+}
