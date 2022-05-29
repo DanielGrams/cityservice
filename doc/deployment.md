@@ -43,6 +43,8 @@ awk '{printf "%s\\n", $0}' cert.pem
 ## Users
 
 ```sh
+flask users create test@test.de
+flask users activate test@test.de
 flask roles add test@test.de admin
 ```
 
@@ -77,10 +79,9 @@ bundle install
 
 - [https://medium.com/scalereal/automate-publishing-app-to-the-google-play-store-with-github-actions-fastlane-ac9104712486]
 - [https://www.runway.team/blog/how-to-build-the-perfect-fastlane-pipeline-for-android]
-- Setup frontend/android/fastlane/.env
 - Setup frontend/android/keystore.properties
-- Put frontend/android/app/google-services.json
 - Put frontend/android/play_config.json
+- Put frontend/android/app/google-services.json
 - Put frontend/android/app/keystore.jks
 
 ```sh
