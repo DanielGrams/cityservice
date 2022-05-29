@@ -1,13 +1,13 @@
 default_platform(:android)
 
-GITHUB_RUN_NUMBER = ENV["GITHUB_RUN_NUMBER"]
+VERSION_CODE = ENV["GITHUB_RUN_ATTEMPT"]
 
 platform :android do
 
   desc "Increment version code"
   lane :increment_vc do
     android_set_version_code(
-      version_code: GITHUB_RUN_NUMBER,
+      version_code: VERSION_CODE,
       gradle_file: "app/build.gradle",
     )
   end
