@@ -35,7 +35,7 @@
         <p class="text-center small text-center text-secondary mb-1">
           <i18n path="app.footer.withLove" tag="span">
             <template v-slot:love>
-              <b-icon icon="heart-fill" style="color: red"></b-icon>
+              <b-icon icon="heart-fill"></b-icon>
             </template>
             <template v-slot:place>
               <strong>Goslar</strong>
