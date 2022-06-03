@@ -13,14 +13,18 @@ describe("NewsFeeds", () => {
       cy.get(".submit-create-modal-btn").click();
       cy.screenshot("list");
 
+      cy.assertNoToast();
       cy.get("td:contains(Polizei)").click();
       cy.get(".edit-btn");
       cy.screenshot("read");
+
+      cy.assertNoToast();
       cy.get(".edit-btn").click();
       cy.get("#publisher").clear().type("Feuerwehr");
       cy.get("#place input").type("G");
       cy.get(".vbt-autcomplete-list").click();
       cy.get(".submit-update-modal-btn").click();
+      cy.assertToast();
 
       cy.assertNoToast();
       cy.get(".delete-btn").click();

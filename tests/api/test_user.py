@@ -306,3 +306,21 @@ def test_push_registration_send_410(
 
         registration = PushRegistration.query.get(push_registration_id)
         assert registration is None
+
+
+def test_recycling_event_list(client, seeder: Seeder, utils: UtilActions):
+    from project.dateutils import get_today
+
+    today = get_today()
+    user_id = seeder.setup_api_access()
+    place_id = seeder.create_place()
+    recycling_street_id = seeder.create_recycling_street(place_id=place_id)
+    seeder.add_user_recycling_street(user_id, recycling_street_id)
+    recycling_event_id = seeder.create_recycling_event(recycling_street_id, date=today)
+
+    url = utils.get_url("api_v1_user_recycling_event_list")
+    response = utils.get_json(url)
+    assert len(response.json["items"]) == 1
+    assert response.json["items"][0]["id"] == recycling_event_id
+    assert response.json["items"][0]["street"]["id"] == recycling_street_id
+    assert response.json["items"][0]["place"]["id"] == place_id

@@ -73,8 +73,15 @@
       "privacy": "Datenschutz",
       "withLove": "Mit {love} in {place} entwickelt."
     },
+    "home": {
+      "news": {
+        "more": "Mehr zu {placeName}"
+      },
+      "recyclingEvents": "Abfuhrtermine"
+    },
     "menu": {
       "admin": "Admin",
+      "home": "Start",
       "login": "Login",
       "logout": "Ausloggen",
       "news": "News",
@@ -111,6 +118,9 @@
       "message": "Es gibt eine neue Version der App."
     },
     "user": {
+      "home": {
+        "title": "Start"
+      },
       "places": {
         "title": "Meine Orte wählen"
       },

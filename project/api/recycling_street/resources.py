@@ -2,11 +2,11 @@ from flask_apispec import doc, marshal_with, use_kwargs
 from sqlalchemy.sql.expression import func
 
 from project.api import add_api_resource
-from project.api.recycling_street.schemas import (
+from project.api.recycling_event.schemas import (
     RecyclingStreetEventListRequestSchema,
     RecyclingStreetEventListResponseSchema,
-    RecyclingStreetSchema,
 )
+from project.api.recycling_street.schemas import RecyclingStreetSchema
 from project.api.resources import BaseResource, login_api_user
 from project.dateutils import get_today
 from project.models import RecyclingEvent, RecyclingStreet
