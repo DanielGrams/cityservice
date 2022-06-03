@@ -64,6 +64,7 @@ VeeValidate.extend("url", {
   },
 });
 
+/* istanbul ignore next */
 if ("VUE_APP_BASE_URL" in process.env) {
   httpService.baseURL = process.env.VUE_APP_BASE_URL;
 }

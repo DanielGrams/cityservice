@@ -61,7 +61,7 @@ export default {
       if (this.$route.query.redirectTo) {
         this.$router.replace(this.$route.query.redirectTo);
       } else {
-        this.$router.replace("/user/profile");
+        this.$router.replace("/user/home");
       }
     },
   },

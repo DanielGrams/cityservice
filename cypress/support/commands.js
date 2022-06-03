@@ -45,6 +45,10 @@ Cypress.Commands.add("assertRequired", (fieldId) => {
   cy.assertInvalid(fieldId, "Pflichtfeld");
 });
 
+Cypress.Commands.add("assertToast", (msg) => {
+  cy.get(".toast-body", { timeout: 10000 }).should("exist");
+});
+
 Cypress.Commands.add("assertErrorToast", (msg) => {
   cy.contains(".toast-body", msg);
 });
@@ -55,10 +59,10 @@ Cypress.Commands.add("assertNoToast", () => {
 
 Cypress.Commands.add(
   "login",
-  (email = "test@test.de", password = "password", redirectTo = "/user/profile") => {
+  (email = "test@test.de", password = "password", redirectTo = "/user/home") => {
     let loginUrl = "/login";
 
-    if (redirectTo != "/user/profile") {
+    if (redirectTo != "/user/home") {
       loginUrl += "?redirectTo=" + redirectTo
     }
 

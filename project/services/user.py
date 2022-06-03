@@ -6,11 +6,12 @@ from sqlalchemy import func
 from sqlalchemy.sql import and_
 
 from project import user_datastore
-from project.dateutils import get_now
+from project.dateutils import get_now, get_today
 from project.models import (
     Place,
     PlacesUsers,
     PushRegistration,
+    RecyclingEvent,
     RecyclingStreet,
     RecyclingStreetsUsers,
 )
@@ -70,6 +71,32 @@ def upsert_user_role(role_name, role_title, permissions):
     role.remove_permissions(role.get_permissions())
     role.add_permissions(permissions)
     return role
+
+
+def get_user_recycling_events_query(user_id: int):
+    today = get_today()
+    from_date = today
+    to_date = today + datetime.timedelta(days=3)
+
+    return (
+        RecyclingEvent.query.join(
+            RecyclingStreet,
+            RecyclingStreet.id == RecyclingEvent.street_id,
+        )
+        .join(
+            RecyclingStreetsUsers,
+            and_(
+                RecyclingStreetsUsers.recyclingstreet_id == RecyclingStreet.id,
+                RecyclingStreetsUsers.user_id == user_id,
+            ),
+        )
+        .filter(
+            and_(
+                RecyclingEvent.date >= from_date,
+                RecyclingEvent.date <= to_date,
+            )
+        )
+    )
 
 
 def get_user_recycling_streets_query(user_id: int):

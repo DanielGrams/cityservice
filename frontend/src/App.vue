@@ -1,27 +1,19 @@
 <template>
   <div id="app">
-    <b-navbar type="light" variant="light">
-      <b-navbar-nav>
-        <b-nav-item to="/places">{{ $t("app.menu.places") }}</b-nav-item>
-      </b-navbar-nav>
-      <b-navbar-nav v-if="currentUser">
-        <b-nav-item to="/user/profile">{{ $t("app.menu.profile") }}</b-nav-item>
-      </b-navbar-nav>
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item v-if="!currentUser" to="/login">{{
-          $t("app.menu.login")
-        }}</b-nav-item>
-        <b-nav-item-dropdown v-if="currentUser" right class="user-dropdown">
-          <template #button-content>
-            {{ currentUser.email }}
-          </template>
-          <b-dropdown-item v-if="isAdmin" to="/admin">{{
-            $t("app.menu.admin")
-          }}</b-dropdown-item>
-          <b-dropdown-item class="logout" href @click.prevent="logOut">{{
-            $t("app.menu.logout")
-          }}</b-dropdown-item>
-        </b-nav-item-dropdown>
+    <b-navbar type="light" fixed="bottom" variant="light">
+      <b-navbar-nav justified class="col col-md-6 m-md-auto">
+        <b-nav-item to="/">
+          <b-icon icon="house-door-fill"></b-icon>
+          <div class="small">{{ $t("app.menu.home") }}</div>
+        </b-nav-item>
+        <b-nav-item to="/places">
+          <b-icon icon="search"></b-icon>
+          <div class="small">{{ $t("app.menu.places") }}</div>
+        </b-nav-item>
+        <b-nav-item to="/user/profile">
+          <b-icon icon="person-fill"></b-icon>
+          <div class="small">{{ $t("app.menu.profile") }}</div>
+        </b-nav-item>
       </b-navbar-nav>
     </b-navbar>
 
@@ -37,10 +29,10 @@
       }}</b-button>
     </b-alert>
 
-    <div class="body-content">
+    <div class="body-content mb-5">
       <router-view />
-      <footer>
-        <p class="text-center">
+      <footer class="mt-5">
+        <p class="text-center small text-center text-secondary mb-1">
           <i18n path="app.footer.withLove" tag="span">
             <template v-slot:love>
               <b-icon icon="heart-fill" style="color: red"></b-icon>
@@ -70,14 +62,6 @@ export default {
     isRefresh: false,
     refreshing: false,
   }),
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    },
-    isAdmin() {
-      return this.$store.getters["auth/isAdmin"];
-    },
-  },
   created() {
     document.addEventListener("serviceWorkerUpdateEvent", this.appUpdateUI, {
       once: true,
@@ -101,11 +85,6 @@ export default {
     });
   },
   methods: {
-    logOut() {
-      this.$store.dispatch("auth/logout").then(() => {
-        this.$router.replace("/");
-      });
-    },
     /* istanbul ignore next */
     appUpdateUI(e) {
       this.registration = e.detail;

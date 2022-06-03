@@ -33,9 +33,9 @@ describe("User", () => {
     // Submit
     cy.get("#submit").click();
 
-    // Profile
-    cy.url().should("include", "/user/profile");
-    cy.screenshot("profile");
+    // Home
+    cy.url().should("include", "/user/home");
+    cy.screenshot("home");
 
     // Redirect to profile if logged in
     cy.visit("/login");
@@ -43,20 +43,14 @@ describe("User", () => {
   });
 
   it("loginWithRedirect", () => {
-    cy.login("test@test.de", "password", "/news");
+    cy.login("test@test.de", "password", "/places");
 
     // /admin without role should redirect to Profile
     cy.visit("/admin");
     cy.url().should("include", "/profile");
 
     // Logout
-    cy.get("body").then($body => {
-        if ($body.find("button.navbar-toggler:visible").length > 0) {
-            cy.get("button.navbar-toggler").click();
-        }
-    });
-    cy.get(".user-dropdown").click();
-    cy.get(".user-dropdown .logout").click();
+    cy.get("button.logout").click();
     cy.url().should("eq", Cypress.config().baseUrl + "/");
 
     // Admin
@@ -107,4 +101,17 @@ describe("User", () => {
     });
   });
 
+
+  it("home", () => {
+    cy.createCommonScenario().then(function () {
+      cy.login("test@test.de");
+      cy.url().should("include", "/user/home");
+      cy.get(".news-item").should("exist");
+      cy.get(".weather-warning").should("exist");
+      cy.screenshot("home");
+
+      cy.visit("/");
+      cy.url().should("include", "/user/home");
+    });
+  });
 });

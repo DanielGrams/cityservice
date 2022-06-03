@@ -16,6 +16,10 @@ from project.api.push_registration.schemas import (
     PushRegistrationPatchRequestSchema,
     PushRegistrationPostRequestSchema,
 )
+from project.api.recycling_event.schemas import (
+    UserRecyclingEventListRequestSchema,
+    UserRecyclingEventListResponseSchema,
+)
 from project.api.recycling_street.schemas import (
     UserRecyclingStreetListRequestSchema,
     UserRecyclingStreetListResponseSchema,
@@ -141,6 +145,31 @@ add_api_resource(
     UserRecyclingStreetListWriteResource,
     "/user/recycling-streets/<int:recycling_street_id>",
     "api_v1_user_recycling_street_list_write",
+)
+
+
+class UserRecyclingEventListResource(BaseResource):
+    @doc(
+        summary="List recycling events of user",
+        tags=["Users", "Recycling"],
+        security=[{"oauth2": ["user:read"]}],
+    )
+    @use_kwargs(UserRecyclingEventListRequestSchema, location=("query"))
+    @marshal_with(UserRecyclingEventListResponseSchema)
+    @require_api_access("user:read")
+    def get(self, **kwargs):
+        from project.services.user import get_user_recycling_events_query
+
+        login_api_user_or_401()
+
+        pagination = get_user_recycling_events_query(current_user.id).paginate()
+        return pagination
+
+
+add_api_resource(
+    UserRecyclingEventListResource,
+    "/user/recycling-events",
+    "api_v1_user_recycling_event_list",
 )
 
 

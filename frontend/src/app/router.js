@@ -16,6 +16,12 @@ const routes = [
   {
     path: "/",
     component: Home,
+    beforeEnter: (to, from, next) => {
+      if (store.state.auth.status.loggedIn) {
+        return next("/user/home");
+      }
+      return next();
+    },
   },
   ...authRoutes,
   ...placesRoutes,
@@ -24,9 +30,15 @@ const routes = [
   ...adminRoutes,
   ...rootRoutes,
   {
-    path: "/",
+    path: "*",
     name: "NotFound",
     component: Home,
+    beforeEnter: /* istanbul ignore next */ (to, from, next) => /* istanbul ignore next */ {
+      if (store.state.auth.status.loggedIn) {
+        return next("/user/home");
+      }
+      return next();
+    },
   },
 ];
 

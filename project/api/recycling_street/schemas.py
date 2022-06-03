@@ -2,10 +2,6 @@ from flask_security import current_user
 from marshmallow import fields
 
 from project.api import marshmallow
-from project.api.recycling_event.schemas import (
-    RecyclingEventListRequestSchema,
-    RecyclingEventListResponseSchema,
-)
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
@@ -109,14 +105,6 @@ class UserRecyclingStreetListResponseSchema(PaginationResponseSchema):
         fields.Nested(UserRecyclingStreetListItemSchema),
         metadata={"description": "Recycling streets"},
     )
-
-
-class RecyclingStreetEventListRequestSchema(RecyclingEventListRequestSchema):
-    pass
-
-
-class RecyclingStreetEventListResponseSchema(RecyclingEventListResponseSchema):
-    pass
 
 
 class UserRecyclingStreetModelSchema(SQLAlchemyBaseSchema):

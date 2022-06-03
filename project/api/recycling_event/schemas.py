@@ -3,6 +3,8 @@ from marshmallow import fields
 
 from project.api import marshmallow
 from project.api.fields import CustomDateTimeField
+from project.api.place.schemas import PlaceRefSchema
+from project.api.recycling_street.schemas import RecyclingStreetRefSchema
 from project.api.schemas import (
     IdSchemaMixin,
     PaginationRequestSchema,
@@ -65,3 +67,29 @@ class RecyclingEventListResponseSchema(PaginationResponseSchema):
     items = fields.List(
         fields.Nested(RecyclingEventSchema), metadata={"description": "Events"}
     )
+
+
+class UserRecyclingEventListRequestSchema(PaginationRequestSchema):
+    pass
+
+
+class UserRecyclingEventListItemSchema(
+    RecyclingEventSchema,
+):
+    street = fields.Nested(RecyclingStreetRefSchema)
+    place = fields.Nested(PlaceRefSchema, attribute="street.place")
+
+
+class UserRecyclingEventListResponseSchema(PaginationResponseSchema):
+    items = fields.List(
+        fields.Nested(UserRecyclingEventListItemSchema),
+        metadata={"description": "Recycling events"},
+    )
+
+
+class RecyclingStreetEventListRequestSchema(RecyclingEventListRequestSchema):
+    pass
+
+
+class RecyclingStreetEventListResponseSchema(RecyclingEventListResponseSchema):
+    pass
