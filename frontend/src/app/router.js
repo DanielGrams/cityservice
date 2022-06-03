@@ -33,7 +33,7 @@ const routes = [
     path: "*",
     name: "NotFound",
     component: Home,
-    beforeEnter: (to, from, next) => /* istanbul ignore next */ {
+    beforeEnter: /* istanbul ignore next */ (to, from, next) => /* istanbul ignore next */ {
       if (store.state.auth.status.loggedIn) {
         return next("/user/home");
       }
