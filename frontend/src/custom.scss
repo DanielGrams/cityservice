@@ -5,6 +5,14 @@ $theme-colors: (
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
 
+h3 {
+  font-size: 1.6rem;
+}
+
+h4 {
+  font-size: 1.4rem;
+}
+
 .body-content {
   padding: 10px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -16,4 +24,17 @@ footer {
 
 .social-btn {
   font-size: 1.5rem;
+}
+
+.list-item-head {
+  font-size: 0.8rem;
+  color: theme-color("secondary");
+}
+
+.list-item-title {
+  font-size: 1.1rem;
+}
+
+.list-item-detail {
+  font-size: 1rem;
 }
