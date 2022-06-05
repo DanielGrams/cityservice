@@ -8,21 +8,25 @@
     >
       <template #item="{ item }">
         <div
-          class="news-item d-flex flex-row align-items-center position-relative p-2"
+          class="news-item d-flex flex-row align-items-center position-relative px-3 py-2"
         >
-          <div class="mx-3" style="max-width: 30px">
-            <img
-              :src="item.publisher_icon_url"
-              class="img-fluid rounded"
-              style="max-width: 30px; border-radius: 15px !important"
-            />
-          </div>
           <div>
+            <div class="list-item-title">{{ item.content }}</div>
+            <div class="list-item-detail">
+              <img
+                :src="item.publisher_icon_url"
+                class="img-fluid rounded"
+                style="
+                  max-width: 20px;
+                  border-radius: 10px !important;
+                  vertical-align: sub;
+                "
+              />
+              {{ item.news_feed.publisher }}
+            </div>
             <div class="list-item-head">
               {{ item.published | moment("dd. DD.MM.YYYY") }}
             </div>
-            <div class="list-item-title">{{ item.news_feed.publisher }}</div>
-            <div class="list-item-detail">{{ item.content }}</div>
           </div>
           <a
             href="#"

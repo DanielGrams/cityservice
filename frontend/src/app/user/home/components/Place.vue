@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4">
-    <h4>{{ place.name }}</h4>
+    <div class="section-title">{{ place.name }}</div>
     <WeatherWarningList :place="place" class="mb-2" />
     <NewsList :place="place" class="mb-2" />
   </div>

@@ -3,12 +3,12 @@
     <DefaultList :url="url" :showEmpty="false">
       <template #item="data">
         <div class="weather-warning px-3 py-2">
+          <div class="list-item-title">{{ data.item.headline }}</div>
+          <div class="list-item-detail">{{ data.item.content }}</div>
           <div class="list-item-head">
             {{ data.item.start | moment("dd. DD.MM.YYYY HH:mm") }} Uhr -
             {{ data.item.end | moment("dd. DD.MM.YYYY HH:mm") }} Uhr
           </div>
-          <div class="list-item-title">{{ data.item.headline }}</div>
-          <div class="list-item-detail">{{ data.item.content }}</div>
         </div>
       </template>
     </DefaultList>

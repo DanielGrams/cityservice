@@ -1,57 +1,56 @@
 <template>
-  <div class="container">
-    <h3 class="d-flex justify-content-between align-items-center">
-      <div>
-        <BackButton path="/places" />
-        <span>{{
-          $t("app.user.recyclingStreets.recyclingStreets.title")
-        }}</span>
+  <DefaultPage :title="$t('app.user.recyclingStreets.recyclingStreets.title')">
+    <template #left>
+      <BackButton path="/user/profile" />
+    </template>
+    <div>
+      <b-form-input
+        id="filter-input"
+        v-model="filter"
+        type="search"
+        :placeholder="$t('shared.filter.instruction')"
+        class="mb-2"
+      ></b-form-input>
+      <div class="alert alert-danger" role="alert" v-if="errorMessage">
+        {{ errorMessage }}
       </div>
-    </h3>
-    <b-form-input
-      id="filter-input"
-      v-model="filter"
-      type="search"
-      :placeholder="$t('shared.filter.instruction')"
-      class="mb-2"
-    ></b-form-input>
-    <div class="alert alert-danger" role="alert" v-if="errorMessage">
-      {{ errorMessage }}
+      <b-table
+        ref="table"
+        id="select-recycling-street-table"
+        :fields="fields"
+        :items="loadTableData"
+        :current-page="currentPage"
+        :per-page="perPage"
+        :filter="filter"
+        filter-debounce="500"
+        primary-key="id"
+        thead-class="d-none"
+        outlined
+        responsive
+        show-empty
+        :empty-text="$t('shared.emptyData')"
+        style="min-height: 120px"
+      >
+        <template #cell(actions)="data">
+          <b-button
+            @click="toggleStreet(data.item)"
+            class="favorite-btn"
+            variant="light"
+            ><b-icon
+              :icon="data.item.is_favored ? 'star-fill' : 'star'"
+            ></b-icon
+          ></b-button>
+        </template>
+      </b-table>
+      <b-pagination
+        v-if="totalRows > perPage"
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        aria-controls="select-recycling-street-table"
+      ></b-pagination>
     </div>
-    <b-table
-      ref="table"
-      id="select-recycling-street-table"
-      :fields="fields"
-      :items="loadTableData"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      filter-debounce="500"
-      primary-key="id"
-      thead-class="d-none"
-      outlined
-      responsive
-      show-empty
-      :empty-text="$t('shared.emptyData')"
-      style="min-height: 120px"
-    >
-      <template #cell(actions)="data">
-        <b-button
-          @click="toggleStreet(data.item)"
-          class="favorite-btn"
-          variant="light"
-          ><b-icon :icon="data.item.is_favored ? 'star-fill' : 'star'"></b-icon
-        ></b-button>
-      </template>
-    </b-table>
-    <b-pagination
-      v-if="totalRows > perPage"
-      v-model="currentPage"
-      :total-rows="totalRows"
-      :per-page="perPage"
-      aria-controls="select-recycling-street-table"
-    ></b-pagination>
-  </div>
+  </DefaultPage>
 </template>
 
 <script>

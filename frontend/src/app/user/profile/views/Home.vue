@@ -1,20 +1,21 @@
 <template>
-  <div class="container" v-if="currentUser">
-    <h3>{{ $t("app.user.profile.title") }}</h3>
-    <p>
-      {{ currentUser.email }}
-      <b-button variant="link" class="logout" @click.prevent="logOut">{{
-        $t("app.menu.logout")
-      }}</b-button>
-      <b-button variant="link" class="admin" v-if="isAdmin" to="/admin">{{
-        $t("app.menu.admin")
-      }}</b-button>
-    </p>
+  <DefaultPage :title="$t('app.user.profile.title')">
+    <div v-if="currentUser">
+      <p>
+        {{ currentUser.email }}
+        <b-button variant="link" class="logout" @click.prevent="logOut">{{
+          $t("app.menu.logout")
+        }}</b-button>
+        <b-button variant="link" class="admin" v-if="isAdmin" to="/admin">{{
+          $t("app.menu.admin")
+        }}</b-button>
+      </p>
 
-    <UserPlaceList />
-    <UserRecyclingStreetList />
-    <UserPushRegistrationList />
-  </div>
+      <UserPlaceList />
+      <UserRecyclingStreetList />
+      <UserPushRegistrationList />
+    </div>
+  </DefaultPage>
 </template>
 
 <script>

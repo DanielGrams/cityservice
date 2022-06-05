@@ -64,7 +64,8 @@
       "login": {
         "email": "Email",
         "errorMessage": "Die Anmeldung ist fehlgeschlagen.",
-        "password": "Passwort"
+        "password": "Passwort",
+        "title": "Anmelden"
       }
     },
     "footer": {

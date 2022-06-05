@@ -1,38 +1,14 @@
 <template>
-  <div class="container">
-    <h3>{{ $t("app.places.list.title") }}</h3>
-
-    <div class="alert alert-danger" role="alert" v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <b-table
-      ref="table"
-      id="main-table"
-      :fields="fields"
-      :items="loadTableData"
-      :current-page="currentPage"
-      :per-page="perPage"
-      primary-key="id"
-      thead-class="d-none"
-      outlined
-      hover
-      responsive
-      show-empty
-      :empty-text="$t('shared.emptyData')"
-      style="min-height: 120px"
-      selectable
-      @row-selected="onRowSelected"
-    >
-    </b-table>
-    <b-pagination
-      v-if="totalRows > perPage"
-      v-model="currentPage"
-      :total-rows="totalRows"
-      :per-page="perPage"
-      aria-controls="main-table"
-    ></b-pagination>
-  </div>
+  <DefaultPage :title="$t('app.places.list.title')">
+    <DefaultList url="/api/places">
+      <template #item="{ item }">
+        <div class="p-2">
+          {{ item.name }}
+          <b-link :to="`/places/${item.id}`" class="stretched-link"></b-link>
+        </div>
+      </template>
+    </DefaultList>
+  </DefaultPage>
 </template>
 
 <script>
