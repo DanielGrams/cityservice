@@ -1,46 +1,47 @@
 <template>
-  <div class="container">
-    <h3 class="d-flex justify-content-between align-items-center">
-      <div>
-        <BackButton path="/places" />
-        <span>{{ $t("app.user.places.title") }}</span>
+  <DefaultPage :title="$t('app.user.places.title')">
+    <template #left>
+      <BackButton path="/user/profile" />
+    </template>
+    <div>
+      <div class="alert alert-danger" role="alert" v-if="errorMessage">
+        {{ errorMessage }}
       </div>
-    </h3>
-    <div class="alert alert-danger" role="alert" v-if="errorMessage">
-      {{ errorMessage }}
+      <b-table
+        ref="table"
+        id="select-place-table"
+        :fields="fields"
+        :items="loadTableData"
+        :current-page="currentPage"
+        :per-page="perPage"
+        primary-key="id"
+        thead-class="d-none"
+        outlined
+        responsive
+        show-empty
+        :empty-text="$t('shared.emptyData')"
+        style="min-height: 120px"
+      >
+        <template #cell(actions)="data">
+          <b-button
+            @click="togglePlace(data.item)"
+            class="favorite-btn"
+            variant="light"
+            ><b-icon
+              :icon="data.item.is_favored ? 'star-fill' : 'star'"
+            ></b-icon
+          ></b-button>
+        </template>
+      </b-table>
+      <b-pagination
+        v-if="totalRows > perPage"
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        aria-controls="select-place-table"
+      ></b-pagination>
     </div>
-    <b-table
-      ref="table"
-      id="select-place-table"
-      :fields="fields"
-      :items="loadTableData"
-      :current-page="currentPage"
-      :per-page="perPage"
-      primary-key="id"
-      thead-class="d-none"
-      outlined
-      responsive
-      show-empty
-      :empty-text="$t('shared.emptyData')"
-      style="min-height: 120px"
-    >
-      <template #cell(actions)="data">
-        <b-button
-          @click="togglePlace(data.item)"
-          class="favorite-btn"
-          variant="light"
-          ><b-icon :icon="data.item.is_favored ? 'star-fill' : 'star'"></b-icon
-        ></b-button>
-      </template>
-    </b-table>
-    <b-pagination
-      v-if="totalRows > perPage"
-      v-model="currentPage"
-      :total-rows="totalRows"
-      :per-page="perPage"
-      aria-controls="select-place-table"
-    ></b-pagination>
-  </div>
+  </DefaultPage>
 </template>
 
 <script>

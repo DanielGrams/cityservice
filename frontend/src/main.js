@@ -22,6 +22,8 @@ import i18n from "./i18n";
 import store from "./store";
 import httpService from "./services/http.service";
 import "./registerServiceWorker";
+import DefaultPage from "@/components/DefaultPage";
+import DefaultList from "@/components/DefaultList";
 
 Vue.config.productionTip = false;
 
@@ -43,6 +45,8 @@ Vue.use(VueMeta, {
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
+Vue.component("DefaultPage", DefaultPage);
+Vue.component("DefaultList", DefaultList);
 
 Object.keys(rules).forEach((rule) => {
   extend(rule, {

@@ -4,9 +4,6 @@
   "webDir": "../project/static/frontend",
   "bundledWebRuntime": false,
   "backgroundColor": "#009688",
-  "ios": {
-    "contentInset": "always"
-  },
   "server": {
     "cleartext": true
   },

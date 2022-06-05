@@ -1,33 +1,35 @@
 <template>
-  <div>
-    <ValidationObserver v-slot="{ handleSubmit }">
-      <b-form @submit.stop.prevent="handleSubmit(submitForm)">
-        <ValidatedInput
-          :label="$t('app.auth.login.email')"
-          name="email"
-          type="email"
-          v-model="email"
-          rules="required|email"
-        />
-        <ValidatedInput
-          :label="$t('app.auth.login.password')"
-          name="password"
-          type="password"
-          v-model="password"
-          rules="required"
-        />
-        <b-button
-          variant="primary"
-          id="submit"
-          type="submit"
-          v-bind:disabled="isSubmitting"
-        >
-          <b-spinner small v-if="isSubmitting"></b-spinner>
-          {{ $t("shared.submit") }}
-        </b-button>
-      </b-form>
-    </ValidationObserver>
-  </div>
+  <DefaultPage :title="$t('app.auth.login.title')">
+    <div class="p-2">
+      <ValidationObserver v-slot="{ handleSubmit }">
+        <b-form @submit.stop.prevent="handleSubmit(submitForm)">
+          <ValidatedInput
+            :label="$t('app.auth.login.email')"
+            name="email"
+            type="email"
+            v-model="email"
+            rules="required|email"
+          />
+          <ValidatedInput
+            :label="$t('app.auth.login.password')"
+            name="password"
+            type="password"
+            v-model="password"
+            rules="required"
+          />
+          <b-button
+            variant="primary"
+            id="submit"
+            type="submit"
+            v-bind:disabled="isSubmitting"
+          >
+            <b-spinner small v-if="isSubmitting"></b-spinner>
+            {{ $t("shared.submit") }}
+          </b-button>
+        </b-form>
+      </ValidationObserver>
+    </div>
+  </DefaultPage>
 </template>
 
 <script>

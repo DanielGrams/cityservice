@@ -72,6 +72,9 @@ npx cap copy
 
 ### Run with dev server
 
+- Start Flask server
+- Set env variable VUE_APP_BASE_URL to network URL of Flask app.
+
 ```sh
 cd frontend
 npm run serve
@@ -81,8 +84,8 @@ frontend/capacitor.config.ts
 
 ```js
 server: {
-    url: "<Network URL of vue app>",
-    cleartext: true,
+    "url": "<Network URL of vue app>",
+    "cleartext": true,
 },
 ```
 

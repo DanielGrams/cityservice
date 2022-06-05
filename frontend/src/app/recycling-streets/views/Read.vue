@@ -1,27 +1,23 @@
 <template>
-  <div>
-    <b-overlay :show="isLoading">
-      <div v-if="recyclingStreet">
-        <h3 class="d-flex justify-content-between align-items-center">
-          <div>
-            <BackButton path="/places" />
-            <span>{{ recyclingStreet.name }}</span>
-          </div>
-          <b-button-group v-if="currentUser" class="pr-2">
-            <b-button
-              @click="toggleFavorite()"
-              class="favorite-btn"
-              variant="light"
-              ><b-icon
-                :icon="recyclingStreet.is_favored ? 'star-fill' : 'star'"
-              ></b-icon
-            ></b-button>
-          </b-button-group>
-        </h3>
-      </div>
-      <RecyclingEventList />
-    </b-overlay>
-  </div>
+  <DefaultPage :title="title">
+    <template #left>
+      <BackButton path="/places" />
+    </template>
+    <template #right>
+      <b-button-group v-if="currentUser && recyclingStreet" class="pr-2">
+        <b-button @click="toggleFavorite()" class="favorite-btn" variant="light"
+          ><b-icon
+            :icon="recyclingStreet.is_favored ? 'star-fill' : 'star'"
+          ></b-icon
+        ></b-button>
+      </b-button-group>
+    </template>
+    <template>
+      <b-overlay :show="isLoading">
+        <RecyclingEventList />
+      </b-overlay>
+    </template>
+  </DefaultPage>
 </template>
 
 <script>
@@ -41,6 +37,9 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.recyclingStreet ? this.recyclingStreet.name : "";
+    },
     currentUser() {
       return this.$store.state.auth.user;
     },

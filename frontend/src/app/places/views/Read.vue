@@ -1,51 +1,45 @@
 <template>
-  <div>
-    <b-overlay :show="isLoading">
-      <div v-if="place">
-        <h3 class="d-flex justify-content-between align-items-center">
-          <div>
-            <BackButton path="/places" />
-            <span>{{ place.name }}</span>
-          </div>
+  <DefaultPage :title="title">
+    <template #left>
+      <BackButton path="/places" />
+    </template>
+    <template #right>
+      <b-button-group v-if="currentUser && place" class="pr-2">
+        <b-button @click="toggleFavorite()" class="favorite-btn" variant="light"
+          ><b-icon :icon="place.is_favored ? 'star-fill' : 'star'"></b-icon
+        ></b-button>
+      </b-button-group>
+    </template>
+    <template>
+      <b-overlay :show="isLoading">
+        <b-nav tabs class="tabs">
+          <b-nav-item
+            :to="`/places/${this.placeId}`"
+            exact
+            exact-active-class="active"
+            replace
+            >{{ $t("app.places.read.news.title") }}</b-nav-item
+          >
+          <b-nav-item
+            :to="`/places/${this.placeId}/weather`"
+            exact
+            exact-active-class="active"
+            replace
+            >{{ $t("app.places.read.weather.title") }}</b-nav-item
+          >
+          <b-nav-item
+            :to="`/places/${this.placeId}/recycling`"
+            exact
+            exact-active-class="active"
+            replace
+            >{{ $t("app.places.read.recycling.title") }}</b-nav-item
+          >
+        </b-nav>
 
-          <b-button-group v-if="currentUser" class="pr-2">
-            <b-button
-              @click="toggleFavorite()"
-              class="favorite-btn"
-              variant="light"
-              ><b-icon :icon="place.is_favored ? 'star-fill' : 'star'"></b-icon
-            ></b-button>
-          </b-button-group>
-        </h3>
-      </div>
-
-      <b-nav tabs class="tabs">
-        <b-nav-item
-          :to="`/places/${this.placeId}`"
-          exact
-          exact-active-class="active"
-          replace
-          >{{ $t("app.places.read.news.title") }}</b-nav-item
-        >
-        <b-nav-item
-          :to="`/places/${this.placeId}/weather`"
-          exact
-          exact-active-class="active"
-          replace
-          >{{ $t("app.places.read.weather.title") }}</b-nav-item
-        >
-        <b-nav-item
-          :to="`/places/${this.placeId}/recycling`"
-          exact
-          exact-active-class="active"
-          replace
-          >{{ $t("app.places.read.recycling.title") }}</b-nav-item
-        >
-      </b-nav>
-
-      <router-view></router-view>
-    </b-overlay>
-  </div>
+        <router-view></router-view>
+      </b-overlay>
+    </template>
+  </DefaultPage>
 </template>
 
 <script>
@@ -61,6 +55,9 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.place ? this.place.name : "";
+    },
     placeId() {
       return this.$route.params.id;
     },
