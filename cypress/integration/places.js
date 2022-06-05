@@ -5,7 +5,7 @@ describe("Places", () => {
       cy.visit("/places");
       cy.screenshot("Places");
       cy.wait(2000);
-      cy.get("#main-table td:contains(Goslar)").click();
+      cy.get(".list-group-item:contains(Goslar)").click();
 
       cy.screenshot("Place");
       cy.get(".favorite-btn").click();
