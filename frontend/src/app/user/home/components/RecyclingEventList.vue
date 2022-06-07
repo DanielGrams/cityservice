@@ -7,6 +7,7 @@
       url="/api/user/recycling-events"
       :showEmpty="false"
       @isEmptyChanged="(value) => (show = !value)"
+      ref="list"
     >
       <template #item="data">
         <div class="d-flex flex-row align-items-center px-3 py-2">
@@ -45,6 +46,11 @@ export default {
     return {
       show: true,
     };
+  },
+  methods: {
+    refreshData() {
+      this.$refs["list"].refreshData();
+    },
   },
 };
 </script>

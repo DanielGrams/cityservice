@@ -276,6 +276,7 @@ if (Capacitor.isPluginAvailable("PushNotifications")) {
 /* istanbul ignore next */
 if (Capacitor.isPluginAvailable("App")) {
   NativeApp.addListener("appStateChange", (state) => {
+    store.commit("setAppIsActive", state.isActive);
     if (
       state.isActive &&
       Capacitor.isPluginAvailable("PushNotifications") &&
