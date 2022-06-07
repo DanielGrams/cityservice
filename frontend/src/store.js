@@ -8,8 +8,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    appIsActive: true,
   },
   mutations: {
+    /* istanbul ignore next */
+    setAppIsActive (state, isActive) {
+      state.appIsActive = isActive;
+    }
   },
   actions: {
   },
