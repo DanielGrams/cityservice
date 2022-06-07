@@ -33,6 +33,7 @@ export default {
     this.loadPlaces();
   },
   methods: {
+    /* istanbul ignore next */
     refreshData() {
       this.$refs["recyclingEventList"].refreshData();
       this.loadPlaces();
