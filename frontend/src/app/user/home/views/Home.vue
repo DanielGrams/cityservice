@@ -1,7 +1,7 @@
 <template>
   <DefaultPage :title="$t('app.user.home.title')">
     <div>
-      <RecyclingEventList ref="recyclingEventList" />
+      <RecyclingEventList />
       <b-overlay :show="isLoading">
         <Place v-for="place in places" :key="place.id" :place="place" />
       </b-overlay>
@@ -11,13 +11,11 @@
 
 <script>
 import httpService from "@/services/http.service";
-import RefreshableMixin from "@/mixins/RefreshableMixin";
 import Place from "../components/Place.vue";
 import RecyclingEventList from "../components/RecyclingEventList.vue";
 import DefaultPage from "@/components/DefaultPage";
 
 export default {
-  mixins: [RefreshableMixin],
   components: {
     DefaultPage,
     Place,
@@ -33,13 +31,7 @@ export default {
     this.loadPlaces();
   },
   methods: {
-    /* istanbul ignore next */
-    refreshData() {
-      this.$refs["recyclingEventList"].refreshData();
-      this.loadPlaces();
-    },
     loadPlaces() {
-      this.onRefreshingDataStarted();
       const vm = this;
       httpService
         .get(`/api/user/places`, {
