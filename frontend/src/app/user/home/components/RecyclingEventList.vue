@@ -47,11 +47,5 @@ export default {
       show: true,
     };
   },
-  methods: {
-    /* istanbul ignore next */
-    refreshData() {
-      this.$refs["list"].refreshData();
-    },
-  },
 };
 </script>

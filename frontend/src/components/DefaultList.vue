@@ -25,9 +25,11 @@
 </template>
 <script>
 import httpService from "@/services/http.service";
+import RefreshableMixin from "@/mixins/RefreshableMixin";
 
 export default {
   name: "DefaultList",
+  mixins: [RefreshableMixin],
   props: {
     url: {
       type: String,
@@ -77,6 +79,7 @@ export default {
   },
   methods: {
     async refreshData() {
+      this.onRefreshingDataStarted();
       const response = await httpService.get(this.url, {
         params: {
           page: this.currentPage,
